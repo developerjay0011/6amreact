@@ -8,11 +8,13 @@ import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import { alpha, IconButton, styled } from "@mui/material";
 
 export const RoundedIconButton = styled(IconButton)(({ theme }) => ({
-  borderRadius: "50%",
+  borderRadius: "4px",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "center",
   backgroundColor: theme.palette.neutral[100],
-  //color: theme.palette.neutral[100],
   ":hover": {
-    backgroundColor: alpha(theme.palette.primary.main, 0.5),
+    backgroundColor: theme.palette.neutral[300],
   },
 }));
 const PrevArrow = ({ onClick, className }) => {
@@ -96,19 +98,19 @@ export const ProductsThumbnailsSettings = {
     {
       breakpoint: 1150,
       settings: {
-        slidesToShow: 5.5,
+        slidesToShow: 5,
       },
     },
     {
       breakpoint: 1300,
       settings: {
-        slidesToShow: 5.5,
+        slidesToShow: 5,
       },
     },
     {
       breakpoint: 1600,
       settings: {
-        slidesToShow: 5.5,
+        slidesToShow: 5.3,
       },
     },
   ],

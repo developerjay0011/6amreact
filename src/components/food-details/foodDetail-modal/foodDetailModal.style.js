@@ -1,15 +1,15 @@
 import { styled } from "@mui/material/styles";
 import { Box } from "@mui/system";
 
-export const FoodDetailModalStyle = styled(Box)(({ theme }) => ({
+export const FoodDetailModalStyle = styled(Box)(({ theme, foodmodal }) => ({
   position: "absolute",
   top: "50%",
   left: "50%",
   transform: "translate(-50%, -50%)",
-  maxWidth: "700px",
+  maxWidth: foodmodal ? "459px" : "922px",
   maxHeight: "100%",
   width: "100%",
-  padding: "1.7%",
+  padding: foodmodal ? "0%" : "1.7%",
   borderRadius: "10px",
   boxShadow: 24,
   border: "none",

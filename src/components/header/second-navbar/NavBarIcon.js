@@ -27,7 +27,7 @@ const NavBarIcon = ({ icon, label, user, handleClick, badgeCount }) => {
           <Badge color="primary" badgeContent={badgeCount} showZero>
             {icon}
           </Badge>
-          <Typography color={theme.palette.neutral[1000]}>{label}</Typography>
+          {/*<Typography color={theme.palette.neutral[1000]}>{label}</Typography>*/}
         </IconButton>
       </Stack>
     </>

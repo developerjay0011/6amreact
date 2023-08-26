@@ -1,13 +1,13 @@
 import MainApi from "../../../MainApi";
-import { latest_items_api } from "../../../ApiRoutes";
+import { latest_items_api, more_from_store } from "../../../ApiRoutes";
 import { useQuery } from "react-query";
 import { onErrorResponse } from "../../../api-error-response/ErrorResponses";
 
 const getData = async (pageParams) => {
-  const { storeId, categoryId, productId, offset, type, limit, minMax } =
+  const { productId, offset, limit } =
     pageParams;
   const { data } = await MainApi.get(
-    `${latest_items_api}?store_id=${storeId}&category_id=${categoryId}&product_id=${productId}&offset=${offset}&limit=${limit}&type=${type}`
+    `${more_from_store}/${productId}?offset=${offset}&limit=${limit}`
   );
   return data;
 };

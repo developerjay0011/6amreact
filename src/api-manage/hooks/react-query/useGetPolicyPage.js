@@ -12,6 +12,8 @@ const getData = async (apiLink) => {
 };
 export default function useGetPolicyPage(apiLink) {
   return useQuery("refund-policy", () => getData(apiLink), {
-    enabled: false,
+    // enabled: false,
+    cacheTime: 100000,
+    staleTime: 100000,
   });
 }

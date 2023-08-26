@@ -3,12 +3,17 @@ import CssBaseline from "@mui/material/CssBaseline";
 import MetaData from "../meta-data";
 import MainLayout from "../../src/components/layout/MainLayout";
 import CampaignsPage from "../../src/components/Campaigns";
+import SEO from "../../components/seo";
 
 const Index = ({ configData, campaignsDetails }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`campaigns - ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `Campaigns` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
       <MainLayout configData={configData}>
         <CampaignsPage />
       </MainLayout>

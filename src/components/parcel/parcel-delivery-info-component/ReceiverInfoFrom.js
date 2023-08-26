@@ -9,6 +9,8 @@ import CustomMapSearch from "../../Map/CustomMapSearch";
 import SaveAddress from "../../SaveAddress";
 import GetLocationFrom from "./GetLocationFrom";
 import MapModal from "../../Map/MapModal";
+import CustomPhoneInput from "../../custom-component/CustomPhoneInput";
+import { getLanguage } from "../../../helper-functions/getLanguage";
 const ReceiverInfoFrom = ({
   addAddressFormik,
   receiverNameHandler,
@@ -62,14 +64,15 @@ const ReceiverInfoFrom = ({
       receiverOptionalAddress?.house ? receiverOptionalAddress?.house : ""
     );
   }, [receiverOptionalAddress]);
+  const lanDirection = getLanguage() ? getLanguage() : "ltr";
   return (
     <CustomStackFullWidth height="100%">
-      <Card sx={{ padding: "1.2rem" }}>
+      <Card sx={{ padding: "1.2rem", height: "100%" }}>
         <CustomStackFullWidth spacing={2}>
           <Stack align="center">
             <Typography variant="h6">{t("Receiver Information")}</Typography>
           </Stack>
-          <CustomStackFullWidth alignItems="center" spacing={3}>
+          <CustomStackFullWidth alignItems="center" spacing={2}>
             <CustomStackFullWidth alignItems="center">
               <CustomTextFieldWithFormik
                 required="true"
@@ -83,16 +86,27 @@ const ReceiverInfoFrom = ({
               />
             </CustomStackFullWidth>
             <CustomStackFullWidth alignItems="center">
-              <CustomTextFieldWithFormik
-                required="true"
-                type="number"
-                label={t("Receiver Phone")}
+              <CustomPhoneInput
+                value={addAddressFormik.values.receiverPhone}
+                onHandleChange={receiverPhoneHandler}
+                initCountry={configData?.country}
                 touched={addAddressFormik.touched.receiverPhone}
                 errors={addAddressFormik.errors.receiverPhone}
-                fieldProps={addAddressFormik.getFieldProps("receiverPhone")}
-                onChangeHandler={receiverPhoneHandler}
-                value={addAddressFormik.values.receiverPhone}
+                rtlChange="true"
+                lanDirection={lanDirection}
+                height="45px"
+                borderRadius="8px"
               />
+              {/*<CustomTextFieldWithFormik*/}
+              {/*  required="true"*/}
+              {/*  type="number"*/}
+              {/*  label={t("Receiver Phone")}*/}
+              {/*  touched={addAddressFormik.touched.receiverPhone}*/}
+              {/*  errors={addAddressFormik.errors.receiverPhone}*/}
+              {/*  fieldProps={addAddressFormik.getFieldProps("receiverPhone")}*/}
+              {/*  onChangeHandler={receiverPhoneHandler}*/}
+              {/*  value={addAddressFormik.values.receiverPhone}*/}
+              {/*/>*/}
             </CustomStackFullWidth>
             <CustomStackFullWidth
               direction="row"
@@ -107,7 +121,10 @@ const ReceiverInfoFrom = ({
                 direction="row"
               >
                 <Button onClick={() => handleOpen()}>
-                  <Typography color={theme.palette.primary.main}>
+                  <Typography
+                    color={theme.palette.primary.main}
+                    fontSize="12px"
+                  >
                     {t("Set from map")}
                   </Typography>
                   <RoomIcon
@@ -117,7 +134,7 @@ const ReceiverInfoFrom = ({
                 </Button>
               </Stack>
             </CustomStackFullWidth>
-            <CustomStackFullWidth>
+            <CustomStackFullWidth pb="4px">
               <GetLocationFrom
                 fromparcel="true"
                 handleLocation={handleLocation}
@@ -125,19 +142,20 @@ const ReceiverInfoFrom = ({
                 currentLocationValue={currentLocationValue}
                 setCurrentLactionValue={setCurrentLactionValue}
                 testLocation={testLocation}
+                toReceiver="true"
               />
             </CustomStackFullWidth>
-            <CustomStackFullWidth>
-              <Card sx={{ padding: "1rem" }} elevation={9}>
-                <SaveAddress
-                  handleLocation={handleLocation}
-                  configData={configData}
-                  setReceiverFormattedAddress={setReceiverFormattedAddress}
-                  setReceiverLocation={setReceiverLocation}
-                  setReceiverOptionalAddress={setReceiverOptionalAddress}
-                />
-              </Card>
-            </CustomStackFullWidth>
+            {/*<CustomStackFullWidth>*/}
+            {/*  <Card sx={{ padding: "1rem" }} elevation={9}>*/}
+            {/*    <SaveAddress*/}
+            {/*      handleLocation={handleLocation}*/}
+            {/*      configData={configData}*/}
+            {/*      setReceiverFormattedAddress={setReceiverFormattedAddress}*/}
+            {/*      setReceiverLocation={setReceiverLocation}*/}
+            {/*      setReceiverOptionalAddress={setReceiverOptionalAddress}*/}
+            {/*    />*/}
+            {/*  </Card>*/}
+            {/*</CustomStackFullWidth>*/}
             <CustomStackFullWidth>
               <CustomTextFieldWithFormik
                 type="text"

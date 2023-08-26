@@ -1,10 +1,10 @@
+import { Card, Stack, Typography, useTheme } from "@mui/material";
 import React, { useState } from "react";
-import { Typography, Grid, Box, Card, Stack, useTheme } from "@mui/material";
 
-import { CustomTypographyGray } from "../../styled-components/CustomTypographies.style";
 import StarIcon from "@mui/icons-material/Star";
-import CustomImageContainer from "../CustomImageContainer";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
+import { CustomTypographyGray } from "../../styled-components/CustomTypographies.style";
+import CustomImageContainer from "../CustomImageContainer";
 import CustomModal from "../modal";
 // import ReviewModal from "../RreviewModal";
 const ReviewCard = ({ review, productImageUrl }) => {
@@ -28,13 +28,16 @@ const ReviewCard = ({ review, productImageUrl }) => {
               alt={review.item_name}
               width="100%"
               height="100%"
-              objectFit="contained"
+              objectFit="cover"
               borderRadius=".7rem"
             />
           </Stack>
           <Stack width="100%" spacing={0.5}>
             <Typography variant="h6">{review.item_name}</Typography>
-            <Typography variant="h5">
+            <Typography
+              variant="h5"
+              sx={{ display: "flex", direction: "row", alignItems: "center" }}
+            >
               {review.rating}
               <StarIcon sx={{ width: "16px", color: "orange" }} />
             </Typography>
@@ -64,7 +67,7 @@ const ReviewCard = ({ review, productImageUrl }) => {
           direction="row"
           spacing={1}
           sx={{
-            padding: "10px",
+            padding: "15px",
             width: "450px",
             [theme.breakpoints.down("sm")]: {
               width: "250px",
@@ -78,7 +81,7 @@ const ReviewCard = ({ review, productImageUrl }) => {
               width="100%"
               height="100%"
               smHeight="70px"
-              objectFit="contained"
+              objectFit="cover"
               borderRadius=".7rem"
             />
           </Stack>
@@ -86,7 +89,10 @@ const ReviewCard = ({ review, productImageUrl }) => {
             <Typography fontSize={{ xs: "12px", md: "16px" }} fontWeight="500">
               {review.item_name}
             </Typography>
-            <Typography variant="h6">
+            <Typography
+              variant="h6"
+              sx={{ display: "flex", direction: "row", alignItems: "center" }}
+            >
               {review.rating}
               <StarIcon sx={{ width: "16px", color: "orange" }} />
             </Typography>

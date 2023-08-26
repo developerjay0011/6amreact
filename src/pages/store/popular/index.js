@@ -7,17 +7,20 @@ import TypeWiseStore from "../../../src/components/Store/TypeWiseStore";
 import MetaData from "../../meta-data";
 import MainLayout from "../../../src/components/layout/MainLayout";
 import {getServerSideProps} from "../../index";
-const Index = ({ configData }) => {
+import SEO from "../../../components/seo";
+
+const Index = ({ configData , landingPageData }) => {
   const { t } = useTranslation();
   const router = useRouter();
   return (
     <>
       <CssBaseline />
-      <MetaData
-        title={`${t("Popular store")} ${t("on")} ${configData?.business_name}`}
-        //ogImage={`${configData?.base_urls?.react_landing_page_images}/${landingPageData?.banner_section_full?.banner_section_img_full}`}
+      <SEO
+        title={configData ? `Popular store` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
       />
-      <MainLayout configData={configData}>
+      <MainLayout configData={configData} landingPageData={landingPageData}>
         <TypeWiseStore
           configData={configData}
           t={t}

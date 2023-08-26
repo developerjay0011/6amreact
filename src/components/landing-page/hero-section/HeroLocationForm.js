@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useId, useState } from "react";
 import {
-  alpha, Grid,
+  alpha,
+  Grid,
   Stack,
   Typography,
   useMediaQuery,
@@ -25,12 +26,13 @@ import { module_select_success } from "../../../utils/toasterMessages";
 import { setWishList } from "../../../redux/slices/wishList";
 import { useWishListGet } from "../../../api-manage/hooks/react-query/wish-list/useWishListGet";
 import { getToken } from "../../../helper-functions/getToken";
-import {Box} from "@mui/system";
+import { Box } from "@mui/system";
 import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MapIcon from "@mui/icons-material/Map";
-import {useRef} from "react";
+import { useRef } from "react";
+import { getLanguage } from "../../../helper-functions/getLanguage";
 const HeroLocationForm = () => {
   const theme = useTheme();
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -52,7 +54,7 @@ const HeroLocationForm = () => {
   const [openModuleSelection, setOpenModuleSelection] = useState(false);
   const [pickLocation, setPickLocation] = useState(false);
   const dispatch = useDispatch();
-
+  const divId = useId();
   const handleClose = () => {
     setOpen(false);
   };
@@ -62,13 +64,13 @@ const HeroLocationForm = () => {
 
   //****getting current location/***/
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
-      useGeolocated({
-        positionOptions: {
-          enableHighAccuracy: false,
-        },
-        userDecisionTimeout: 5000,
-        isGeolocationEnabled: true,
-      });
+    useGeolocated({
+      positionOptions: {
+        enableHighAccuracy: false,
+      },
+      userDecisionTimeout: 5000,
+      isGeolocationEnabled: true,
+    });
 
   const handleCloseLocation = () => {
     setOpenLocation(false);
@@ -110,8 +112,8 @@ const HeroLocationForm = () => {
     setPlaceDetailsEnabled(true);
   };
   const { data: places, isLoading } = useGetAutocompletePlace(
-      searchKey,
-      enabled
+    searchKey,
+    enabled
   );
 
   useEffect(() => {
@@ -121,8 +123,8 @@ const HeroLocationForm = () => {
   }, [places]);
 
   const { data: geoCodeResults, isLoading: isLoadingGeoCode } = useGetGeoCode(
-      location,
-      geoLocationEnable
+    location,
+    geoLocationEnable
   );
 
   useEffect(() => {
@@ -144,8 +146,8 @@ const HeroLocationForm = () => {
   //
   // //********************Pick Location */
   const { isLoading: isLoading2, data: placeDetails } = useGetPlaceDetails(
-      placeId,
-      placeDetailsEnabled
+    placeId,
+    placeDetailsEnabled
   );
   //
   useEffect(() => {
@@ -171,7 +173,7 @@ const HeroLocationForm = () => {
     dispatch(setWishList(response));
   };
   const { refetch: wishlistRefetch, isLoading: isLoadingWishlist } =
-      useWishListGet(onSuccessHandler);
+    useWishListGet(onSuccessHandler);
   const setLocationEnable = async () => {
     if (!currentLocation) {
       toast.error(t("Location is required."), {
@@ -215,8 +217,8 @@ const HeroLocationForm = () => {
     // Handle clicks outside of excludedDivRef
     const handleClickOutside = (event) => {
       if (
-          excludedDivRef.current &&
-          !excludedDivRef.current.contains(event.target)
+        excludedDivRef.current &&
+        !excludedDivRef.current.contains(event.target)
       ) {
         setPickLocation(false);
         // setClickedOutside(true);
@@ -235,185 +237,193 @@ const HeroLocationForm = () => {
   const handlePickLocation = (e) => {
     setPickLocation((prev) => !prev);
   };
+  const lanDirection = getLanguage() ? getLanguage() : "ltr";
 
   return (
-      <>
+    <>
+      <CustomStackFullWidth
+        backgroundColor={alpha(theme.palette.primary.main, 0.5)}
+        padding={{ xs: ".7rem", md: "1.2rem" }}
+        borderRadius="5px"
+      >
         <CustomStackFullWidth
-            backgroundColor={alpha(theme.palette.primary.main, 0.5)}
-            padding={{ xs: ".7rem", md: "1.2rem" }}
-            borderRadius="5px"
+          direction="row"
+          alignItems="center"
+          sx={{ position: "relative", zIndex: 999 }}
         >
-          <CustomStackFullWidth
-              direction="row"
-              alignItems="center"
-              sx={{ position: "relative", zIndex: 999 }}
-          >
-            <Grid container>
-              <Grid item xs={5.8} sm={7}>
-                <CustomMapSearch
-                    isLoading={isLoadingGeoCode}
-                    showCurrentLocation={showCurrentLocation}
-                    predictions={predictions}
-                    handleChange={handleChange}
-                    HandleChangeForSearch={HandleChangeForSearch}
-                    handleAgreeLocation={handleAgreeLocation}
-                    currentLocation={currentLocation}
-                    handleCloseLocation={handleCloseLocation}
-                    frommap="false"
-                    fromparcel="false"
-                />
-              </Grid>
-              <Grid item xs={3.9} sm={2.9}>
-                <Box ref={excludedDivRef}>
-                  <Box
-                      onClick={handlePickLocation}
+          <Grid container>
+            <Grid item xs={5.8} sm={7}>
+              <CustomMapSearch
+                isLoading={isLoadingGeoCode}
+                showCurrentLocation={showCurrentLocation}
+                predictions={predictions}
+                handleChange={handleChange}
+                HandleChangeForSearch={HandleChangeForSearch}
+                handleAgreeLocation={handleAgreeLocation}
+                currentLocation={currentLocation}
+                handleCloseLocation={handleCloseLocation}
+                frommap="false"
+                fromparcel="false"
+              />
+            </Grid>
+            <Grid item xs={3.9} sm={2.9}>
+              <Box ref={excludedDivRef}>
+                <Box
+                  onClick={handlePickLocation}
+                  sx={{
+                    backgroundColor: (theme) => theme.palette.neutral[100],
+                    width: "100%",
+                    height: "55px",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    display: "flex",
+                    padding: {
+                      xs: "0rem",
+                      sm: lanDirection === "rtl" ? "0rem" : "12px",
+                    },
+                    position: "relative",
+                    cursor: "pointer",
+                    boxShadow: pickLocation && "1px 0 5px 0 rgba(0, 0, 0, 0.5)",
+                    borderRadius: {
+                      xs: pickLocation ? "5px 5px 0 0" : "0px",
+                      sm: "0px",
+                    },
+                  }}
+                >
+                  <CustomStackFullWidth
+                    alignItems="center"
+                    justifyContent="space-between"
+                    direction="row"
+                    spacing={0.4}
+                    sx={{
+                      marginInlineEnd: "5px",
+                      width: "170px",
+                      color: !pickLocation && "primary.main",
+                      "&:hover": {
+                        color: "primary.main",
+                      },
+                    }}
+                  >
+                    <GpsFixedIcon
+                      onClick={handleAgreeLocation}
+                      sx={{ fontSize: { xs: "14px", sm: "18px" } }}
+                    />
+                    <Typography
+                      variant={isXSmall ? "body3" : "body1"}
+                      onClick={handleAgreeLocation}
                       sx={{
-                        backgroundColor: (theme) => theme.palette.neutral[100],
-                        width: "100%",
-                        height: "55px",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        display: "flex",
-                        p: { xs: "0.5rem", sm: "1rem" },
-                        position: "relative",
                         cursor: "pointer",
-                        boxShadow: pickLocation && "1px 0 5px 0 rgba(0, 0, 0, 0.5)",
-                        borderRadius: {
-                          xs: pickLocation ? "5px 5px 0 0" : "0px",
-                          sm: "0px",
+                        "&:hover": {
+                          textDecoration: "underline",
                         },
                       }}
+                    >
+                      {t("Locate me")}
+                    </Typography>
+                    {pickLocation ? (
+                      <KeyboardArrowUpIcon
+                        id={`${divId}-Locate-me`}
+                        sx={{ fontSize: { xs: "14px", sm: "18px" } }}
+                      />
+                    ) : (
+                      <KeyboardArrowDownIcon
+                        id={`${divId}-Locate-me`}
+                        sx={{ fontSize: { xs: "14px", sm: "18px" } }}
+                      />
+                    )}
+                  </CustomStackFullWidth>
+                </Box>
+                {pickLocation && (
+                  <Box
+                    onClick={handleOpen}
+                    sx={{
+                      backgroundColor: (theme) => theme.palette.neutral[100],
+                      width: { xs: "125px", sm: "160px" },
+                      height: "55px",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      display: "flex",
+                      p: "1rem",
+                      position: "absolute",
+                      zIndex: 999,
+                      cursor: "pointer",
+                      boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
+                      borderRadius: "0px 0px 5px 5px",
+                      "&:hover": {
+                        color: "primary.main",
+                      },
+                    }}
                   >
                     <CustomStackFullWidth
-                        alignItems="center"
-                        justifyContent="space-between"
-                        direction="row"
-                        spacing={0.4}
-                        sx={{
-                          width: "150px",
-                          color: !pickLocation && "primary.main",
-                          "&:hover": {
-                            color: "primary.main",
-                          },
-                        }}
+                      alignItems="center"
+                      direction="row"
+                      spacing={1}
+                      sx={{
+                        width: "150px",
+                      }}
                     >
-                      <GpsFixedIcon
-                          onClick={handleAgreeLocation}
-                          sx={{ fontSize: { xs: "14px", sm: "18px" } }}
-                      />
+                      <MapIcon sx={{ fontSize: "18px" }} />
                       <Typography
-                          variant={isXSmall ? "body3" : "body1"}
-                          onClick={handleAgreeLocation}
-                          sx={{
-                            cursor: "pointer",
-                            "&:hover": {
-                              textDecoration: "underline",
-                            },
-                          }}
+                        id={`${divId}-pick-from-map`}
+                        variant={isXSmall ? "body3" : "body1"}
+                        sx={{
+                          cursor: "pointer",
+                        }}
                       >
-                        {t("Locate me")}
+                        {t("Pick from map")}
                       </Typography>
-                      {pickLocation ? (
-                          <KeyboardArrowUpIcon
-                              sx={{ fontSize: { xs: "14px", sm: "18px" } }}
-                          />
-                      ) : (
-                          <KeyboardArrowDownIcon
-                              sx={{ fontSize: { xs: "14px", sm: "18px" } }}
-                          />
-                      )}
                     </CustomStackFullWidth>
                   </Box>
-                  {pickLocation && (
-                      <Box
-                          onClick={handleOpen}
-                          sx={{
-                            backgroundColor: (theme) => theme.palette.neutral[100],
-                            width: { xs: "125px", sm: "160px" },
-                            height: "55px",
-                            alignItems: "center",
-                            justifyContent: "center",
-                            display: "flex",
-                            p: "1rem",
-                            position: "absolute",
-                            zIndex: 999,
-                            cursor: "pointer",
-                            boxShadow: "0px 4px 4px rgba(0, 0, 0, 0.1)",
-                            borderRadius: "0px 0px 5px 5px",
-                            "&:hover": {
-                              color: "primary.main",
-                            },
-                          }}
-                      >
-                        <CustomStackFullWidth
-                            alignItems="center"
-                            direction="row"
-                            spacing={1}
-                            sx={{
-                              width: "150px",
-                            }}
-                        >
-                          <MapIcon sx={{ fontSize: "18px" }} />
-                          <Typography
-                              variant={isXSmall ? "body3" : "body1"}
-                              sx={{
-                                cursor: "pointer",
-                              }}
-                          >
-                            {t("Pick from map")}
-                          </Typography>
-                        </CustomStackFullWidth>
-                      </Box>
-                  )}
-                </Box>
-              </Grid>
-              <Grid item xs={2.1} sm={2.1}>
-                <StyledButton
-                    sx={{
-                      height: "100%",
-                      width: "100%",
-                      borderRadius: "0px 8px 8px 0px",
-                    }}
-                    onClick={() => setLocationEnable()}
-                    radiuschange={isXSmall ? "false" : "true"}
-                    disabled={isLoadingGeoCode}
-                >
-                  <Typography
-                      variant={isXSmall ? "body3" : "body1"}
-                      color="whiteContainer.main"
-                      fontWeight="bold"
-                  >
-                    {t("Explore")}
-                  </Typography>
-                </StyledButton>
-              </Grid>
+                )}
+              </Box>
             </Grid>
-          </CustomStackFullWidth>
-          {open && (
-              <MapModal
-                  open={open}
-                  handleClose={handleClose}
-                  coords={coords}
-                  disableAutoFocus
-              />
-          )}
-          {openLocation && (
-              <AllowLocationDialog
-                  handleCloseLocation={handleCloseLocation}
-                  openLocation={openLocation}
-                  isGeolocationEnabled={isGeolocationEnabled}
-              />
-          )}
+            <Grid item xs={2.1} sm={2.1}>
+              <StyledButton
+                sx={{
+                  height: "100%",
+                  width: "100%",
+                  borderRadius: "0px 8px 8px 0px",
+                }}
+                onClick={() => setLocationEnable()}
+                radiuschange={isXSmall ? "false" : "true"}
+                disabled={isLoadingGeoCode}
+              >
+                <Typography
+                  variant={isXSmall ? "body3" : "body1"}
+                  color="whiteContainer.main"
+                  fontWeight="bold"
+                >
+                  {t("Explore")}
+                </Typography>
+              </StyledButton>
+            </Grid>
+          </Grid>
         </CustomStackFullWidth>
-        {zoneData && openModuleSelection && (
-            <ModuleSelection
-                location={currentLocation}
-                closeModal={handleCloseModuleModal}
-                setOpenModuleSelection={setOpenModuleSelection}
-                disableAutoFocus
-            />
+        {open && (
+          <MapModal
+            open={open}
+            handleClose={handleClose}
+            coords={coords}
+            disableAutoFocus
+          />
         )}
-      </>
+        {openLocation && (
+          <AllowLocationDialog
+            handleCloseLocation={handleCloseLocation}
+            openLocation={openLocation}
+            isGeolocationEnabled={isGeolocationEnabled}
+          />
+        )}
+      </CustomStackFullWidth>
+      {zoneData && openModuleSelection && (
+        <ModuleSelection
+          location={currentLocation}
+          closeModal={handleCloseModuleModal}
+          setOpenModuleSelection={setOpenModuleSelection}
+          disableAutoFocus
+        />
+      )}
+    </>
   );
 };
 export default HeroLocationForm;

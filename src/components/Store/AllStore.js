@@ -1,17 +1,19 @@
 import React from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import MetaData from "../../../pages/meta-data";
 import MainLayout from "../layout/MainLayout";
 import StoresWithFilter from "../home/stores-with-filter";
+import SEO from "../seo";
 
 const AllStore = ({ configData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData
-        title={`Store On ${configData?.business_name} `}
-        //ogImage={`${configData?.base_urls?.react_landing_page_images}/${landingPageData?.banner_section_full?.banner_section_img_full}`}
+      <SEO
+        title={configData ? `Store` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
       />
+
       <MainLayout configData={configData}>
         <StoresWithFilter />
       </MainLayout>

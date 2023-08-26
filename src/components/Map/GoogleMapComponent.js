@@ -22,12 +22,19 @@ const GoogleMapComponent = ({
   locationEnabled,
   setPlaceDescription,
   height,
+  isModalExpand,
 }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const containerStyle = {
     width: "100%",
-    height: height ? height : isSmall ? "250px" : "450px",
+    height: isModalExpand
+      ? "70vh"
+      : height
+      ? height
+      : isSmall
+      ? "250px"
+      : "450px",
     paddingBottom: "0px",
   };
   const mapRef = useRef(GoogleMap);
@@ -36,8 +43,9 @@ const GoogleMapComponent = ({
       lat: parseFloat(location?.lat),
       lng: parseFloat(location?.lng),
     }),
-    []
+    [location?.lng, location?.lng]
   );
+
   const options = useMemo(
     () => ({
       zoomControl: false,
@@ -69,8 +77,8 @@ const GoogleMapComponent = ({
     }
     if (map?.center && mapSetup) {
       setCenterPosition({
-        lat: map.center.lat(),
-        lng: map.center.lng(),
+        lat: map.center?.lat(),
+        lng: map.center?.lng(),
       });
     }
 
@@ -83,7 +91,14 @@ const GoogleMapComponent = ({
   }, []);
 
   return isLoaded ? (
-    <Stack padding="0px">
+    <Stack
+      padding="0px"
+      sx={{
+        boxShadow: "inset 0px 4px 4px rgba(0, 0, 0, 0.1)",
+        borderRadius: "10px",
+        p: "4px",
+      }}
+    >
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={centerPosition}
@@ -93,20 +108,18 @@ const GoogleMapComponent = ({
         onMouseDown={(e) => {
           setMapSetup?.(true);
           setDisablePickButton?.(true);
-
-          // setPlaceDetailsEnabled(false)
         }}
         onMouseUp={(e) => {
           setMapSetup?.(false);
           setDisablePickButton?.(false);
           setLocationEnabled?.(true);
           setLocation?.({
-            lat: map.center.lat(),
-            lng: map.center.lng(),
+            lat: map.center?.lat(),
+            lng: map.center?.lng(),
           });
           setCenterPosition?.({
-            lat: map.center.lat(),
-            lng: map.center.lng(),
+            lat: map.center?.lat(),
+            lng: map.center?.lng(),
           });
           setPlaceDetailsEnabled?.(false);
           setPlaceDescription?.(undefined);
@@ -117,12 +130,12 @@ const GoogleMapComponent = ({
           if (map) {
             setLocationEnabled?.(true);
             setLocation?.({
-              lat: map.center.lat(),
-              lng: map.center.lng(),
+              lat: map.center?.lat(),
+              lng: map.center?.lng(),
             });
             setCenterPosition({
-              lat: map.center.lat(),
-              lng: map.center.lng(),
+              lat: map.center?.lat(),
+              lng: map.center?.lng(),
             });
             // setPlaceDetailsEnabled(false)
           }
@@ -139,7 +152,7 @@ const GoogleMapComponent = ({
               marginLeft: -32,
               left: "50%",
               top: "50%",
-              height: "45px",
+              height: "60px",
               width: "45px",
             }}
           />

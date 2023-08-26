@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CustomImageContainerStyled } from "../styled-components/CustomStyles.style";
 import placeholder from "../../public/static/no-image-found.png";
+import { Box } from "@mui/system";
 
 const CustomImageContainer = ({
   cursor,
@@ -42,15 +43,25 @@ const CustomImageContainer = ({
       cursor={cursor}
       aspect_ratio={aspectRatio}
     >
-      <img
-        src={imageFile}
-        alt={alt}
-        onError={() => {
-          // currentTarget.onerror = null; // prevents looping
-          setState(placeholder.src);
-        }}
-        loading="lazy"
-      />
+      {!imageFile ? (
+        <Box
+          sx={{
+            height: "100%",
+            width: "100%",
+            border: (theme) => `1px solid ${theme.palette.neutral[200]}`,
+          }}
+        />
+      ) : (
+        <img
+          src={imageFile}
+          alt={alt}
+          onError={() => {
+            // currentTarget.onerror = null; // prevents looping
+            setState(placeholder.src);
+          }}
+          loading="lazy"
+        />
+      )}
     </CustomImageContainerStyled>
   );
 };

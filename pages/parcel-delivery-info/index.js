@@ -2,20 +2,26 @@ import React from "react";
 import MainLayout from "../../src/components/layout/MainLayout";
 import PercelDelivery from "../../src/components/parcel/parcel-delivery-info-component/ParcelDelivary";
 import CssBaseline from "@mui/material/CssBaseline";
-import MetaData from "../meta-data";
 import { NoSsr } from "@mui/material";
-import {getServerSideProps} from "../index";
+import { getServerSideProps } from "../index";
+import SEO from "../../src/components/seo";
+import CustomContainer from "../../src/components/container";
+import AuthGuard from "../../src/components/route-guard/AuthGuard";
 
-const Index = ({ configData,landingPageData }) => {
+const Index = ({ configData, landingPageData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData
-        title={`Parcel Deliver information - ${configData?.business_name}`}
+      <SEO
+        title={configData ? `Parcel Deliver information` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
       />
       <MainLayout configData={configData} landingPageData={landingPageData}>
         <NoSsr>
-          <PercelDelivery configData={configData} />
+          <CustomContainer>
+            <PercelDelivery configData={configData} />
+          </CustomContainer>
         </NoSsr>
       </MainLayout>
     </>
@@ -23,4 +29,4 @@ const Index = ({ configData,landingPageData }) => {
 };
 
 export default Index;
-export {getServerSideProps}
+export { getServerSideProps };

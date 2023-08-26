@@ -17,9 +17,9 @@ const PricePreviewWithStock = (props) => {
         display="flex"
         alignItems="center"
         fontWeight="700"
-        color={theme.palette.info.main}
+        color={theme.palette.primary.main}
         sx={{
-          fontSize: { xs: "18px", sm: "26px" },
+          fontSize: { xs: "15px", sm: "24px" },
         }}
       >
         {price ===
@@ -34,16 +34,6 @@ const PricePreviewWithStock = (props) => {
           <>
             {
               <>
-                <Typography
-                  variant="body1"
-                  marginRight="10px"
-                  marginTop="10px"
-                  fontWeight="400"
-                  color={theme.palette.error.main}
-                  sx={{ fontSize: { xs: "13px", sm: "16px" } }}
-                >
-                  <del>{getAmountWithSign(price)}</del>
-                </Typography>
                 {getAmountWithSign(
                   getDiscountedAmount(
                     price,
@@ -52,28 +42,18 @@ const PricePreviewWithStock = (props) => {
                     state.modalData[0]?.store_discount
                   )
                 )}
+                <Typography
+                  variant="body1"
+                  marginLeft="8px"
+                  fontWeight="400"
+                  color={theme.palette.customColor.textGray}
+                  sx={{ fontSize: { xs: "13px", sm: "16px" } }}
+                >
+                  <del>{getAmountWithSign(price)}</del>
+                </Typography>
               </>
             }
           </>
-        )}
-        {productDetailsData?.stock > 0 ? (
-          <Typography
-            color={theme.palette.primary.main}
-            variant="h6"
-            pl="5px"
-            pb="10px"
-          >
-            {t("In Stock")}
-          </Typography>
-        ) : (
-          <Typography
-            variant="h6"
-            color={theme.palette.error.main}
-            pl="5px"
-            pb="10px"
-          >
-            {t("Out of Stock")}
-          </Typography>
         )}
       </Typography>
     );
@@ -82,15 +62,12 @@ const PricePreviewWithStock = (props) => {
     return (
       <Typography
         marginTop="5px !important"
-        //fontSize="28px"
         display="flex"
         alignItems="center"
         fontWeight="700"
-        color={theme.palette.info.main}
-        flexWrap="wrap"
-        flexGap="10px"
+        color={theme.palette.primary.main}
         sx={{
-          fontSize: { xs: "14px", sm: "26px" },
+          fontSize: { xs: "15px", sm: "24px" },
         }}
       >
         {state?.modalData?.[0]?.discount === 0 ? (
@@ -113,18 +90,6 @@ const PricePreviewWithStock = (props) => {
           </>
         ) : (
           <>
-            <Typography
-              variant="body1"
-              marginRight="10px"
-              marginTop="10px"
-              fontWeight="400"
-              color={theme.palette.error.main}
-              sx={{ fontSize: { xs: "14px", sm: "16px" } }}
-            >
-              <del>{`${getAmountWithSign(priceOne)} - ${getAmountWithSign(
-                priceTwo
-              )}`}</del>
-            </Typography>
             {`${getAmountWithSign(
               getDiscountedAmount(
                 priceOne,
@@ -140,27 +105,18 @@ const PricePreviewWithStock = (props) => {
                 state.modalData[0]?.store_discount
               )
             )} `}
+            <Typography
+              variant="body1"
+              marginLeft="8px"
+              fontWeight="400"
+              color={theme.palette.customColor.textGray}
+              sx={{ fontSize: { xs: "13px", sm: "16px" } }}
+            >
+              <del>{`${getAmountWithSign(priceOne)} - ${getAmountWithSign(
+                priceTwo
+              )}`}</del>
+            </Typography>
           </>
-        )}
-
-        {productDetailsData?.stock > 0 ? (
-          <Typography
-            color={theme.palette.primary.main}
-            variant="h6"
-            pl="5px"
-            pb="10px"
-          >
-            {t("In Stock")}
-          </Typography>
-        ) : (
-          <Typography
-            variant="h6"
-            color={theme.palette.error.main}
-            pl="5px"
-            pb="10px"
-          >
-            {t("Out of Stock")}
-          </Typography>
         )}
       </Typography>
     );

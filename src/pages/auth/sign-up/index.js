@@ -4,8 +4,9 @@ import MainLayout from "../../../src/components/layout/MainLayout";
 import { CustomContainer } from "../../../src/components/footer/Footer.style";
 import {getServerSideProps} from "../../index";
 import CssBaseline from "@mui/material/CssBaseline";
-import MetaData from "../../meta-data";
+import isHover from "../../meta-data";
 import dynamic from "next/dynamic";
+import SEO from "../../../components/seo";
 
 const index = ({ configData }) => {
   const SignUp = dynamic(
@@ -17,7 +18,7 @@ const index = ({ configData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Sign Up - ${configData?.business_name}`} />
+      <SEO title={`Sign Up - ${configData?.business_name}`} />
       <MainLayout configData={configData}>
         <SignUp />
       </MainLayout>

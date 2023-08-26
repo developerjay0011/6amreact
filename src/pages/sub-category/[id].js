@@ -12,7 +12,9 @@ import {
 } from "../../src/styled-components/CustomStyles.style";
 import CategoriesDetails from "../../src/components/categories-details";
 import {getServerSideProps} from "../index";
-const Index = ({ configData }) => {
+import SEO from "../../components/seo";
+
+const Index = ({ configData, landingPageData }) => {
   const [type, setType] = useState("all");
   const [offset, setOffset] = useState(1);
   const [page_limit, setPageLimit] = useState(10);
@@ -56,8 +58,12 @@ const Index = ({ configData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Sub category - ${configData?.business_name}`} />
-      <MainLayout configData={configData}>
+      <SEO
+        title={configData ? `Sub category` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
+      <MainLayout configData={configData} landingPageData={landingPageData}>
         <CustomStackFullWidth>
           <CustomPaperBigCard sx={{ minHeight: "70vh" }}>
             <NoSsr>

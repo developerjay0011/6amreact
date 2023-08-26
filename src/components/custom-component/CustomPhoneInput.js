@@ -8,11 +8,15 @@ import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style
 import { NoSsr } from "@mui/material";
 import PhoneInput from "react-phone-input-2";
 import "react-phone-input-2/lib/style.css";
+import { useSelector } from "react-redux";
 
 const CustomPhoneNumberInputStyled = styled(PhoneInput)(
-  ({ theme, languageDirection }) => ({
+  ({ theme, languageDirection, borderRadius }) => ({
     "&.react-tel-input .flag-dropdown": {
-      backgroundColor: theme.palette.neutral[200],
+      backgroundColor: theme.palette.neutral[100],
+      borderRadius: borderRadius
+        ? `${borderRadius}0px 0px ${borderRadius}`
+        : "3px 0px 0px 5px",
     },
     "&.react-tel-input .selected-flag .flag": {
       right: languageDirection === "rtl" && "11px",
@@ -22,7 +26,7 @@ const CustomPhoneNumberInputStyled = styled(PhoneInput)(
     },
     "&.react-tel-input .form-control": {
       border: `1px solid ${theme.palette.neutral[200]}`,
-      backgroundColor: theme.palette.neutral[200],
+      backgroundColor: theme.palette.neutral[100],
       color: theme.palette.neutral[1000],
       paddingLeft: languageDirection === "rtl" ? "48px" : "48px",
       ...(languageDirection === "rtl" && {
@@ -55,10 +59,13 @@ const CustomPhoneInput = ({
   touched,
   errors,
   lanDirection,
+  height,
+  borderRadius,
 }) => {
   const changeHandler = (e) => {
     onHandleChange(e);
   };
+
   const { t } = useTranslation();
   const defaultCountry = initCountry?.toLowerCase();
   return (
@@ -66,6 +73,7 @@ const CustomPhoneInput = ({
       <CustomStackFullWidth alignItems="flex-start" spacing={0.8}>
         {lanDirection && (
           <CustomPhoneNumberInputStyled
+            borderRadius={borderRadius}
             autoFormat={false}
             placeholder={t("Enter phone number")}
             value={value}
@@ -81,7 +89,8 @@ const CustomPhoneInput = ({
             searchStyle={{ margin: "0", width: "95%", height: "50px" }}
             inputStyle={{
               width: "100%",
-              height: "56px",
+              height: height ? height : "56px",
+              borderRadius: borderRadius ? borderRadius : "5px",
             }}
             dropdownStyle={{ height: "300px", width: "267px" }}
             languageDirection={lanDirection}

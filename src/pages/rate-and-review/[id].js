@@ -8,13 +8,18 @@ import AuthGuard from "../../src/components/route-guard/AuthGuard";
 import { useRouter } from "next/router";
 import {getServerSideProps} from "../index";
 import RateAndReview from "../../src/components/review/RateAndReview";
+import SEO from "../../components/seo";
 
 const Index = ({ configData }) => {
   const router = useRouter();
 
   return (
     <>
-      <MetaData title={`Rate and Review - ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `Rate and Review` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
       <CssBaseline />
       <AuthGuard from={router.pathname.replace("/", "")}>
         <MainLayout configData={configData}>

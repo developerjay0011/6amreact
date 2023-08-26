@@ -1,8 +1,10 @@
-import { Button, IconButton, styled } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { alpha, Button, IconButton, styled } from "@mui/material";
 
 export const CustomIconButton = styled(IconButton)(({ theme }) => ({
-  borderRadius: "50%",
+  background: theme.palette.neutral[100],
+  boxShadow: `0px 4px 4px ${alpha(theme.palette.footer.inputButton, 0.5)}`,
+  padding: 10,
 }));
 
 export const CustomButtonWarning = styled(Button)(({ theme }) => ({
@@ -67,23 +69,46 @@ export const CustomButtonGray = styled(Button)(({ theme }) => ({
   },
 }));
 
-export const CustomButtonPrimary = styled(Button)(({ theme, fullwidth }) => ({
-  backgroundColor: theme.palette.primary.main,
-  color: theme.palette.whiteContainer.main,
-  "&:hover": {
-    backgroundColor: theme.palette.primary.dark,
-  },
-  [theme.breakpoints.up("xs")]: {
-    maxWidth: fullwidth === "true" ? "100%" : "128px",
-  },
-  [theme.breakpoints.down("sm")]: {
-    fontSize: "9px",
-  },
-}));
+export const CustomButtonPrimary = styled(Button)(
+  ({ theme, fullwidth, height }) => ({
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.whiteContainer.main,
+    width: fullwidth && "100%",
+    height: height ? height : "",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.dark,
+    },
+    [theme.breakpoints.up("xs")]: {
+      maxWidth: fullwidth === "true" ? "100%" : "131px",
+    },
+    [theme.breakpoints.down("sm")]: {
+      fontSize: "9px",
+    },
+  })
+);
 
 // ##ziaul
 
-export const SignInButton = styled(Button)(({ theme }) => ({
-  color: "#fff",
-  backgroundColor: theme.palette.primary.main,
-}));
+export const DeliveryOptionButton = styled(CustomButtonPrimary)(
+  ({ theme, orderType }) => ({
+    backgroundColor: orderType
+      ? theme.palette.primary.main
+      : theme.palette.neutral[100],
+    width: "100%",
+    borderRadius: "5px",
+    border: `1px solid ${theme.palette.primary.main}`,
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "20px",
+    padding: "7px 16px",
+    "&:hover": {
+      backgroundColor: theme.palette.primary.dark,
+    },
+    [theme.breakpoints.down("md")]: {
+      gap: "10px",
+      fontSize: "12px",
+      padding: "8px 10px",
+      width: "fit-content",
+    },
+  })
+);

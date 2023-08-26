@@ -50,20 +50,20 @@ const FilePreviewer = (props) => {
   const renderFilePreview = () => {
     if (file?.length > 0) {
       return (
-        <Grid container spacing={3}>
+        <Grid container spacing={1}>
           {multipleImages.map((image, index) => {
             return (
               <Grid
                 item
                 xs={prescription === "true" && matches ? 6 : 12}
-                sm={gridControl === "true" ? 4 : 3}
-                md={gridControl === "true" ? 4 : 3}
+                sm={gridControl === "true" ? 4 : 2.5}
+                md={gridControl === "true" ? 4 : 2.5}
                 key={index}
               >
                 <CustomBoxForFilePreviewer width={width}>
                   {previewBasedOnType(image, index)}
                   <IconButtonImagePreviewer onClick={() => onDelete(index)}>
-                    <DeleteIcon />
+                    <DeleteIcon style={{ width: "12px", height: "12px" }} />
                   </IconButtonImagePreviewer>
                 </CustomBoxForFilePreviewer>
               </Grid>
@@ -72,18 +72,20 @@ const FilePreviewer = (props) => {
           <Grid
             item
             xs={prescription === "true" && matches ? 6 : 12}
-            sm={gridControl === "true" ? 4 : 3}
-            md={gridControl === "true" ? 4 : 3}
+            sm={gridControl === "true" ? 4 : 2.3}
+            md={gridControl === "true" ? 4 : 2.3}
           >
-            <FileInputField
-              titleText={titleText}
-              label={label}
-              hintText={hintText}
-              errorStatus={errorStatus}
-              width
-              onChange={onChange}
-              acceptedFileInput={acceptedFileInput}
-            />
+            {multipleImages?.length <= 5 && (
+              <FileInputField
+                titleText={titleText}
+                label={label}
+                hintText={hintText}
+                errorStatus={errorStatus}
+                width
+                onChange={onChange}
+                acceptedFileInput={acceptedFileInput}
+              />
+            )}
           </Grid>
         </Grid>
       );
@@ -114,7 +116,7 @@ const FilePreviewer = (props) => {
         // onClick={() => anchor.current.click()}
         // width={width}
         >
-          <CustomImageContainer src={file.url} alt="preview" />
+          <CustomImageContainer src={file.url} alt="preview" height="7.75rem" />
           {/*<img src={file.url} alt="preview" />*/}
         </FilePreviewerWrapper>
       );
@@ -125,7 +127,7 @@ const FilePreviewer = (props) => {
           objectFit
           // width={width}
         >
-          <CustomImageContainer src={pdfIcon} alt="pdf" />
+          <CustomImageContainer src={pdfIcon} alt="pdf" height="7.75rem" />
         </FilePreviewerWrapper>
       );
     } else if (file.type === "docx" || file.type === "docx") {
@@ -135,7 +137,7 @@ const FilePreviewer = (props) => {
           objectFit
           // width={width}
         >
-          <CustomImageContainer src={docIcon} alt="doc" />
+          <CustomImageContainer src={docIcon} alt="doc" height="7.75rem" />
         </FilePreviewerWrapper>
       );
     } else if (file.type === "txt") {
@@ -145,7 +147,7 @@ const FilePreviewer = (props) => {
           objectFit
           // width={width}
         >
-          <CustomImageContainer src={txtIcon} alt="text" />
+          <CustomImageContainer src={txtIcon} alt="text" height="7.75rem" />
         </FilePreviewerWrapper>
       );
     } else {

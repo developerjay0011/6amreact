@@ -9,15 +9,21 @@ import { useTranslation } from "react-i18next";
 import { NoSsr } from "@mui/material";
 import AuthGuard from "../../src/components/route-guard/AuthGuard";
 import { useRouter } from "next/router";
+import SEO from "../../components/seo";
+
 import {getServerSideProps} from "../index";
-const Index = ({ configData }) => {
+const Index = ({ configData, landingPageData }) => {
   const { t } = useTranslation();
   const router = useRouter();
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Profile - ${configData?.business_name}`} />
-      <MainLayout configData={configData}>
+      <SEO
+        title={configData ? `Profile` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
+      <MainLayout configData={configData} landingPageData={landingPageData}>
         <NoSsr>
           <AuthGuard from={router.pathname.replace("/", "")}>
             <UserLayout

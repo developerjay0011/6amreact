@@ -70,7 +70,9 @@ const StartPriceView = (props) => {
               {handleDiscountedPriceView()}
               <Stack>
                 <Typography
-                  fontSize="28px"
+                  sx={{
+                    fontSize: { xs: "13px", sm: "16px" },
+                  }}
                   display="flex"
                   alignItems="center"
                   fontWeight="700"

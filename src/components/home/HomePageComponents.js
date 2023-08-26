@@ -1,23 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
-import Banners from "./banners";
-import FeaturedCategories from "./featured-categories";
-import NewArrivalStores from "./new-arrival-stores";
-import PopularItemsNearby from "./popular-items-nearby";
-import RunningCampaigns from "./running-campaigns";
-import BestReviewedItems from "./best-reviewed-items";
-import StoresWithFilter from "./stores-with-filter";
 import { useRouter } from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useWishListGet } from "../../api-manage/hooks/react-query/wish-list/useWishListGet";
 import { setWishList } from "../../redux/slices/wishList";
 import PushNotificationLayout from "../PushNotificationLayout";
-import HomeSearch from "../search/HomeSearch";
-import { Grid, styled, useMediaQuery, useTheme } from "@mui/material";
-import ManageSearch from "../header/second-navbar/ManageSearch";
-import DeliveryPlace from "./DeliveryPlace";
+import { styled, useMediaQuery, useTheme } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import { CustomBoxFullWidth } from "../chat/Chat.style";
+import TopBanner from "./top-banner";
+import SearchWithTitle from "./SearchWithTitle";
+import SearchResult from "./search";
+import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
+import Grocery from "./module-wise-components/Grocery";
+import Pharmacy from "./module-wise-components/pharmacy/Pharmacy";
+import CustomContainer from "../container";
+import Shop from "./module-wise-components/ecommerce";
+import { ModuleTypes } from "../../helper-functions/moduleTypes";
+import FoodModule from "./module-wise-components/food";
+import Parcel from "./module-wise-components/parcel/Index";
 
 export const HomeComponentsWrapper = styled(Stack)(({ theme }) => ({
   width: "100%",
@@ -26,6 +26,7 @@ export const HomeComponentsWrapper = styled(Stack)(({ theme }) => ({
 
 const HomePageComponents = ({ configData }) => {
   const [wishListsData, setWishListsData] = useState();
+  const { modules } = useSelector((state) => state.storedData);
   const matches = useMediaQuery("(max-width:1180px)");
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
@@ -52,54 +53,51 @@ const HomePageComponents = ({ configData }) => {
   useEffect(() => {
     window.scrollTo({ top, behavior: "smooth" });
   }, []);
+
+  const getModuleWiseComponents = () => {
+    switch (getCurrentModuleType()) {
+      case ModuleTypes.GROCERY:
+        return <Grocery configData={configData} />;
+      case ModuleTypes.PHARMACY:
+        return <Pharmacy configData={configData} />;
+      case ModuleTypes.ECOMMERCE:
+        return <Shop configData={configData} />;
+      case ModuleTypes.FOOD:
+        return <FoodModule configData={configData} />;
+      case ModuleTypes.PARCEL:
+        return <Parcel configData={configData} />;
+    }
+  };
   return (
     <PushNotificationLayout>
-      {matches && (
-        <>
+      <CustomStackFullWidth>
+        <CustomStackFullWidth sx={{ position: "relative" }}>
+          <TopBanner />
           <CustomStackFullWidth
-            direction={{ xs: "column", sm: "row" }}
             alignItems="center"
-            justifyContent="space-between"
-            spacing={2}
+            justifyContent="center"
+            sx={{
+              position: "absolute",
+              top: 0,
+              height: "100%",
+            }}
           >
-            <DeliveryPlace />
-            <ManageSearch
-              zoneid={zoneid}
-              token={token}
-              router={router}
-              maxwidth="false"
-            />
+            <SearchWithTitle zoneid={zoneid} token={token} />
           </CustomStackFullWidth>
-        </>
-      )}
-      <Box width="100%">
-        <Grid container spacing={1}>
-          <Grid item xs={12}>
-            <Banners />
-          </Grid>
-          <Grid item xs={12} sx={{marginTop:'10px'}}>
-            <FeaturedCategories configData={configData} />
-          </Grid>
-          <Grid item xs={12}>
-            <PopularItemsNearby />
-          </Grid>
-          <Grid item xs={12}>
-            <RunningCampaigns />
-          </Grid>
-          <Grid item xs={12}>
-            <NewArrivalStores />
-          </Grid>
-          <Grid item xs={12}>
-            <BestReviewedItems />
-          </Grid>
-          <Grid item xs={12}>
-            <StoresWithFilter />
-          </Grid>
-        </Grid>
-      </Box>
-      <CustomStackFullWidth></CustomStackFullWidth>
+        </CustomStackFullWidth>
+        {/*SEARCH ARE HAPPENING hERE*/}
+        {router.query.search ? (
+          <SearchResult
+            key={router.query.id}
+            searchValue={router.query.search}
+            configData={configData}
+          />
+        ) : (
+          <Box width="100%">{getModuleWiseComponents()}</Box>
+        )}
+      </CustomStackFullWidth>
     </PushNotificationLayout>
   );
 };
 
-export default HomePageComponents;
+export default React.memo(HomePageComponents);

@@ -1,9 +1,21 @@
 import React from "react";
-import { Card, Grid, Typography, useMediaQuery, useTheme } from "@mui/material";
+import {
+  Card,
+  FormControlLabel,
+  Grid,
+  Typography,
+  useMediaQuery,
+  useTheme,
+} from "@mui/material";
 import CustomImageContainer from "../CustomImageContainer";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { t } from "i18next";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import { Stack } from "@mui/system";
+import FormLabel from "@mui/material/FormLabel";
+import Radio from "@mui/material/Radio";
+import RadioGroup from "@mui/material/RadioGroup";
+import FormControl from "@mui/material/FormControl";
 
 const PaymentMethodCard = (props) => {
   const {
@@ -14,44 +26,80 @@ const PaymentMethodCard = (props) => {
     setPaymentMethod,
     paymentType,
     paidBy,
+    parcel,
+    digitalPaymentMethodActive,
+    imageUrl,
   } = props;
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
-  return (
-    <Card
-      elevation={9}
-      {...props}
-      sx={{ padding: "20px", cursor:'pointer' }}
-      onClick={() => setPaymentMethod(type)}
-    >
-      <Grid
-        container
-        justifyContent="center"
-        alignItems="center"
-        spacing={{ xs: 1, sm: 3, md: 4 }}
-      >
-        <Grid item xs={2}>
-          <CustomImageContainer
-            src={image.src}
-            objectfit="contain"
-            height={paidBy ? "100%" : isSmall ? "35px" : "40px"}
-            width={paidBy ? "100%" : isSmall ? "35px" : "60px"}
-          />
-        </Grid>
-        <Grid item xs={8}>
-          <CustomStackFullWidth>
-            <Typography fontWeight="500">{t(paymentType)}</Typography>
-            {/*<Typography fontSize="12px">{description}</Typography>*/}
-          </CustomStackFullWidth>
-        </Grid>
+  const handleChange = () => {
+    setPaymentMethod(type);
+  };
 
-        <Grid item xs={2} textAlign="right">
-          <CustomStackFullWidth>
-            {paymentMethod === type && <CheckCircleIcon color="success" />}
-          </CustomStackFullWidth>
-        </Grid>
-      </Grid>
-    </Card>
+  const radioLabel = () => {
+    return (
+      <Stack
+        direction="row"
+        gap="16px"
+        alignItems="center"
+        paddingLeft={{ xs: "5px", sm: "5px", md: "10px" }}
+      >
+        {parcel === "true" ? (
+          <CustomImageContainer
+            src={
+              digitalPaymentMethodActive ? `${imageUrl}/${image}` : image.src
+            }
+            width="32px"
+            height="32px"
+            objectfit="contain"
+            borderRadius="50%"
+          />
+        ) : (
+          !isSmall && (
+            <CustomImageContainer
+              width="32px"
+              height="32px"
+              objectfit="contain"
+              borderRadius="50%"
+              src={
+                digitalPaymentMethodActive ? `${imageUrl}/${image}` : image.src
+              }
+            />
+          )
+        )}
+
+        <Typography
+          fontWeight={parcel === "true" ? "400" : "500"}
+          fontSize={{ xs: "12px", sm: "12px", md: "16px" }}
+        >
+          {paymentType}
+        </Typography>
+      </Stack>
+    );
+  };
+  return (
+    <Stack>
+      <FormControl
+        sx={{ marginRight: { xs: "0px" }, marginLeft: { xs: "5px" } }}
+      >
+        <RadioGroup
+          aria-labelledby="demo-radio-buttons-group-label"
+          name="radio-buttons-group"
+          onChange={handleChange}
+        >
+          <FormControlLabel
+            value={type}
+            control={
+              <Radio
+                sx={{ padding: { xs: "2px" } }}
+                checked={paymentMethod === type}
+              />
+            }
+            label={radioLabel()}
+          />
+        </RadioGroup>
+      </FormControl>
+    </Stack>
   );
 };
 

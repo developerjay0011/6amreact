@@ -1,30 +1,50 @@
 import React from "react";
-import { CustomColouredTypography } from "../../../styled-components/CustomStyles.style";
+import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 import { t } from "i18next";
-import { Button, Stack } from "@mui/material";
+import { alpha, Button } from "@mui/material";
 import { useRouter } from "next/router";
-import NavLinks from "./NavLinks";
 import PropTypes from "prop-types";
+import ArrowRightAltIcon from "@mui/icons-material/ArrowRightAlt";
+import { VIEW_ALL_TEXT } from "../../../utils/staticTexts";
 
-const ViewMore = ({ redirect, handlePopoverCloseSub }) => {
+const ViewMore = ({ redirect, handlePopoverCloseSub, buttonType }) => {
   const router = useRouter();
   const handleClick = () => {
-    router.push(redirect, undefined, { shallow: true });
+    handlePopoverCloseSub?.();
+    if (redirect === "/categories") {
+      router.push(
+        {
+          pathname: "/home",
+          query: {
+            search: VIEW_ALL_TEXT.allCategories,
+          },
+        },
+        undefined,
+        { shallow: true }
+      );
+    } else {
+      router.push(redirect, undefined, { shallow: true });
+    }
   };
   return (
-    <Stack
-      direction="row"
-      alignItems="center"
-      gap={1}
-      justifyContent="center"
-      padding="10px"
-      sx={{ cursor: "pointer" }}
-      onMouseEnter={handlePopoverCloseSub}
-    >
-      <Button onClick={() => handleClick()} variant="text">
-        {t("View More")}
+    <CustomStackFullWidth>
+      <Button
+        onClick={() => handleClick()}
+        variant={buttonType ? buttonType : "outlined"}
+        sx={{
+          textTransform: "capitalize",
+          fontSize: "13px",
+          color: buttonType ? "whiteContainer.main" : "primary.main",
+          boxShadow: (theme) =>
+            `0px 23px 54px 0px ${alpha(theme.palette.primary.main, 0.05)}`,
+        }}
+      >
+        {t("View all")}{" "}
+        <ArrowRightAltIcon
+          sx={{ fontSize: "18px", marginInlineStart: "5px" }}
+        />
       </Button>
-    </Stack>
+    </CustomStackFullWidth>
   );
 };
 ViewMore.propTypes = {

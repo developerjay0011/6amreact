@@ -1,5 +1,6 @@
 import { styled } from "@mui/material/styles";
 import {
+  alpha,
   Autocomplete,
   Box,
   Button,
@@ -14,6 +15,10 @@ import {
   Typography,
 } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
+import { Stack } from "@mui/system";
+import { TimePicker } from "@mui/x-date-pickers/TimePicker";
+import { DatePicker, MobileTimePicker } from "@mui/x-date-pickers";
+import { DateCalendar } from "@mui/x-date-pickers/DateCalendar";
 
 export const DeliveryTitle = styled(Typography)(({ theme }) => ({
   textAlign: "center",
@@ -22,13 +27,15 @@ export const DeliveryTitle = styled(Typography)(({ theme }) => ({
   fontWeight: "700",
   paddingBottom: "20px",
 }));
-export const DeliveryCaption = styled(Typography)(({ theme }) => ({
+export const DeliveryCaption = styled(Typography)(({ theme, parcel }) => ({
+  textAlign: parcel === "true" ? "center" : "left",
   fontSize: "16px",
   fontWeight: "700",
   // color: '#414141',
   color: `${theme.palette.mode === "dark" ? "#fff" : "#414141"}`,
-  paddingTop: "20px",
-  paddingBottom: "20px",
+  [theme.breakpoints.down("md")]: {
+    fontSize: "14px",
+  },
 }));
 
 export const PrefarableCaption = styled(Typography)(({ theme }) => ({
@@ -80,6 +87,11 @@ export const PreferableTimeInput = styled(Autocomplete)(({ theme }) => ({
   borderRadius: "10px",
   "&.MuiAutocomplete-option": {
     backgroundColor: theme.palette.primary.main,
+    height: "100%",
+  },
+  ".MuiAutocomplete-paper": {
+    zIndex: 99999,
+    height: "100%",
   },
 }));
 export const CouponGrid = styled(Grid)(() => ({
@@ -90,16 +102,16 @@ export const CouponGrid = styled(Grid)(() => ({
   alignItems: "center",
   marginTop: "20px",
 }));
-export const CouponTitle = styled(Typography)(({ theme }) => ({
-  color: theme.palette.neutral[1000],
+export const CouponTitle = styled(Typography)(({ theme, textAlign }) => ({
+  color: theme.palette.footer.appDownloadButtonBgGray,
   fontWeight: "700",
   fontSize: "16px",
-  textAlign: "center",
+  textAlign: textAlign ? textAlign : "center",
   [theme.breakpoints.up("xs")]: {
-    textAlign: "center",
+    textAlign: textAlign ? textAlign : "center",
   },
   [theme.breakpoints.up("md")]: {
-    textAlign: "inherit",
+    textAlign: textAlign ? textAlign : "center",
   },
 }));
 
@@ -165,13 +177,15 @@ export const ConditionTypography = styled(Typography)(() => ({
   paddingTop: "15px",
   paddingBottom: "20px",
 }));
-export const PlaceOrderButton = styled(Button)(() => ({
-  // background: '#EF7822',
-  borderRadius: "5px",
-  border: "1px solid rgba(239, 120, 34, 0.3)",
-  // color: 'white',
-  // width: '100%',
-}));
+export const StepperCustomBorder = styled(Stack)(
+  ({ theme, background, padding, border, boxshadow }) => ({
+    borderRadius: "50%",
+    padding: padding,
+    border: border ? border : `2px solid ${theme.palette.primary.main}`,
+    background: background,
+    boxShadow: boxshadow && boxshadow,
+  })
+);
 export const OrderSummary = styled(Typography)(({ theme }) => ({
   color: `${theme.palette.mode === "dark" ? "#fff" : "#414141"}`,
   fontSize: "18px",
@@ -182,8 +196,17 @@ export const OrderSummary = styled(Typography)(({ theme }) => ({
   marginRight: "auto",
 }));
 export const OrderFoodName = styled(Typography)(({ theme }) => ({
-  fontSize: "14px",
-  color: `${theme.palette.mode === "dark" ? "#fff" : "#414141"}`,
+  fontSize: "12px",
+  fontWeight: "500",
+  color: `${
+    theme.palette.mode === "dark"
+      ? theme.palette.whiteContainer.main
+      : theme.palette.footer.appDownloadButtonBgGray
+  }`,
+  textOverflow: "ellipsis",
+  whiteSpace: "nowrap",
+  overflow: "hidden",
+  width: "199px",
 }));
 export const OrderFoodSubtitle = styled(Typography)(
   ({ theme, orderdetailscolor }) => ({
@@ -195,7 +218,6 @@ export const OrderFoodSubtitle = styled(Typography)(
   })
 );
 export const OrderFoodAmount = styled(Typography)(({ theme }) => ({
-  color: theme.palette.primary.main,
   fontSize: "16px",
   fontWeight: "600",
 }));
@@ -207,4 +229,55 @@ export const TotalGrid = styled(Grid)(() => ({
   fontSize: "16px",
   fontWeight: "600",
   padding: "0px",
+}));
+export const RoundButton = styled(Button)(({ theme, minWidth, padding }) => ({
+  backgroundColor: alpha(theme.palette.primary.main, 0.1),
+  color: theme.palette.primary.main,
+  minWidth: minWidth,
+  border: `1px solid ${theme.palette.primary.main}`,
+  borderRadius: "50%",
+  textAlign: "center",
+  fontWeight: "600",
+  padding: padding,
+}));
+export const CustomTimePicker = styled(MobileTimePicker)(({ theme }) => ({
+  "& .MuiInputBase-root": {
+    width: "100px",
+    background: " rgba(118, 118, 128, 0.12)",
+    color: theme.palette.neutral[500], // Customize the text color
+    fontSize: "16px", // Customize the font size
+
+    // Add any other custom styles as needed
+  },
+
+  "& input": {
+    padding: "5px", // Customize the input padding
+
+    // Add any other custom styles as needed
+  },
+
+  "& .MuiInputLabel-root": {
+    color: "green", // Customize the label color
+    // Add any other custom styles as needed
+  },
+
+  "& .MuiOutlinedInput-input::placeholder": {
+    color: "red", // Customize the placeholder color
+  },
+}));
+export const CustomDatePicker = styled(DateCalendar)(({ theme }) => ({
+  "& .MuiPickersCalendarHeader-root": {
+    marginTop: "0px",
+    "& .MuiPickersCalendarHeader-label": {
+      fontSize: "22px",
+    },
+    "& .MuiPickersArrowSwitcher-root": {
+      "& .MuiPickersArrowSwitcher-button": {
+        "& .MuiSvgIcon-root": {
+          border: `2px solid ${theme.palette.primary.main}`,
+          borderRadius: "50%",
+        },
+      },
+    },
+  },
 }));

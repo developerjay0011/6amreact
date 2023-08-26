@@ -16,7 +16,7 @@ const DeliveryInfoCard = ({ title, name, phone, address }) => {
       <Stack
         width="100%"
         padding=".9rem"
-        backgroundColor={alpha(theme.palette.primary.main, 0.1)}
+        backgroundColor={theme.palette.neutral[300]}
         borderRadius="7px"
         spacing={0.5}
       >
@@ -24,24 +24,24 @@ const DeliveryInfoCard = ({ title, name, phone, address }) => {
         <Stack direction="row" spacing={1.3} alignItems="center">
           <LocalPhoneIcon
             sx={{
-              width: "16.5px",
-              height: "16.5px",
+              width: "14.5px",
+              height: "14.5px",
               color: (theme) => theme.palette.primary.main,
             }}
           />
-          <Typography fontSize="14px" color={theme.palette.neutral[500]}>
+          <Typography fontSize="12px" color={theme.palette.neutral[500]}>
             {phone}
           </Typography>
         </Stack>
         <Stack direction="row" spacing={1.3} alignItems="center">
           <RoomIcon
             sx={{
-              width: "16.5px",
-              height: "16.5px",
+              width: "14.5px",
+              height: "14.5px",
               color: (theme) => theme.palette.primary.main,
             }}
           />
-          <Typography fontSize="14px" color={theme.palette.neutral[500]}>
+          <Typography fontSize="12px" color={theme.palette.neutral[500]}>
             {address}
           </Typography>
         </Stack>

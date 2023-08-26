@@ -69,7 +69,9 @@ const VariationsManager = ({ productDetailsData, handleChoices }) => {
                 size={item}
                 productsize={value[choiceIndex]?.value}
               >
-                <Typography>{item}</Typography>
+                <Typography fontSize={{ xs: "12px", sm: "14px" }}>
+                  {item}
+                </Typography>
               </CustomSizeBox>
             ))}
           </CustomStackFullWidth>

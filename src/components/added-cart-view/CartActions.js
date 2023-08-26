@@ -9,14 +9,22 @@ import { useDispatch } from "react-redux";
 import { setClearCart } from "../../redux/slices/cart";
 
 const CartActions = (props) => {
-  const { setSideDrawerOpen } = props;
+  const { setSideDrawerOpen, cartList } = props;
   const theme = useTheme();
   const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
   const handleCheckout = () => {
-    router.push("/checkout?page=cart", undefined, { shallow: true });
-    setSideDrawerOpen(false);
+    if (cartList?.length > 0) {
+      router.push("/checkout?page=cart", undefined, { shallow: true });
+      setSideDrawerOpen(false);
+    } else {
+      if (router.pathname === "/home") {
+        setSideDrawerOpen(false);
+      } else {
+        router.push("/home", undefined, { shallow: true });
+      }
+    }
   };
   const handleClearAll = () => {
     dispatch(setClearCart());
@@ -24,24 +32,13 @@ const CartActions = (props) => {
     // setOpenModal(false);
   };
   return (
-    <Stack direction="row" width="100%" spacing={1} pb="1rem">
-      <PrimaryButton
-        sx={{
-          backgroundColor: (theme) => theme.palette.neutral[200],
-          color: "black",
-          "&:hover": {
-            backgroundColor: (theme) => theme.palette.neutral[400],
-            color: "black",
-          },
-        }}
-        onClick={handleClearAll}
-        variant="contained"
-        size="large"
-        fullWidth
-        borderRadius="7px"
-      >
-        {t("Clear All")}
-      </PrimaryButton>
+    <Stack
+      direction="row"
+      width="100%"
+      spacing={1}
+      paddingX="1.25rem"
+      pb="1rem"
+    >
       <PrimaryButton
         onClick={handleCheckout}
         variant="contained"
@@ -49,7 +46,9 @@ const CartActions = (props) => {
         fullWidth
         borderRadius="7px"
       >
-        {t("Checkout")}
+        {cartList?.length > 0
+          ? t("Proceed To Checkout")
+          : t("Continue Shopping")}
       </PrimaryButton>
     </Stack>
   );

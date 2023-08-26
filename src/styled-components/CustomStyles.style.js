@@ -20,11 +20,15 @@ import {
   TextareaAutosize,
   TextField,
   Typography,
+  List,
+  Grid,
+  Tab,
 } from "@mui/material";
 import Link from "@mui/material/Link";
+import { style } from "@mui/system";
 // import imgB from '../../public/static/Privacy/RectangleP.png'
 //import { Link } from 'react-router-dom'
-import MuiList from "@mui/material/List";
+
 export const FlexContainerCol = styled(Box)({
   display: "flex",
   flexDirection: "column",
@@ -64,7 +68,7 @@ export const CustomTextField = styled(TextField)(({ theme }) => ({
   borderRadius: "13px",
 
   "& .MuiInputBase-input": {
-    padding: "10px 10px",
+    padding: "15px 10px",
     "& .MuiOutlinedInput-input": {
       padding: "4px 10px",
       borderRadius: "5px",
@@ -83,7 +87,7 @@ export const CustomPaper = styled(Paper)(({ theme, width, height }) => ({
   padding: "2rem",
   maxWidth: width ? width : "600px",
   width: "100%",
-  minHeight: "300px",
+  minHeight: "100px",
   height: height ? height : "100%",
   borderRadius: "20px",
   justifyContent: "center",
@@ -217,14 +221,16 @@ export const CustomTabs = styled(Tabs)(({ theme }) => ({
 export const CloseIconWrapper = styled("div")(
   ({ theme, right, language_direction }) => ({
     top: 0,
-    right: language_direction !== "rtl" ? (right ? right : 9) : null,
-    left: language_direction === "rtl" ? (right ? right : 9) : null,
+    // right: language_direction !== "rtl" ? (right ? right : 9) : null,
+    // left: language_direction === "rtl" ? (right ? right : 9) : null,
+    right: right ? right : 0,
     height: "100%",
     position: "absolute",
     cursor: "pointer",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    // backgroundColor: "red",
   })
 );
 
@@ -248,20 +254,24 @@ export const CustomTypographyAlign = styled(Typography)(({ theme, align }) => ({
 
 export const CustomChip = styled(Chip)(({ theme }) => ({
   fontWeight: "bold",
-  color: theme.palette.whiteContainer.main,
 }));
 
-export const CustomIconButton = styled(Box)(({ theme, marginTop }) => ({
+export const CustomIconButton = styled(Box)(({ theme, marginTop, align }) => ({
+  display: "flex",
+  justifyContent: align ? align : "center",
+  alignItems: "center",
   color: theme.palette.neutral[700],
   cursor: "pointer",
+  gap: "8px",
 }));
 
 export const CustomBoxFullWidth = styled(Box)(({ theme }) => ({
   width: "100%",
 }));
 export const CustomStackFullWidth = styled(Stack)(
-  ({ theme, marginBottom }) => ({
+  ({ theme, marginBottom, justifyContent }) => ({
     width: "100%",
+    justifyContent: justifyContent,
   })
 );
 export const CustomBoxWithSpacing = styled(Box)(
@@ -403,12 +413,14 @@ export const CustomViewAll = styled(Stack)(({ theme }) => ({
   fontSize: "14px",
   cursor: "pointer",
 }));
-export const CustomFab = styled(Fab)(({ theme }) => ({
-  width: "40px",
-  height: "40px",
+export const CustomFab = styled(Fab)(({ theme, module_type }) => ({
+  width: "30px",
+  height: "30px",
+  minHeight: "30px",
+
   [theme.breakpoints.down("sm")]: {
-    width: "33px",
-    height: "35px",
+    width: "30px",
+    height: "30px",
   },
 }));
 export const CustomImageContainerStyled = styled(Box)(
@@ -459,9 +471,14 @@ export const CustomImageContainerStyled = styled(Box)(
   })
 );
 export const CustomListItem = styled(ListItem)(
-  ({ theme, display, cursor }) => ({
+  ({ theme, display, cursor, border }) => ({
     display: display,
     cursor: cursor && "pointer",
+    border: border,
+    borderRadius: "5px",
+    marginBottom: "5px",
+    paddingInline: "5px",
+    justifyContent: "flex-start",
   })
 );
 export const CustomBoxRelative = styled(Box)(({ theme, maxWidth, height }) => ({
@@ -495,26 +512,29 @@ export const BackImage = styled(Stack)(({ theme }) => ({
   backgroundImage:
     "url('https://media.geeksforgeeks.org/wp-content/uploads/rk.png')",
 }));
-export const List = styled(MuiList)(({ theme }) => ({}));
+export const CustomList = styled(List)(({ theme, border }) => ({
+  paddingTop: "0px",
+}));
 export const SliderCustom = styled(Stack)(
-    ({ theme, language_direction, nopadding }) => ({
-      position: "relative",
-      width: "100%",
-      paddingY: "10px",
-      "& .slick-slider": {
-        "& .slick-slide": {
-          padding: "6px",
-        },
-        "& .slick-list": {
-          paddingY: nopadding !== "true" && "8px",
-          "& .slick-track": {
-            float: "left",
-            gap: "5px",
-          },
+  ({ theme, language_direction, nopadding }) => ({
+    position: "relative",
+    width: "100%",
+    paddingY: "10px",
+    "& .slick-slider": {
+      "& .slick-slide": {
+        padding: "6px",
+      },
+      "& .slick-list": {
+        paddingY: nopadding !== "true" && "8px",
+        "& .slick-track": {
+          float: theme.direction === "ltr" ? "left" : "right",
+          gap: "5px",
         },
       },
-    })
+    },
+  })
 );
+
 export const CustomHeroBackground = styled(Box)(({ theme, bgImg }) => ({
   backgroundColor: (theme) => alpha(theme.palette.primary.main, 0.15),
   width: "100%",
@@ -552,17 +572,23 @@ export const CustomTypographyGray = styled(Typography)(
     textDecoration: textdecoration,
   })
 );
-export const CustomBoxForTips = styled(Box)(({ theme }) => ({
-  height: "40px",
-  width: "60px",
+export const CustomBoxForTips = styled(Box)(({ theme, active }) => ({
+  paddingInline: "10px",
+  height: "50px",
+  width: "auto",
+  minWidth: "50px",
   display: "flex",
   alignItems: "center",
   justifyContent: "center",
-  border: "1px solid",
+  border: "1px solid ",
+  borderColor: theme.palette.primary.main,
   cursor: "pointer",
-  borderRadius: "8px",
+  borderRadius: "5px",
+  background: active && theme.palette.primary.main,
+  position: "relative",
   [theme.breakpoints.down("sm")]: {
-    height: "40px",
+    height: "30px",
+    paddingInline: "5px",
   },
 }));
 export const CustomZoom = styled(Stack)(({ theme }) => ({}));
@@ -633,4 +659,161 @@ export const PhoneWrapper = styled(Stack)(({ theme, lanDirection }) => ({
   "&.react-tel-input .selected-flag .arrow": {
     left: "29px",
   },
+}));
+export const StoreImageBox = styled(Box)(
+  ({ theme, borderraduis, padding, border }) => ({
+    padding: padding ? padding : "12px",
+    border: border,
+    borderRadius: borderraduis ? borderraduis : "5px",
+    display: "flex",
+    alignItems: "center",
+    position: "relative",
+    width: "76px",
+    [theme.breakpoints.down("md")]: {
+      padding: "18px",
+      width: "81px",
+    },
+  })
+);
+
+export const AddressTypeStack = styled(Stack)(
+  ({ theme, addressType, value }) => ({
+    padding: "10px",
+    border:
+      value === addressType
+        ? `1px solid ${theme.palette.primary.main}`
+        : `1px solid ${alpha(theme.palette.neutral[400], 0.5)}`,
+    borderRadius: "5px",
+    background: value === addressType && alpha(theme.palette.primary.main, 0.2),
+    cursor: "pointer",
+  })
+);
+export const ScheduleTimeStack = styled(Stack)(({ theme }) => ({
+  padding: "14px",
+  background: alpha(theme.palette.neutral[400], 0.3),
+  maxWidth: "244px",
+  width: "100%",
+  border: `1px solid ${theme.palette.neutral[300]}`,
+  borderRadius: "5px",
+  justifyContent: "center",
+  alignItems: "center",
+}));
+export const UserInfoGrid = styled(Grid)(({ theme, page }) => ({
+  position: "relative",
+  zIndex: 99,
+  "&::before": {
+    content: '""',
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: "42%",
+    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+    zIndex: -1,
+    [theme.breakpoints.down("md")]: {
+      bottom:
+        page === "profile-settings" ? "81%" : page === "inbox" ? "0%" : "37%",
+    },
+  },
+
+  "&::after": {
+    content: '""',
+    position: "absolute",
+    left: 0,
+    bottom: "42%",
+    top: 0,
+    right: 0,
+    backgroundColor: alpha(theme.palette.primary.main, 0.1),
+    zIndex: -1,
+    [theme.breakpoints.down("md")]: {
+      bottom:
+        page === "profile-settings" ? "81%" : page === "inbox" ? "0%" : "37%",
+    },
+  },
+}));
+export const UserProfileTabs = styled(Tabs)(({ theme, isActive }) => ({
+  // borderBottom: `1px solid ${alpha(theme.palette.neutral[400], 0.5)}`,
+  // paddingBottom: "20px",
+  "& .MuiTabs-scroller": {
+    "& .MuiTabs-flexContainer": {
+      flexWrap: "nowrap",
+    },
+  },
+  "& .MuiButtonBase-root": {
+    minHeight: "42px",
+    color: theme.palette.neutral[600],
+    textTransform: "capitalize",
+    [theme.breakpoints.down("sm")]: {
+      minHeight: "32px",
+    },
+  },
+}));
+
+export const UserProfileTab = styled(Button)(
+  ({ theme, page, item, marginright, fontSize, borderRadius }) => ({
+    background: item?.name === page && alpha(theme.palette.primary.main, 0.1),
+    paddingInlineEnd: "15px",
+    paddingInlineStart: "15px",
+    marginInlineEnd: marginright ? marginright : "25px",
+    paddingBlockEnd: "0px",
+    paddingBlockStart: "0px",
+    borderRadius: borderRadius ? borderRadius : "10px",
+    [theme.breakpoints.down("sm")]: {
+      marginInlineEnd: "10px",
+      paddingInlineEnd: "7px",
+      paddingInlineStart: "7px",
+    },
+  })
+);
+
+export const RoundedStack = styled(Stack)(
+  ({ theme, width, height, background, smwidth, smheight }) => ({
+    width: width,
+    height: height,
+    backgroundColor: background,
+    borderRadius: "50%",
+    alignItems: "center",
+    justifyContent: "center",
+    position: "relative",
+    [theme.breakpoints.down("md")]: {
+      width: smwidth,
+      height: smheight,
+    },
+  })
+);
+export const CouponStyle = styled(Stack)(({ theme }) => ({
+  position: "relative",
+  "&::after": {
+    position: " absolute",
+    content: '""',
+    display: "block",
+    width: "22px",
+    height: "22px",
+    backgroundColor: "#D9D9D9",
+    top: "-20px",
+    right: "-9px",
+    zIndex: 1,
+    borderRadius: "50%",
+  },
+  "&::before": {
+    position: " absolute",
+    content: '""',
+    display: "block",
+    width: "22px",
+    height: "22px",
+    backgroundColor: "#D9D9D9",
+    bottom: "-20px",
+    right: "-10px",
+    zIndex: 1,
+    borderRadius: "50%",
+  },
+}));
+export const PageDetailsWrapper = styled(CustomStackFullWidth)(({ theme }) => ({
+  marginTop: "1rem",
+}));
+export const CustomStackForFoodModal = styled(Stack)(({ theme, padding }) => ({
+  padding: padding ? padding : "18px",
+  position: "absolute",
+  bottom: "0",
+  background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgb(18 18 18 / 94%) 100%)`,
 }));

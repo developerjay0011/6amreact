@@ -1,4 +1,5 @@
-import React, { useReducer } from "react";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import {
   Grid,
   styled,
@@ -6,45 +7,42 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import CustomImageContainer from "../CustomImageContainer";
-import {
-  CustomBoxFullWidth,
-  CustomStackFullWidth,
-} from "../../styled-components/CustomStyles.style";
 import { Box, Stack } from "@mui/system";
-import H1 from "../typographies/H1";
-import RatingStar from "../RatingStar";
+import React, { useReducer } from "react";
+import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import PinDropIcon from "@mui/icons-material/PinDrop";
-import TimerIcon from "@mui/icons-material/Timer";
-import DiscountInfo from "./DiscountInfo";
-import LocationViewOnMap from "../Map/location-view/LocationViewOnMap";
-import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import { useDispatch, useSelector } from "react-redux";
 import { useAddStoreToWishlist } from "../../api-manage/hooks/react-query/wish-list/useAddStoreToWishLists";
+import { useWishListStoreDelete } from "../../api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
+import { getAmountWithSign } from "../../helper-functions/CardHelpers";
+import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
+import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import {
   addWishListStore,
   removeWishListStore,
 } from "../../redux/slices/wishList";
-import toast from "react-hot-toast";
+import {
+  CustomBoxFullWidth,
+  CustomStackFullWidth,
+} from "../../styled-components/CustomStyles.style";
 import { not_logged_in_message } from "../../utils/toasterMessages";
-import { useWishListStoreDelete } from "../../api-manage/hooks/react-query/wish-list/useWishListStoreDelete";
-import { RoundedIconButton } from "../product-details/product-details-section/ProductsThumbnailsSettings";
-import { getAmountWithSign } from "../../helper-functions/CardHelpers";
-import FreeDeliveryTag from "./FreeDeliveryTag";
 import ClosedNowScheduleWise from "../closed-now/ClosedNowScheduleWise";
+import CustomImageContainer from "../CustomImageContainer";
+import { StyledRating } from "../CustomMultipleRatings";
+import LocationViewOnMap from "../Map/location-view/LocationViewOnMap";
+import { RoundedIconButton } from "../product-details/product-details-section/ProductsThumbnailsSettings";
+import H1 from "../typographies/H1";
 import Link from "next/link";
-import { getNumberWithConvertedDecimalPoint } from "../../utils/CustomFunctions";
 
-const ImageWrapper = styled(Box)(({ theme }) => ({
+const ContentWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   position: "relative",
-  borderRadius: "50%",
+  height: "250px",
+}));
+
+const ImageWrapper = styled(Box)(({ theme, smallScreen }) => ({
+  position: "relative",
   width: "100%",
   height: "100px",
-  border: "2px solid",
-  aspectRatio: 1 / 1,
-  borderColor: theme.palette.primary.light,
   [theme.breakpoints.down("lg")]: {
     height: "100px",
     maxWidth: "110px",
@@ -54,8 +52,9 @@ const ImageWrapper = styled(Box)(({ theme }) => ({
     maxWidth: "110px",
   },
   [theme.breakpoints.down("sm")]: {
-    height: "65px",
-    maxWidth: "85px",
+    height: smallScreen === "true" ? "100px" : "65px",
+    maxWidth: smallScreen !== "true" && "85px",
+    width: smallScreen === "true" && "100px",
   },
 }));
 const PrimaryWrapper = styled(Box)(({ theme, borderradius }) => ({
@@ -64,6 +63,15 @@ const PrimaryWrapper = styled(Box)(({ theme, borderradius }) => ({
   padding: "8px",
   borderRadius: borderradius,
   cursor: "pointer",
+}));
+const ContentBox = styled(Box)(({ theme, borderradius }) => ({
+  width: "45%",
+  height: "100%",
+  position: "absolute",
+  top: 0,
+  left: 0,
+  color: theme.palette.whiteContainer.main,
+  borderRadius: "5px",
 }));
 
 const initialState = {
@@ -81,7 +89,7 @@ const reducer = (state, action) => {
   }
 };
 const Top = (props) => {
-  const { bannerCover, storeDetails, configData, logo } = props;
+  const { bannerCover, storeDetails, configData, logo, storeShare } = props;
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const theme = useTheme();
@@ -138,185 +146,449 @@ const Top = (props) => {
       },
     });
   };
-  return (
-    <>
-      <Grid container spacing={2}>
-        <Grid
-          item
-          xs={12}
-          sm={12}
-          md={6}
-          lg={6}
-          align="center"
-          sx={{ position: "relative" }}
-        >
+  const getModuleWiseBG = () => {
+    if (getCurrentModuleType()) {
+      switch (getCurrentModuleType()) {
+        case ModuleTypes.GROCERY:
+          return {
+            bgColor: theme.palette.primary.main,
+          };
+        case ModuleTypes.PHARMACY:
+          return {
+            bgColor: theme.palette.info.custom1,
+          };
+        case ModuleTypes.ECOMMERCE:
+          return {
+            bgColor: theme.palette.info.blue,
+          };
+        case ModuleTypes.FOOD:
+          return {
+            bgColor: theme.palette.moduleTheme.food,
+          };
+      }
+    } else {
+      switch (storeShare?.moduleType) {
+        case ModuleTypes.GROCERY:
+          return {
+            bgColor: theme.palette.primary.main,
+          };
+        case ModuleTypes.PHARMACY:
+          return {
+            bgColor: theme.palette.info.custom1,
+          };
+        case ModuleTypes.ECOMMERCE:
+          return {
+            bgColor: theme.palette.info.blue,
+          };
+        case ModuleTypes.FOOD:
+          return {
+            bgColor: theme.palette.moduleTheme.food,
+          };
+      }
+    }
+  };
+  const content = () => {
+    if (isSmall) {
+      return (
+        <CustomStackFullWidth>
+          <CustomBoxFullWidth
+            sx={{
+              position: "relative",
+              height: "122px",
+            }}
+          >
+            <CustomImageContainer
+              src={bannerCover}
+              width="100%"
+              height="100%"
+              objectFit="cover"
+            />
+          </CustomBoxFullWidth>
+          <CustomStackFullWidth>
+            <CustomBoxFullWidth
+              sx={{
+                backdropFilter: "blur(10px)",
+                zIndex: 0,
+              }}
+            >
+              <CustomBoxFullWidth
+                sx={{
+                  backgroundColor: getModuleWiseBG()?.bgColor,
+                  zIndex: 999,
+                  position: "relative",
+                }}
+              >
+                <CustomBoxFullWidth
+                  sx={{
+                    background: " rgba(255, 255, 255, 0.1)",
+                    boxShadow: "0px 2px 30px 2px rgba(0, 0, 0, 0.08)",
+                    padding: "15px 20px",
+                  }}
+                >
+                  <Grid container spacing={3}>
+                    <Grid
+                      item
+                      xs={4}
+                      sm={2}
+                      sx={{
+                        mt: "22px",
+                        mb: "30px",
+                        position: "relative",
+                      }}
+                    >
+                      <CustomBoxFullWidth
+                        sx={{ position: "absolute", top: -52 }}
+                      >
+                        <ImageWrapper smallScreen="true">
+                          <CustomImageContainer
+                            src={logo}
+                            width="100%"
+                            height="100%"
+                            objectFit="cover"
+                            borderRadius="50%"
+                          />
+                          <ClosedNowScheduleWise
+                            active={storeDetails?.active}
+                            schedules={storeDetails?.schedules}
+                            borderRadius="50%"
+                          />
+                        </ImageWrapper>
+                      </CustomBoxFullWidth>
+                    </Grid>
+                    <Grid item xs={8} sm={10}>
+                      <CustomStackFullWidth
+                        sx={{ color: "whiteContainer.main" }}
+                        spacing={1}
+                      >
+                        <H1 text={storeDetails?.name} textAlign="flex-start" />
+                        <Stack direction="row" alignItems="center" spacing={1}>
+                          <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="center"
+                            spacing={0.4}
+                          >
+                            <StyledRating
+                              name="read-only"
+                              value={storeDetails?.avg_rating}
+                              readOnly
+                              size="small"
+                            />
+                            <Typography>{`(${storeDetails?.rating_count})`}</Typography>
+                          </Stack>
+                          <Typography
+                            sx={{
+                              color: (theme) => theme.palette.neutral[600],
+                            }}
+                          >
+                            |
+                          </Typography>
+                          <Typography
+                            textDecoration="underline"
+                            fontWeight="700"
+                            lineHeight="16.15px"
+                            sx={{
+                              fontSize: {
+                                xs: "10px",
+                                sm: "14px",
+                              },
+                            }}
+                          >
+                            {storeDetails?.rating_count} {t("Reviews")}
+                          </Typography>
+                        </Stack>
+                        <Typography
+                          textDecoration="underline"
+                          fontWeight="400"
+                          lineHeight="16.15px"
+                          sx={{
+                            fontSize: { xs: "12px", sm: "14px" },
+                          }}
+                        >
+                          {storeDetails?.address}
+                        </Typography>
+                      </CustomStackFullWidth>
+                    </Grid>
+                  </Grid>
+                </CustomBoxFullWidth>
+              </CustomBoxFullWidth>
+            </CustomBoxFullWidth>
+
+            <CustomBoxFullWidth
+              sx={{
+                // backdropFilter: "blur(10px)",
+                backgroundColor: getModuleWiseBG()?.bgColor,
+                opacity: "0.9",
+                padding: "13.5px 25px",
+                color: "whiteContainer.main",
+              }}
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={{ xs: 4, sm: 3, md: 5 }}
+              >
+                <Stack alignItems="flex-start">
+                  <Typography
+                    textAlign="center"
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "14px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {storeDetails?.positive_rating}
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.3}>
+                    <Typography
+                      noWrap
+                      sx={{
+                        fontSize: { xs: "10px", sm: "inherit" },
+                      }}
+                    >
+                      {t("Positive Review")}
+                    </Typography>
+                  </Stack>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "16px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {getAmountWithSign(storeDetails?.minimum_order)}
+                  </Typography>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontSize: { xs: "10px", sm: "inherit" },
+                    }}
+                  >
+                    {t("Minimum Order Value")}
+                  </Typography>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "16px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {storeDetails?.delivery_time}
+                  </Typography>
+                  <Typography
+                    noWrap
+                    sx={{
+                      fontSize: { xs: "10px", sm: "inherit" },
+                    }}
+                  >
+                    {t("Delivery Time")}
+                  </Typography>
+                </Stack>
+              </Stack>
+            </CustomBoxFullWidth>
+          </CustomStackFullWidth>
+        </CustomStackFullWidth>
+      );
+    } else {
+      return (
+        <ContentWrapper>
           <CustomImageContainer
             src={bannerCover}
             width="100%"
-            height={
-              storeDetails?.discount ? "290px" : isSmall ? "220px" : "250px"
-            }
-            objectFit="contained"
+            height="100%"
+            objectFit="cover"
             borderRadius="10px"
           />
-          <Stack
-            alignItems="flex-start"
-            paddingRight={{
-              xs: "5px",
-              sm: "0px",
-              position: "absolute",
-              top: 20,
-              right: 10,
-            }}
-          >
-            {!isInWishList(storeDetails?.id) && (
-              <RoundedIconButton onClick={addToFavorite}>
-                <FavoriteBorderIcon color="primary" />
-              </RoundedIconButton>
-            )}
-            {isInWishList(storeDetails?.id) && (
-              <RoundedIconButton
-                onClick={() => deleteWishlistStore(storeDetails?.id)}
+          <ContentBox>
+            <CustomBoxFullWidth
+              sx={{
+                borderTopRightRadius: "10px",
+                borderTopLeftRadius: "10px",
+                backgroundColor: getModuleWiseBG()?.bgColor,
+              }}
+            >
+              <CustomBoxFullWidth
+                sx={{
+                  borderTopRightRadius: "10px",
+                  borderTopLeftRadius: "10px",
+                  background: " rgba(255, 255, 255, 0.1)",
+                  boxShadow: "0px 2px 30px 2px rgba(0, 0, 0, 0.08)",
+                  padding: "10px 25px",
+                }}
               >
-                <FavoriteIcon color="primary" />
-              </RoundedIconButton>
-            )}
-          </Stack>
-          {storeDetails?.free_delivery && <FreeDeliveryTag />}
-        </Grid>
-        <Grid item xs={12} sm={12} md={6} lg={6}>
-          <CustomBoxFullWidth
-            sx={{
-              backgroundColor: "background.custom",
-              p: "15px",
-              height: storeDetails?.discount
-                ? "100%"
-                : isSmall
-                ? "250px"
-                : "250px",
-              borderRadius: "15px",
-            }}
-          >
-            <CustomStackFullWidth spacing={2}>
-              <Grid container spacing={2}>
-                <Grid item xs={3} sm={2.5} md={3} lg={2.5} align="center">
-                  <ImageWrapper>
-                    <CustomImageContainer
-                      src={logo}
-                      width="100%"
-                      height="100%"
-                      objectFit="contained"
-                      borderRadius="50%"
-                    />
-                    <ClosedNowScheduleWise
-                      active={storeDetails?.active}
-                      schedules={storeDetails?.schedules}
-                      borderRadius="50%"
-                    />
-                  </ImageWrapper>
-                </Grid>
-                <Grid item xs={9} sm={8.5} md={9} lg={9.5}>
-                  <CustomStackFullWidth spacing={2}>
-                    <CustomStackFullWidth
-                      direction="row"
-                      alignItems="center"
-                      justifyContent="space-between"
-                      spacing={3}
-                    >
-                      <Stack alignItems="flex-start" flexGrow={2}>
-                        <H1 text={storeDetails?.name} textAlign="flex-start" />
-                        <Typography color="customColor.textGray">
-                          {storeDetails?.address}
-                        </Typography>
-                        <Link
-                          href={`/review/${
-                            storeDetails?.id
-                              ? storeDetails?.id
-                              : storeDetails?.slug
-                          }`}
-                          passHref
-                        >
+                <Grid container spacing={3}>
+                  <Grid item xs={3} sx={{ mt: "22px", mb: "30px" }}>
+                    <ImageWrapper>
+                      <CustomImageContainer
+                        src={logo}
+                        width="100%"
+                        height="100%"
+                        objectFit="cover"
+                        borderRadius="10px"
+                      />
+                      <ClosedNowScheduleWise
+                        active={storeDetails?.active}
+                        schedules={storeDetails?.schedules}
+                        borderRadius="50%"
+                      />
+                    </ImageWrapper>
+                  </Grid>
+                  <Grid item xs={7}>
+                    <CustomStackFullWidth spacing={1}>
+                      <H1 text={storeDetails?.name} textAlign="flex-start" />
+                      <Link
+                        href={`/review/${
+                          storeDetails?.id
+                            ? storeDetails?.id
+                            : storeDetails?.slug
+                        }`}
+                      >
+                        <Stack direction="row" alignItems="center" spacing={1}>
                           <Stack
                             direction="row"
-                            alignItems="flex-start"
-                            spacing={0.5}
+                            alignItems="center"
+                            justifyContent="center"
+                            spacing={0.4}
                           >
-                            <RatingStar fontSize="18px" color="warning.dark" />
-                            <Typography fontWeight="bold">
-                              {getNumberWithConvertedDecimalPoint(
-                                storeDetails?.avg_rating,
-                                configData?.digit_after_decimal_point
-                              )}
-                            </Typography>
-                            <Typography>
-                              ({storeDetails?.rating_count})
-                            </Typography>
+                            <StyledRating
+                              sx={{ color: "whiteContainer.main" }}
+                              name="read-only"
+                              value={storeDetails?.avg_rating}
+                              readOnly
+                              size="small"
+                            />
+                            <Typography>{`(${storeDetails?.rating_count})`}</Typography>
                           </Stack>
-                        </Link>
-                      </Stack>
-                      <PrimaryWrapper
-                        borderradius="8px"
-                        onClick={() => openMapHandler()}
-                      >
-                        <Stack alignItems="center" justifyContent="center">
-                          <PinDropIcon />
                           <Typography
-                            sx={{ display: { xs: "none", sm: "inherit" } }}
+                            sx={{
+                              color: (theme) => theme.palette.neutral[600],
+                            }}
                           >
-                            {t("Location")}
+                            |
+                          </Typography>
+                          <Typography
+                            fontSize="14px"
+                            textDecoration="underline"
+                            fontWeight="700"
+                            lineHeight="16.15px"
+                          >
+                            {storeDetails?.rating_count} Reviews
                           </Typography>
                         </Stack>
-                      </PrimaryWrapper>
+                      </Link>
+                      <Typography
+                        fontSize="14px"
+                        textDecoration="underline"
+                        fontWeight="400"
+                        lineHeight="16.15px"
+                      >
+                        {storeDetails?.address}
+                      </Typography>
                     </CustomStackFullWidth>
-                    <Stack
-                      direction="row"
-                      alignItems="center"
-                      spacing={{ xs: 2, sm: 3, md: 5 }}
-                    >
-                      <Stack alignItems="flex-start">
-                        <Typography
-                          textAlign="center"
-                          variant="h5"
-                          color="primary.main"
-                          sx={{
-                            fontSize: { xs: "14px", sm: "22px", md: "22px" },
-                          }}
-                        >
-                          {storeDetails?.delivery_time}
-                        </Typography>
-                        <Stack
-                          direction="row"
-                          alignItems="center"
-                          spacing={0.3}
-                        >
-                          <TimerIcon />
-                          <Typography>{t("Delivery Time")}</Typography>
-                        </Stack>
-                      </Stack>
-
-                      <Stack alignItems="flex-start">
-                        <Typography
-                          variant="h5"
-                          color="primary.main"
-                          sx={{
-                            fontSize: { xs: "16px", sm: "22px", md: "22px" },
-                          }}
-                        >
-                          {getAmountWithSign(storeDetails?.minimum_order)}
-                        </Typography>
-                        <Typography>{t("Minimum Order Value")}</Typography>
-                      </Stack>
-                    </Stack>
-                  </CustomStackFullWidth>
+                  </Grid>
+                  <Grid item xs={2} align="right">
+                    {!isInWishList(storeDetails?.id) && (
+                      <RoundedIconButton onClick={addToFavorite}>
+                        <FavoriteBorderIcon color="primary" />
+                      </RoundedIconButton>
+                    )}
+                    {isInWishList(storeDetails?.id) && (
+                      <RoundedIconButton
+                        onClick={() => deleteWishlistStore(storeDetails?.id)}
+                      >
+                        <FavoriteIcon color="primary" />
+                      </RoundedIconButton>
+                    )}
+                  </Grid>
                 </Grid>
-              </Grid>
-              {storeDetails?.discount && (
-                <DiscountInfo discount={storeDetails?.discount} />
-              )}
-            </CustomStackFullWidth>
-          </CustomBoxFullWidth>
-        </Grid>
-      </Grid>
+              </CustomBoxFullWidth>
+            </CustomBoxFullWidth>
+            <CustomBoxFullWidth
+              sx={{
+                // backdropFilter: "blur(10px)",
+                backgroundColor: getModuleWiseBG()?.bgColor,
+                opacity: "0.9",
+                padding: "13.5px 25px",
+                borderBottomRightRadius: "10px",
+                borderBottomLeftRadius: "10px",
+              }}
+            >
+              <Stack
+                direction="row"
+                alignItems="center"
+                spacing={{ xs: 2, sm: 3, md: 5 }}
+              >
+                <Stack alignItems="flex-start">
+                  <Typography
+                    textAlign="center"
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "14px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {storeDetails?.positive_rating}%
+                  </Typography>
+                  <Stack direction="row" alignItems="center" spacing={0.3}>
+                    <Typography>{t("Positive Review")}</Typography>
+                  </Stack>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "16px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {getAmountWithSign(storeDetails?.minimum_order)}
+                  </Typography>
+                  <Typography>{t("Minimum Order Value")}</Typography>
+                </Stack>
+                <Stack alignItems="flex-start">
+                  <Typography
+                    variant="h5"
+                    sx={{
+                      fontSize: {
+                        xs: "16px",
+                        sm: "22px",
+                        md: "22px",
+                      },
+                    }}
+                  >
+                    {storeDetails?.delivery_time}
+                  </Typography>
+                  <Typography>{t("Delivery Time")}</Typography>
+                </Stack>
+              </Stack>
+            </CustomBoxFullWidth>
+          </ContentBox>
+        </ContentWrapper>
+      );
+    }
+  };
+  return (
+    <>
+      {content()}
       {state.viewMap && (
         <LocationViewOnMap
           open={state.viewMap}

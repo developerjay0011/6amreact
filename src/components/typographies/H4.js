@@ -1,27 +1,25 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
+import { Typography, useMediaQuery, useTheme } from "@mui/material";
+import { textWithEllipsis } from "../../styled-components/TextWithEllipsis";
+import { IsSmallScreen } from "../../utils/CommonValues";
 
 const H4 = (props) => {
   const { text } = props;
-
   const { t } = useTranslation();
-  const theme = useTheme();
-  const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const classes = textWithEllipsis();
   return (
     <Typography
-      textAlign="center"
-      variant={isSmall ? "h6" : "h5"}
-      textTransform="capitalize"
+      variant={IsSmallScreen() ? "h8" : "subtitle2"}
+      className={classes.singleLineEllipsis}
+      maxHeight="20px"
     >
       {t(text)}
     </Typography>
   );
 };
 
-H4.propTypes = {
-  text: PropTypes.string.isRequired,
-};
+H4.propTypes = {};
 
 export default H4;

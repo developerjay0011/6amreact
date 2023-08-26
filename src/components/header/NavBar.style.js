@@ -4,12 +4,14 @@ import {
   BottomNavigationAction,
   Button,
   Drawer,
+  Menu,
+  Link as MenuLink,
   Stack,
   styled,
   Switch,
 } from "@mui/material";
 import bgImg from "../../../public/bgimge.jpg";
-import { Menu, Link as MenuLink } from "@mui/material";
+
 import React from "react";
 export const AppBarStyle = styled(AppBar)(({ theme }) => ({
   background: `${theme.palette.mode === "light" && "#fff !important"}`,
@@ -29,7 +31,7 @@ export const TopBarButton = styled(Button)(({ theme, formmobilemenu }) => ({
   padding: formmobilemenu === "true" ? "7px 5px" : "7px 12px",
   color: theme.palette.neutral[100],
 }));
-export const CustomSwitch = styled(Switch)(({ theme,noimage }) => ({
+export const CustomSwitch = styled(Switch)(({ theme, noimage }) => ({
   width: 40,
   height: 20,
   padding: 0,
@@ -38,12 +40,15 @@ export const CustomSwitch = styled(Switch)(({ theme,noimage }) => ({
     margin: 1,
     transitionDuration: "300ms",
     "&.Mui-checked": {
-      transform: "translateX(20px)",
+      transform: "translateX(20px)rotate(360deg)",
       color: "#fff",
       "& .MuiSwitch-thumb:before": {
-        backgroundImage:noimage==='true' ? null : `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="15" width="15" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
-          theme.palette.primary.main
-        )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
+        backgroundImage:
+          noimage === "true"
+            ? null
+            : `url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" height="15" width="15" viewBox="0 0 20 20"><path fill="${encodeURIComponent(
+                theme.palette.primary.main
+              )}" d="M9.305 1.667V3.75h1.389V1.667h-1.39zm-4.707 1.95l-.982.982L5.09 6.072l.982-.982-1.473-1.473zm10.802 0L13.927 5.09l.982.982 1.473-1.473-.982-.982zM10 5.139a4.872 4.872 0 00-4.862 4.86A4.872 4.872 0 0010 14.862 4.872 4.872 0 0014.86 10 4.872 4.872 0 0010 5.139zm0 1.389A3.462 3.462 0 0113.471 10a3.462 3.462 0 01-3.473 3.472A3.462 3.462 0 016.527 10 3.462 3.462 0 0110 6.528zM1.665 9.305v1.39h2.083v-1.39H1.666zm14.583 0v1.39h2.084v-1.39h-2.084zM5.09 13.928L3.616 15.4l.982.982 1.473-1.473-.982-.982zm9.82 0l-.982.982 1.473 1.473.982-.982-1.473-1.473zM9.305 16.25v2.083h1.389V16.25h-1.39z"/></svg>')`,
       },
       "& + .MuiSwitch-track": {
         backgroundColor:
@@ -151,7 +156,6 @@ export const NavLinkStyle = styled(Stack)(({ theme, language_direction }) => ({
   },
 }));
 export const SignInButton = styled(Button)(({ theme }) => ({
-  maxWidth: "150px",
   width: "100%",
   color: theme.palette.neutral[100],
   backgroundColor: theme.palette.primary.main,
@@ -175,30 +179,34 @@ export const ButtonContainer = styled("div")(({ theme }) => ({
 }));
 export const CustomDrawer = styled(Drawer)(({ theme, router }) => ({
   "& .MuiDrawer-paper": {
-    top: "60px",
-    borderBottomRightRadius: "10px",
-    borderBottomLeftRadius: "10px",
-    marginLeft: router.pathname==='/' && '24px',
-    marginRight: router.pathname==='/' && '24px',
-    [theme.breakpoints.down('sm')]:{
-      marginLeft: router.pathname==='/' && '16px',
-      marginRight: router.pathname==='/' && '16px',
-    }
+    top: "56px",
+    width: "80%",
+    height: "80vh",
+
+    // marginLeft: router.pathname === "/" && "24px",
+    // marginRight: router.pathname === "/" && "24px",
+    // [theme.breakpoints.down("sm")]: {
+    //   marginLeft: router.pathname === "/" && "16px",
+    //   marginRight: router.pathname === "/" && "16px",
+    // },
   },
 }));
 export const CustomBottomNavigationAction = styled(BottomNavigationAction)(
   ({ theme }) => ({
     color: theme.palette.neutral[1000],
     minWidth: "60px",
+    fontSize: "10px",
+    padding: "0px 0px",
+
     "&.Mui-selected": {
       color: theme.palette.primary.main,
     },
-    "& .MuiBottomNavigationAction-label" :{
-      overflow: 'hidden',
-      textOverflow: 'ellipsis',
-      display: '-webkit-box',
-      WebkitLineClamp: '1',
-      WebkitBoxOrient: 'vertical',
-    }
+    // "& .MuiBottomNavigationAction-label": {
+    //   overflow: "hidden",
+    //   textOverflow: "ellipsis",
+    //   display: "-webkit-box",
+    //   WebkitLineClamp: "1",
+    //   WebkitBoxOrient: "vertical",
+    // },
   })
 );

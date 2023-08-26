@@ -1,34 +1,46 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
 import SimpleBar from "simplebar-react";
 import CartContent from "./CartContent";
-import { Box } from "@mui/system";
+import { Stack } from "@mui/system";
+import cartImage from "./assets/cartImage.png";
+import CustomImageContainer from "../CustomImageContainer";
+import "simplebar-react/dist/simplebar.min.css";
+import { getAmountWithSign } from "../../helper-functions/CardHelpers";
+import { cartItemTotalDiscount } from "../../utils/CustomFunctions";
 
 const CartContents = (props) => {
   const { cartList, imageBaseUrl } = props;
   const { t } = useTranslation();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
-
+  const discountContent = t("You have Saved");
   return (
     <CustomStackFullWidth
       justifyContent="flex-start"
       sx={{ height: "100%" }}
       alignItems="center"
-      mt="1rem"
+      mt=".7rem"
     >
-      <Typography variant="subtitle1">
-        <span style={{ color: theme.palette.primary.main, fontWeight: "bold" }}>
-          {cartList?.length}
-        </span>{" "}
-        {t("items in your cart")}
-      </Typography>
+      <Stack direction="row" spacing={1} alignItems="center" marginBottom="5px">
+        <CustomImageContainer
+          src={cartImage.src}
+          width="16px"
+          height="16px"
+          objectfit="cover"
+        />
+        <Typography color={theme.palette.primary.main} fontSize="12px">
+          {`${discountContent} ${getAmountWithSign(
+            cartItemTotalDiscount(cartList)
+          )}`}
+        </Typography>
+      </Stack>
+
       <SimpleBar
         style={{
-          height: isSmall ? "68vh" : "70vh",
+          maxHeight: "60vh",
           width: "100%",
         }}
       >

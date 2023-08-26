@@ -1,3 +1,5 @@
+import * as theme from "@mui/system";
+
 export const baseThemeOptions = {
   breakpoints: {
     values: {

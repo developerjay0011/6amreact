@@ -6,6 +6,7 @@ import createEmotionCache from "../src/utils/create-emotion-cache";
 import {store} from "../src/redux/store";
 import {ThemeProvider} from "@mui/material/styles";
 import {createTheme} from "../src/theme";
+
 import CssBaseline from "@mui/material/CssBaseline";
 import {RTL} from "../src/components/rtl";
 import {Toaster} from "react-hot-toast";
@@ -20,12 +21,12 @@ import {persistStore} from "redux-persist";
 import DynamicFavicon from "../src/components/favicon/DynamicFavicon";
 import Head from "next/head";
 import {useTranslation} from "react-i18next";
+import {PersistGate} from "redux-persist/integration/react";
 
 Router.events.on("routeChangeStart", nProgress.start);
 Router.events.on("routeChangeError", nProgress.done);
 Router.events.on("routeChangeComplete", nProgress.done);
 const clientSideEmotionCache = createEmotionCache();
-
 function MyApp(props) {
     const {Component, emotionCache = clientSideEmotionCache, pageProps} = props;
     const getLayout = Component.getLayout ?? ((page) => page);
@@ -46,6 +47,7 @@ function MyApp(props) {
             <CacheProvider value={emotionCache}>
                 <QueryClientProvider client={queryClient}>
                     <ReduxProvider store={store}>
+                      {/*<PersistGate loading={null} persistor={persistor}>*/}
                         <SettingsProvider>
                             <SettingsConsumer>
                                 {(value) => (
@@ -69,6 +71,7 @@ function MyApp(props) {
                                 )}
                             </SettingsConsumer>
                         </SettingsProvider>
+                      {/*</PersistGate>*/}
                     </ReduxProvider>
                     <ReactQueryDevtools initialIsOpen={false} position="bottom-right"/>
                 </QueryClientProvider>

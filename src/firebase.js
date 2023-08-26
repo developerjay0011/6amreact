@@ -15,14 +15,15 @@ const firebaseConfig = {
   appId: "1:436179974467:web:eec622a489d3ec179617f6",
   measurementId: "G-GMTML8YLCP"
 };
-const firebaseApp = !getApps().length ? initializeApp(firebaseConfig) : getApp()
+const firebaseApp = !getApps().length
+  ? initializeApp(firebaseConfig)
+  : getApp();
 const messaging = (async () => {
   try {
     const isSupportedBrowser = await isSupported();
     if (isSupportedBrowser) {
       return getMessaging(firebaseApp);
     }
-
     return null;
   } catch (err) {
     return null;
@@ -31,8 +32,7 @@ const messaging = (async () => {
 
 export const fetchToken = async (setTokenFound, setFcmToken) => {
   return getToken(await messaging, {
-    vapidKey:
-        "",
+    vapidKey: "",
   })
     .then((currentToken) => {
       if (currentToken) {
@@ -48,6 +48,7 @@ export const fetchToken = async (setTokenFound, setFcmToken) => {
       }
     })
     .catch((err) => {
+      console.error(err);
       // catch error while creating client token
     });
 };

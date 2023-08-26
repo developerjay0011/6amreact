@@ -12,6 +12,8 @@ import GetLocationFrom from "./GetLocationFrom";
 import MapModal from "../../Map/MapModal";
 import { useSelector } from "react-redux";
 import CustomPhoneInput from "../../custom-component/CustomPhoneInput";
+import { getLanguage } from "../../../helper-functions/getLanguage";
+import { getToken } from "../../../helper-functions/getToken";
 const SenderInfoForm = ({
   addAddressFormik,
   senderNameHandler,
@@ -63,7 +65,8 @@ const SenderInfoForm = ({
       senderOptionalAddress?.house ? senderOptionalAddress?.house : ""
     );
   }, [senderOptionalAddress]);
-
+  const lanDirection = getLanguage() ? getLanguage() : "ltr";
+  console.log("value", addAddressFormik.values.senderPhone);
   return (
     <CustomStackFullWidth height="100%">
       <Card sx={{ padding: "1.2rem", height: "100%" }}>
@@ -71,7 +74,7 @@ const SenderInfoForm = ({
           <Stack align="center" width="100%">
             <Typography variant="h6">{t("Sender Information")}</Typography>
           </Stack>
-          <CustomStackFullWidth alignItems="center" spacing={3}>
+          <CustomStackFullWidth alignItems="center" spacing={2}>
             <CustomStackFullWidth alignItems="center">
               <CustomTextFieldWithFormik
                 required="true"
@@ -85,16 +88,27 @@ const SenderInfoForm = ({
               />
             </CustomStackFullWidth>
             <CustomStackFullWidth alignItems="center">
-              <CustomTextFieldWithFormik
-                required="true"
-                type="number"
-                label={t("Sender Phone")}
+              <CustomPhoneInput
+                value={addAddressFormik.values.senderPhone}
+                onHandleChange={senderPhoneHandler}
+                initCountry={configData?.country}
                 touched={addAddressFormik.touched.senderPhone}
                 errors={addAddressFormik.errors.senderPhone}
-                fieldProps={addAddressFormik.getFieldProps("senderPhone")}
-                onChangeHandler={senderPhoneHandler}
-                value={addAddressFormik.values.senderPhone}
+                rtlChange="true"
+                lanDirection={lanDirection}
+                height="45px"
+                borderRadius="8px"
               />
+              {/*<CustomTextFieldWithFormik*/}
+              {/*  required="true"*/}
+              {/*  type="number"*/}
+              {/*  label={t("Sender Phone")}*/}
+              {/*  touched={addAddressFormik.touched.senderPhone}*/}
+              {/*  errors={addAddressFormik.errors.senderPhone}*/}
+              {/*  fieldProps={addAddressFormik.getFieldProps("senderPhone")}*/}
+              {/*  onChangeHandler={senderPhoneHandler}*/}
+              {/*  value={addAddressFormik.values.senderPhone}*/}
+              {/*/>*/}
             </CustomStackFullWidth>
             <CustomStackFullWidth
               direction="row"
@@ -109,7 +123,10 @@ const SenderInfoForm = ({
                 direction="row"
               >
                 <Button onClick={handleOpen}>
-                  <Typography color={theme.palette.primary.main}>
+                  <Typography
+                    color={theme.palette.primary.main}
+                    fontSize="12px"
+                  >
                     {t("Set from map")}
                   </Typography>
                   <RoomIcon
@@ -130,49 +147,52 @@ const SenderInfoForm = ({
                 setCurrentLactionValue={setCurrentLactionValue}
               />
             </CustomStackFullWidth>
-            <CustomStackFullWidth>
-              <Card sx={{ padding: "1rem" }} elevation={9}>
-                <SaveAddress
-                  handleLocation={handleLocation}
-                  configData={configData}
-                  setSenderFormattedAddress={setSenderFormattedAddress}
-                  setSenderLocation={setSenderLocation}
-                  setSenderOptionalAddress={setSenderOptionalAddress}
-                  sender="true"
-                />
-              </Card>
-            </CustomStackFullWidth>
-            <CustomStackFullWidth>
-              <CustomTextFieldWithFormik
-                type="text"
-                label={t("Street number")}
-                touched={addAddressFormik.touched.senderRoad}
-                errors={addAddressFormik.errors.senderRoad}
-                fieldProps={addAddressFormik.getFieldProps("senderRoad")}
-                onChangeHandler={senderRoadHandler}
-                value={addAddressFormik.values.senderRoad}
-              />
-            </CustomStackFullWidth>
-            <CustomStackFullWidth direction="row" spacing={1.3}>
-              <CustomTextFieldWithFormik
-                type="text"
-                label={t("House no.")}
-                touched={addAddressFormik.touched.senderHouse}
-                errors={addAddressFormik.errors.senderHouse}
-                fieldProps={addAddressFormik.getFieldProps("senderHouse")}
-                onChangeHandler={senderHouseHandler}
-                value={addAddressFormik.values.senderHouse}
-              />
-              <CustomTextFieldWithFormik
-                type="text"
-                label={t("Floor no.")}
-                touched={addAddressFormik.touched.senderFloor}
-                errors={addAddressFormik.errors.senderFloor}
-                fieldProps={addAddressFormik.getFieldProps("senderFloor")}
-                onChangeHandler={senderFloorHandler}
-                value={addAddressFormik.values.senderFloor}
-              />
-            </CustomStackFullWidth>
+            {getToken() && (
+              <CustomStackFullWidth>
+                <Card sx={{ padding: ".5rem" }} elevation={9}>
+                  <SaveAddress
+                    handleLocation={handleLocation}
+                    configData={configData}
+                    setSenderFormattedAddress={setSenderFormattedAddress}
+                    setSenderLocation={setSenderLocation}
+                    setSenderOptionalAddress={setSenderOptionalAddress}
+                    sender="true"
+                  />
+                </Card>
+              </CustomStackFullWidth>
+            )}
+
+            {/*<CustomStackFullWidth>*/}
+            {/*  <CustomTextFieldWithFormik*/}
+            {/*    type="text"*/}
+            {/*    label={t("Street number")}*/}
+            {/*    touched={addAddressFormik.touched.senderRoad}*/}
+            {/*    errors={addAddressFormik.errors.senderRoad}*/}
+            {/*    fieldProps={addAddressFormik.getFieldProps("senderRoad")}*/}
+            {/*    onChangeHandler={senderRoadHandler}*/}
+            {/*    value={addAddressFormik.values.senderRoad}*/}
+            {/*  />*/}
+            {/*</CustomStackFullWidth>*/}
+            {/*<CustomStackFullWidth direction="row" spacing={1.3}>*/}
+            {/*  <CustomTextFieldWithFormik*/}
+            {/*    type="text"*/}
+            {/*    label={t("House no.")}*/}
+            {/*    touched={addAddressFormik.touched.senderHouse}*/}
+            {/*    errors={addAddressFormik.errors.senderHouse}*/}
+            {/*    fieldProps={addAddressFormik.getFieldProps("senderHouse")}*/}
+            {/*    onChangeHandler={senderHouseHandler}*/}
+            {/*    value={addAddressFormik.values.senderHouse}*/}
+            {/*  />*/}
+            {/*  <CustomTextFieldWithFormik*/}
+            {/*    type="text"*/}
+            {/*    label={t("Floor no.")}*/}
+            {/*    touched={addAddressFormik.touched.senderFloor}*/}
+            {/*    errors={addAddressFormik.errors.senderFloor}*/}
+            {/*    fieldProps={addAddressFormik.getFieldProps("senderFloor")}*/}
+            {/*    onChangeHandler={senderFloorHandler}*/}
+            {/*    value={addAddressFormik.values.senderFloor}*/}
+            {/*  />*/}
+            {/*</CustomStackFullWidth>*/}
           </CustomStackFullWidth>
         </CustomStackFullWidth>
       </Card>

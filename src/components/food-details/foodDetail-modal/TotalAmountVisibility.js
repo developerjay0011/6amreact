@@ -30,7 +30,6 @@ const TotalAmountVisibility = (props) => {
     <Stack direction="row" alignItems="center" spacing={0.5}>
       <FoodTitleTypography
         gutterBottom
-        variant="h6"
         component="h6"
         sx={{
           margin: "0",
@@ -38,45 +37,46 @@ const TotalAmountVisibility = (props) => {
           justifyContent: "flex-start",
           padding: "0",
           textAlign: "left",
+          fontSize: "16px",
+          fontWeight: "500",
         }}
       >
         {t("Total Amount")} :
+        <Box
+          component="span"
+          sx={{
+            color: (theme) => theme.palette.primary.main,
+          }}
+        >
+          {modalData.length > 0 &&
+            getAmountWithSign(
+              handleTotalAmountWithAddons(
+                getDiscountedAmount(
+                  totalPrice,
+                  productDiscount,
+                  productDiscountType,
+                  productRestaurantDiscount,
+                  productQuantity
+                ),
+                selectedAddOns
+              )
+            )}
+        </Box>
       </FoodTitleTypography>
-        <Stack direction='row' alignItems='center' spacing={.5}>
-            <FoodTitleTypography
-                variant="h6"
-                component="h6"
-                color='primary.main'
-            >
-                {modalData.length > 0 &&
-                    getAmountWithSign(
-                        handleTotalAmountWithAddons(
-                            getDiscountedAmount(
-                                totalPrice,
-                                productDiscount,
-                                productDiscountType,
-                                productRestaurantDiscount,
-                                productQuantity
-                            ),
-                            selectedAddOns
-                        )
-                    )}
-            </FoodTitleTypography>
-            {modalData.length > 0 &&
-            (productDiscount || productRestaurantDiscount === 1) ? (
-                <CustomTypographyGray
-                    nodefaultfont="true"
-                    textdecoration="line-through"
-                >
-                    (
-                    {getAmountWithSign(
-                        handleTotalAmountWithAddons(totalPrice, selectedAddOns)
-                    )}
-                    )
-                </CustomTypographyGray>
-            ) : null}
 
-        </Stack>
+      {modalData.length > 0 &&
+      (productDiscount || productRestaurantDiscount === 1) ? (
+        <CustomTypographyGray
+          nodefaultfont="true"
+          textdecoration="line-through"
+        >
+          (
+          {getAmountWithSign(
+            handleTotalAmountWithAddons(totalPrice, selectedAddOns)
+          )}
+          )
+        </CustomTypographyGray>
+      ) : null}
     </Stack>
   );
 };

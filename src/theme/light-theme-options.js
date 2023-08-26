@@ -20,6 +20,11 @@ const background = {
   custom: "#f1f2f5",
   custom2: "#FFFFFF",
   custom3: "#F6F7FB",
+  custom4: "#ffffff",
+  footer1: "#9f9f9f1a",
+  footer2: "#9f9f9f0d",
+  custom5: "#F4F6F8",
+  custom6: "#FCFCFD",
 };
 
 const divider = "#E6E8F0";
@@ -33,11 +38,18 @@ const primary = {
   contrastText: "#FFFFFF",
   customType1: "#0DCB72",
   customType2: "#3BB77E",
+  customType3: "#29CE00",
   overLay: "#000000",
   lite: "rgba(3, 157, 85, 0.1)",
+  icon: "#039D55",
 };
-
-const horizontalCardBG = "#E4FFF3"
+const moduleTheme = {
+  pharmacy: "#039D55",
+  ecommerce: "#039D55",
+  food: "#039D55",
+  parcel: "#039D55",
+};
+const horizontalCardBG = "#E4FFF3";
 
 const secondary = {
   main: "#10B981",
@@ -59,14 +71,19 @@ const info = {
   dark: "#0B79D0",
   lite: "#DBF5FF",
   contrastText: "#FFFFFF",
+  contrastText1: "#F5F6F8",
+  blue: "#0D6EFD",
+  custom1: "#31C0F5",
 };
 
 const warning = {
   main: "#FFB020",
   light: "#FFF8D5",
   lite: "#FFBD8B",
+  liter: "#FFF8F2",
   dark: "#FE961C",
   contrastText: "#FFFFFF",
+  new: "#FFC817",
 };
 
 const error = {
@@ -74,6 +91,7 @@ const error = {
   light: "#DA6868",
   dark: "#922E2E",
   contrastText: "#FFFFFF",
+  deepLight: "#FF725E",
 };
 
 const text = {
@@ -88,14 +106,16 @@ const footer = {
   inputButton: "#BBFFDF",
   inputButtonHover: "#6dcfa6",
   bottom: "rgba(0, 98, 52, 0.3)",
+  foodBottom: "#686B78",
   appDownloadButtonBg: "#1A1A1A",
   appDownloadButtonBgGray: "#3E594D",
   appDownloadButtonBgHover: "#4f4f4f",
+  foodFooterBg: "#414141",
 };
 const customColor = {
   textGray: "#9c9c9c",
   textGrayDeep: "#787676",
-  buyButton: "#006371",
+  buyButton: "#F9E091",
 };
 const whiteContainer = {
   main: "#ffffff",
@@ -105,6 +125,9 @@ const pink = {
 };
 const foodCardColor = "#FFF6EF";
 const paperBoxShadow = "#E5EAF1";
+const roundStackOne = "rgba(255, 255, 255, 0.04)";
+const roundStackTwo = "rgba(255, 255, 255, 0.06)";
+
 export const lightThemeOptions = {
   components: {
     MuiAvatar: {
@@ -229,6 +252,9 @@ export const lightThemeOptions = {
     pink,
     paperBoxShadow,
     foodCardColor,
+    moduleTheme,
+    roundStackOne,
+    roundStackTwo,
   },
   shadows: [
     "none",

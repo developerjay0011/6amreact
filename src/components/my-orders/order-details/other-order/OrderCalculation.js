@@ -1,11 +1,18 @@
 import React from "react";
 import PropTypes from "prop-types";
 import { CustomStackFullWidth } from "../../../../styled-components/CustomStyles.style";
-import { Divider, Typography } from "@mui/material";
+import { alpha, Divider, styled, Typography } from "@mui/material";
 import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
 import { useSelector } from "react-redux";
-
+export const OrderSummaryCalculationCard = styled(CustomStackFullWidth)(
+  ({ theme }) => ({
+    paddingInline: "20px",
+    paddingBlock: "25px",
+    backgroundColor: theme.palette.background.custom6,
+    borderRadius: "10px",
+  })
+);
 const getItemsPrice = (items) => {
   const productPrice = items.reduce(
     (total, product) => product.price * product.quantity + total,
@@ -40,16 +47,20 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
       trackOrderData?.order_amount - trackOrderData?.total_tax_amount
     );
   };
+
+  const due_amount =
+    trackOrderData?.order_amount - trackOrderData?.partially_paid_amount;
   return (
-    <CustomStackFullWidth spacing={1}>
+    <OrderSummaryCalculationCard spacing={1.5}>
+      <Typography fontWeight="500">{t("Summary")}</Typography>
       <CustomStackFullWidth
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         spacing={2}
       >
-        <Typography fontWeight="bold">{t("Items Price")}</Typography>
-        <Typography fontWeight="bold">
+        <Typography fontSize="14px">{t("Items Price")}</Typography>
+        <Typography fontSize="14px">
           {data && data?.length > 0 && getAmountWithSign(getItemsPrice(data))}
         </Typography>
       </CustomStackFullWidth>
@@ -60,8 +71,8 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           justifyContent="space-between"
           spacing={2}
         >
-          <Typography fontWeight="bold"> {t("Addons Price")}</Typography>
-          <Typography fontWeight="bold">
+          <Typography fontSize="14px"> {t("Addons Price")}</Typography>
+          <Typography fontSize="14px">
             {data &&
               data?.length > 0 &&
               getAmountWithSign(getAddOnsPrice(data))}
@@ -69,15 +80,14 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
         </CustomStackFullWidth>
       )}
 
-      <Divider />
       <CustomStackFullWidth
         direction="row"
         alignItems="center"
         justifyContent="space-between"
         spacing={2}
       >
-        <Typography fontWeight="bold"> {t("Subtotal")}</Typography>
-        <Typography fontWeight="bold">
+        <Typography fontSize="14px"> {t("Subtotal")}</Typography>
+        <Typography fontSize="14px">
           {data &&
             data?.length > 0 &&
             getAmountWithSign(getSubTotalPrice(data))}
@@ -89,8 +99,8 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
         justifyContent="space-between"
         spacing={2}
       >
-        <Typography fontWeight="bold"> {t("Discount")}</Typography>
-        <Typography fontWeight="bold">
+        <Typography fontSize="14px"> {t("Discount")}</Typography>
+        <Typography fontSize="14px">
           -
           {trackOrderData &&
           getAmountWithSign(trackOrderData?.store_discount_amount)
@@ -105,8 +115,8 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           justifyContent="space-between"
           spacing={2}
         >
-          <Typography fontWeight="bold"> {t("Coupon Discount")}</Typography>
-          <Typography fontWeight="bold">
+          <Typography fontSize="14px"> {t("Coupon Discount")}</Typography>
+          <Typography fontSize="14px">
             -
             {trackOrderData &&
               getAmountWithSign(trackOrderData?.coupon_discount_amount)}
@@ -120,12 +130,12 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           justifyContent="space-between"
           spacing={2}
         >
-          <Typography fontWeight="bold">
+          <Typography fontSize="14px">
             {" "}
             {t("VAT")}({getRestaurantValue(data, "tax")}
             %)
           </Typography>
-          <Typography fontWeight="bold">
+          <Typography fontSize="14px">
             {trackOrderData &&
               getAmountWithSign(trackOrderData?.total_tax_amount)}
           </Typography>
@@ -139,12 +149,27 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           justifyContent="space-between"
           spacing={2}
         >
-          <Typography fontWeight="bold">{t("Delivery Man Tips")}</Typography>
-          <Typography fontWeight="bold">
+          <Typography fontSize="14px">{t("Delivery Man Tips")}</Typography>
+          <Typography fontSize="14px">
             {trackOrderData && getAmountWithSign(trackOrderData?.dm_tips)}
           </Typography>
         </CustomStackFullWidth>
       )}
+      {configData?.add_fund_status === 1 ? (
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography fontSize="14px">
+            {configData?.additional_charge_name}
+          </Typography>
+          <Typography fontSize="14px">
+            {trackOrderData && getAmountWithSign(configData?.additional_charge)}
+          </Typography>
+        </CustomStackFullWidth>
+      ) : null}
 
       <CustomStackFullWidth
         direction="row"
@@ -152,8 +177,8 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
         justifyContent="space-between"
         spacing={2}
       >
-        <Typography fontWeight="bold">{t("Delivery fee")}</Typography>
-        <Typography fontWeight="bold">
+        <Typography fontSize="14px">{t("Delivery fee")}</Typography>
+        <Typography fontSize="14px">
           {trackOrderData && getAmountWithSign(trackOrderData?.delivery_charge)}
         </Typography>
       </CustomStackFullWidth>
@@ -161,7 +186,7 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
         width="100%"
         sx={{
           mt: "20px",
-          borderBottom: (theme) => `2px solid ${theme.palette.neutral[300]}`,
+          borderBottom: (theme) => `1px dotted ${theme.palette.neutral[400]}`,
         }}
       ></Stack>
       <CustomStackFullWidth
@@ -174,12 +199,46 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           {t("Total")}
         </Typography>
         <Typography fontWeight="bold">
-          {trackOrderData && configData?.tax_included === 1
-            ? getAmountWithSign(trackOrderData?.order_amount)
-            : handleExcludedVatTotalAmount()}
+          {getAmountWithSign(trackOrderData?.order_amount)}
         </Typography>
       </CustomStackFullWidth>
-    </CustomStackFullWidth>
+      {trackOrderData?.partially_paid_amount ? (
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography fontSize="14px" textTransform="capitalize">
+            {t("partially paid amount")}
+          </Typography>
+          <Typography fontSize="14px">
+            -{" "}
+            {trackOrderData &&
+              getAmountWithSign(trackOrderData?.partially_paid_amount)}
+          </Typography>
+        </CustomStackFullWidth>
+      ) : null}
+      {trackOrderData?.partially_paid_amount ? (
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
+        >
+          <Typography
+            fontSize="14px"
+            textTransform="capitalize"
+            fontWeight="bold"
+          >
+            {t("due amount")}
+          </Typography>
+          <Typography fontSize="14px" fontWeight="bold">
+            {trackOrderData && getAmountWithSign(due_amount)}
+          </Typography>
+        </CustomStackFullWidth>
+      ) : null}
+    </OrderSummaryCalculationCard>
   );
 };
 

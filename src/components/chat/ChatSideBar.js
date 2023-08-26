@@ -3,6 +3,7 @@ import { Typography } from "@mui/material";
 import useMediaQuery from "@mui/material/useMediaQuery";
 import { ChatSidebarDesktop, ChatSidebarMobile } from "./Chat.style";
 import ChatContent from "./ChatContent";
+import { CustomPaperBigCard } from "../../styled-components/CustomStyles.style";
 
 const ChatSideBar = ({
   chatFrom,
@@ -19,6 +20,10 @@ const ChatSideBar = ({
   setSearchValue,
   searchValue,
   handleSearch,
+  userType,
+  setUserType,
+  setChannelId,
+  setIsSidebarOpen,
 }) => {
   const mdUp = useMediaQuery((theme) => theme.breakpoints.up("md"));
 
@@ -30,6 +35,7 @@ const ChatSideBar = ({
         open={Boolean("true")}
       >
         <ChatContent
+          setIsSidebarOpen={setIsSidebarOpen}
           isFetched={isFetched}
           handleToggleSidebar={handleToggleSidebar}
           channelList={channelList}
@@ -42,31 +48,39 @@ const ChatSideBar = ({
           searchSubmitHandler={searchSubmitHandler}
           channelLoading={channelLoading}
           selectedId={selectedId}
+          userType={userType}
+          setUserType={setUserType}
+          setChannelId={setChannelId}
         />
       </ChatSidebarDesktop>
     );
   }
   return (
-    <ChatSidebarMobile
-      anchor="left"
-      variant="temporary"
-      open={chatFrom === "true" ? !open : open}
-    >
-      {" "}
-      <ChatContent
-        isFetched={isFetched}
-        handleToggleSidebar={handleToggleSidebar}
-        channelList={channelList}
-        handleChannelOnClick={handleChannelOnClick}
-        setSearchValue={setSearchValue}
-        searchValue={searchValue}
-        handleSearch={handleSearch}
-        isLoading={isLoading}
-        handleReset={handleReset}
-        searchSubmitHandler={searchSubmitHandler}
-        selectedId={selectedId}
-      />
-    </ChatSidebarMobile>
+    <>
+      {open && (
+        <CustomPaperBigCard padding="14px" sx={{ minHeight: "70vh" }}>
+          {" "}
+          <ChatContent
+            setIsSidebarOpen={setIsSidebarOpen}
+            isFetched={isFetched}
+            handleToggleSidebar={handleToggleSidebar}
+            channelList={channelList}
+            handleChannelOnClick={handleChannelOnClick}
+            setSearchValue={setSearchValue}
+            searchValue={searchValue}
+            handleSearch={handleSearch}
+            isLoading={isLoading}
+            handleReset={handleReset}
+            searchSubmitHandler={searchSubmitHandler}
+            channelLoading={channelLoading}
+            selectedId={selectedId}
+            userType={userType}
+            setUserType={setUserType}
+            setChannelId={setChannelId}
+          />
+        </CustomPaperBigCard>
+      )}
+    </>
   );
 };
 export default ChatSideBar;

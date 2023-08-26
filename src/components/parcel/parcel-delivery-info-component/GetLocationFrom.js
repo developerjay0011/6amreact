@@ -16,6 +16,7 @@ const GetLocationForm = ({
   handleLocation,
   testLocation,
   setCurrentLactionValue,
+  toReceiver,
 }) => {
   const [location, setLocation] = useState(undefined);
   const [geoLocationEnable, setGeoLocationEnable] = useState(false);
@@ -147,6 +148,7 @@ const GetLocationForm = ({
         fromparcel={fromparcel}
         currentLocationValue={currentLocationValue}
         testLocation={testLocation}
+        toReceiver={toReceiver}
       />
     </CustomStackFullWidth>
   );

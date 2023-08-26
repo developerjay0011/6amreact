@@ -31,7 +31,13 @@ const ClosedNow = (props) => {
           borderRadius: borderRadius ? borderRadius : "8px",
         }}
       >
-        <Typography align="center" color={theme.palette.neutral[100]}>
+        <Typography
+          align="center"
+          color={theme.palette.neutral[100]}
+          sx={{
+            fontSize: "10px",
+          }}
+        >
           {t("Closed Now")}
         </Typography>
       </Stack>

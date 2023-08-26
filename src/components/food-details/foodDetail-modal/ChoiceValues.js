@@ -71,11 +71,12 @@ export const ChoiceValues = (props) => {
     >
       <FoodTitleTypography
         gutterBottom
-        variant="h6"
         component="h6"
         sx={{
           margin: "5px 0",
           textAlign: "left",
+          fontSize: "14px",
+          fontWeight: "500",
         }}
       >
         {choice.name}{" "}

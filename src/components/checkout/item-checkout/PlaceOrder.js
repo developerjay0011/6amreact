@@ -18,53 +18,52 @@ import {
 import LoadingButton from "@mui/lab/LoadingButton";
 import { CustomTypography } from "../../landing-page/hero-section/HeroSection.style";
 import Link from "next/link";
+import { useTheme } from "@emotion/react";
 
 const PlaceOrder = (props) => {
-  const { placeOrder, orderLoading, zoneData, orderType } = props;
+  const { placeOrder, orderLoading, zoneData } = props;
   const { t } = useTranslation();
+  const theme = useTheme();
   const [checked, setChecked] = useState(false);
   const handleChange = (e) => {
     setChecked(e.target.checked);
   };
+
+  const primaryColor = theme.palette.primary.main;
   return (
-    <CustomPaperBigCard>
-      <CustomStackFullWidth alignItems="center" spacing={2}>
-        <FormGroup>
-          <FormControlLabel
-            control={<Checkbox checked={checked} onChange={handleChange} />}
-            label={
-              <CustomTypography>
-                {t(`I agree that placing the order places me under`)}{" "}
-                <Link
-                  href="/terms-and-conditions"
-                  style={{ textDecoration: "underline" }}
-                >
-                  {t("Terms and Conditions")}
-                </Link>{" "}
-                {t("&")}
-                <Link
-                  href="/privacy-policy"
-                  style={{ textDecoration: "underline" }}
-                >
-                  {" "}
-                  {t("Privacy Policy")}
-                </Link>
-              </CustomTypography>
-            }
-          />
-        </FormGroup>
-        <LoadingButton
-          type="submit"
-          fullWidth
-          variant="contained"
-          onClick={placeOrder}
-          loading={orderLoading}
-          disabled={!checked}
-        >
-          {t("Place Order")}
-        </LoadingButton>
-      </CustomStackFullWidth>
-    </CustomPaperBigCard>
+    <CustomStackFullWidth alignItems="center" spacing={2} mt=".5rem">
+      <FormGroup>
+        <FormControlLabel
+          control={<Checkbox checked={checked} onChange={handleChange} />}
+          label={
+            <CustomTypography fontSize="12px">
+              {t(`I agree that placing the order places me under`)}{" "}
+              <Link
+                href="/terms-and-conditions"
+                style={{ color: primaryColor }}
+              >
+                {t("Terms and Conditions")}
+              </Link>{" "}
+              {t("&")}
+              <Link href="/privacy-policy" style={{ color: primaryColor }}>
+                {" "}
+                {t("Privacy Policy")}
+              </Link>
+            </CustomTypography>
+          }
+        />
+      </FormGroup>
+      <LoadingButton
+        type="submit"
+        fullWidth
+        variant="contained"
+        onClick={placeOrder}
+        loading={orderLoading}
+        disabled={!checked}
+      >
+        {t("Place Order")}
+      </LoadingButton>
+    </CustomStackFullWidth>
   );
 };
 

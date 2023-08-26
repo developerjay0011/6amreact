@@ -1,45 +1,49 @@
-import React, { useEffect, useState } from "react";
+import { useTheme } from "@emotion/react";
+import { Typography, useMediaQuery } from "@mui/material";
 import { useRouter } from "next/router";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { useTranslation } from "react-i18next";
+import { onErrorResponse } from "../../../../api-manage/api-error-response/ErrorResponses";
+import useGetTrackOrderData from "../../../../api-manage/hooks/react-query/order/useGetTrackOrderData";
+import { useStoreRefundRequest } from "../../../../api-manage/hooks/react-query/refund-request/useStoreRefundRequest";
 import {
   CustomPaperBigCard,
   CustomStackFullWidth,
 } from "../../../../styled-components/CustomStyles.style";
-import useGetTrackOrderData from "../../../../api-manage/hooks/react-query/order/useGetTrackOrderData";
+import CustomDivider from "../../../CustomDivider";
+import NoDeliveryManImage from "../../../NoDeliveryManImage";
+import TrackParcelOrderDrawer from "../../../home/module-wise-components/parcel/TrackParcelOrderDrawer";
+import TrackOrder from "../../../track-order";
+import ProfileTab from "../../../user-information/ProfileTab";
 import TopDetails from "../TopDetails";
-import { Button, Grid, Skeleton, Typography } from "@mui/material";
-import { OrderStatusBox, OrderStatusGrid } from "../../myorders.style";
-import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
-import { useTheme } from "@emotion/react";
-import RefundDetails from "./RefundDetails";
-import StoreDetails from "./StoreDetails";
+import {
+  orderDetailsMenuData,
+  orderDetailsMenuDataForParcel,
+} from "../orderDetailsMenuData";
+import DeliveryManInfo from "./DeliveryManInfo";
 import OrderSummery from "./OrderSummery";
-import Link from "next/link";
-import { PrimaryButton } from "../../../Map/map.style";
-import { Box, Stack } from "@mui/system";
-import OrderDetailsBottom from "./OrderDetailsBottom";
-import PaymentUpdate from "./PaymentUpdate";
 import RefundModal from "./RefundModal";
-import PrescriptionOrderSummery from "../prescription-order/PrescriptionOrderSummery";
-import { useStoreRefundRequest } from "../../../../api-manage/hooks/react-query/refund-request/useStoreRefundRequest";
-import { toast } from "react-hot-toast";
-import { onErrorResponse } from "../../../../api-manage/api-error-response/ErrorResponses";
-import SingleOrderAttachment from "../singleOrderAttachment";
-import {getCurrentModuleType} from "../../../../helper-functions/getCurrentModuleType";
+import StoreDetails from "./StoreDetails";
 
 const OtherOrder = (props) => {
-  const { configData, data, refetch } = props;
+  const { configData, data, refetch, id, dataIsLoading } = props;
   const [openModal, setOpenModal] = useState(false);
+  const [currentTab, setCurrentTab] = useState(orderDetailsMenuData[0]?.name);
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const router = useRouter();
+  const { tab } = router.query;
   const { t } = useTranslation();
-  const { id } = router.query;
   const theme = useTheme();
-  const { refetch: refetchTrackOrder, data: trackOrderData } =
-    useGetTrackOrderData(id);
+  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const {
+    refetch: refetchTrackOrder,
+    data: trackOrderData,
+    isLoading,
+  } = useGetTrackOrderData(id);
   useEffect(() => {
     refetchTrackOrder();
   }, []);
-
 
   const { mutate, isLoading: refundIsLoading } = useStoreRefundRequest();
   const formSubmitHandler = (values) => {
@@ -58,294 +62,147 @@ const OtherOrder = (props) => {
       onError: onErrorResponse,
     });
   };
-  return (
-    <CustomStackFullWidth
-      alignItems="center"
-      justifyContent="center"
-      mb="2rem"
-      spacing={2}
-    >
-      <TopDetails data={data} trackData={trackOrderData} />
-      <CustomPaperBigCard>
-        <Grid container item md={12} lg={12} xs={12} spacing={3}>
-          <Grid item md={7}>
-            <OrderStatusBox>
-              <OrderStatusGrid container md={12} xs={12}>
-                <Grid item md={5} xs={12}>
-                  <Typography sx={{ fontWeight: "600" }} align="left">
-                    {t("Payment method")}
-                  </Typography>
-                  {trackOrderData ? (
-                    <Typography
-                      sx={{
-                        fontWeight: "700",
-                        color: (theme) => theme.palette.primary.main,
-                        textTransform: "capitalize",
-                      }}
-                      align="left"
-                    >
-                      {trackOrderData &&
-                        t(trackOrderData?.payment_method.replaceAll("_", " "))}
-                    </Typography>
-                  ) : (
-                    <Skeleton width="100px" variant="text" />
-                  )}
-
-
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography sx={{ fontWeight: "500" }} align="left">
-                      {t("Amount")}:
-                    </Typography>
-                    {trackOrderData ? (
-                      <Typography sx={{ fontWeight: "500" }} align="left">
-                        {trackOrderData &&
-                          getAmountWithSign(trackOrderData?.order_amount)}
-                      </Typography>
-                    ) : (
-                      <Skeleton width="100px" variant="text" />
-                    )}
-                  </Stack>
-                </Grid>
-                <Grid item md={7} xs={12}>
-                  <Stack direction="row" alignItems="center" spacing={1}>
-                    <Typography sx={{ fontWeight: "500" }} align="left">
-                      {t("Order Status")} :
-                    </Typography>
-                    {trackOrderData ? (
-                      <Typography
-                        component="span"
-                        textTransform="capitalize"
-                        color={theme.palette.info.dark}
-                        align="left"
-                      >
-                        {trackOrderData &&
-                          t(
-                            (trackOrderData?.order_status).replaceAll("_", " ")
-                          )}
-                      </Typography>
-                    ) : (
-                      <Skeleton width="100px" variant="text" />
-                    )}
-                  </Stack>
-                  {trackOrderData &&
-                    trackOrderData?.order_status === "canceled" && (
-                      <>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography sx={{ fontWeight: "500" }} align="left">
-                            {t("Cancelled By")} :
-                          </Typography>
-                          {trackOrderData ? (
-                            <Typography
-                              component="span"
-                              textTransform="capitalize"
-                              color={theme.palette.info.dark}
-                              align="left"
-                            >
-                              {trackOrderData?.canceled_by}
-                            </Typography>
-                          ) : (
-                            <Skeleton width="100px" variant="text" />
-                          )}
-                        </Stack>
-                        <Stack direction="row" alignItems="center" spacing={1}>
-                          <Typography sx={{ fontWeight: "500" }} align="left">
-                            {t("Cancellation Reason")} :
-                          </Typography>
-                          {trackOrderData ? (
-                            <Typography
-                              component="span"
-                              textTransform="capitalize"
-                              color={theme.palette.info.dark}
-                              align="left"
-                            >
-                              {trackOrderData?.cancellation_reason}
-                            </Typography>
-                          ) : (
-                            <Skeleton width="100px" variant="text" />
-                          )}
-                        </Stack>
-                      </>
-                    )}
-                  <Typography sx={{ fontWeight: "500" }} align="left">
-                    {t("Payment Status")} :{" "}
-                    {trackOrderData &&
-                    trackOrderData?.payment_status === "paid" ? (
-                      <span
-                        style={{
-                          color: theme.palette.success.light,
-                        }}
-                      >
-                        {t("Paid")}
-                      </span>
-                    ) : (
-                      <span
-                        style={{
-                          color: "red",
-                        }}
-                      >
-                        {t("Unpaid")}
-                      </span>
-                    )}
-                  </Typography>
-                </Grid>
-                <Grid item  xs={12}>
-                  {
-                      trackOrderData && trackOrderData?.module_type==='food' && trackOrderData?.cutlery &&  <Stack direction="row" alignItems="center" spacing={1}>
-                        <Typography sx={{ fontWeight: "500" }} align="left">
-                          {t("Cutlery")} :
-                        </Typography>
-                        {trackOrderData ? (
-                            <Typography
-                                component="span"
-                                textTransform="capitalize"
-                                align="left"
-                            >
-                              {t('Yes')}
-                            </Typography>
-                        ) : (
-                            <Skeleton width="100px" variant="text" />
-                        )}
-                      </Stack>
-                  }
-                  {
-                      trackOrderData && trackOrderData?.delivery_instruction &&  <Stack direction="row" alignItems="center" spacing={1}>
-                        <Typography sx={{ fontWeight: "500" }} align="left">
-                          {t("Delivery instruction")} :
-                        </Typography>
-                        {trackOrderData ? (
-                            <Typography
-                                component="span"
-                                textTransform="capitalize"
-                                align="left"
-                            >
-                              {t(trackOrderData?.delivery_instruction)}
-                            </Typography>
-                        ) : (
-                            <Skeleton width="100px" variant="text" />
-                        )}
-                      </Stack>
-                  }
-                  {
-                      trackOrderData && trackOrderData?.unavailable_item_note &&  <Stack direction="row" alignItems="center" spacing={1}>
-                        <Typography sx={{ fontWeight: "500" }} align="left">
-                          {t("Unavailable item note")} :
-                        </Typography>
-                        {trackOrderData ? (
-                            <Typography
-                                component="span"
-                                // textTransform="capitalize"
-                                align="left"
-                            >
-                              {t(trackOrderData?.unavailable_item_note)}
-                            </Typography>
-                        ) : (
-                            <Skeleton width="100px" variant="text" />
-                        )}
-                      </Stack>
-                  }
-                </Grid>
-                <RefundDetails
-                  trackOrderData={trackOrderData}
-                  configData={configData}
-                  t={t}
-                />
-                { !data?.prescription_order &&  trackOrderData?.module_type === "pharmacy" &&
-                  trackOrderData?.order_attachment && (
-                    <SingleOrderAttachment
-                      title="Prescription"
-                      attachment={trackOrderData?.order_attachment}
-                      configData={configData}
-                    />
-                  )}
-              </OrderStatusGrid>
-            </OrderStatusBox>
-            {trackOrderData ? (
+  const handleTab = (item) => {
+    if (item.name === "track-order") {
+      if (trackOrderData?.module_type === "parcel") {
+        setSideDrawerOpen(true);
+      } else {
+        setCurrentTab(item?.name);
+      }
+    } else {
+      setCurrentTab(item?.name);
+    }
+  };
+  useEffect(() => {
+    if (tab) {
+      setCurrentTab(tab);
+    }
+  }, [tab]);
+  const activeTabPanel = () => {
+    switch (currentTab) {
+      case "order-summary":
+        return (
+          <OrderSummery
+            trackOrderData={trackOrderData}
+            configData={configData}
+            t={t}
+            data={data}
+            isLoading={isLoading}
+            dataIsLoading={dataIsLoading}
+          />
+        );
+        break;
+      case "seller-info":
+        return (
+          <>
+            {data && data.module_type !== "parcel" && (
               <StoreDetails
-                trackOrderData={trackOrderData}
+                storeData={trackOrderData?.store}
+                configData={configData}
+                t={t}
+              />
+            )}
+          </>
+        );
+        break;
+      case "delivery-man-info":
+        return (
+          <>
+            {trackOrderData?.delivery_man ? (
+              <DeliveryManInfo
+                deliveryManData={trackOrderData?.delivery_man}
                 configData={configData}
                 t={t}
               />
             ) : (
-              <Skeleton variant="text" width="100%" height="250px" />
-            )}
-          </Grid>
-          <Grid item md={5} xs={12}>
-            {data?.prescription_order ? (
-              <PrescriptionOrderSummery
-                data={data}
-                trackOrderData={trackOrderData}
-              />
-            ) : (
-              trackOrderData && (
-                <OrderSummery
-                  trackOrderData={trackOrderData}
-                  configData={configData}
-                  t={t}
-                  data={data}
-                />
-              )
-            )}
-          </Grid>
-        </Grid>
-      </CustomPaperBigCard>
-      {data &&
-        !data?.[0]?.item_campaign_id  &&
-        trackOrderData &&
-        trackOrderData?.order_status === "delivered" && (
-          <CustomPaperBigCard>
-            <Grid container spacing={1}>
-              <Grid
-                item
-                xs={12}
-                sm={12}
-                md={configData?.refund_active_status ? 6 : 12}
+              <CustomStackFullWidth
+                minHeight="20vh"
+                justifyContent="center"
+                alignItems="center"
               >
-                <Link href={`/rate-and-review/${id}`}>
-                  <PrimaryButton variant="contained" sx={{ width: "100%" }}>
-                    {t("Give a review")}
-                  </PrimaryButton>
-                </Link>
-              </Grid>
-              {configData?.refund_active_status && (
-                <Grid item xs={12} sm={12} md={6}>
-                  <Button
-                    variant="outlined"
-                    sx={{
-                      width: "100%",
-                      color: (theme) => theme.palette.primary.main,
-                    }}
-                    onClick={() => setOpenModal(true)}
-                  >
-                    {t("Refund Request")}
-                  </Button>
-                </Grid>
-              )}
-            </Grid>
-          </CustomPaperBigCard>
-        )}
-      {trackOrderData &&
-        (trackOrderData?.order_status === "confirmed" ||
-          trackOrderData?.order_status === "accepted" ||
-          trackOrderData?.order_status === "picked_up" ||
-          trackOrderData?.order_status === "pending" ||
-          trackOrderData?.order_status === "processing" ||
-          trackOrderData?.order_status === "handover") && (
-          <Box sx={{ marginTop: "1rem" }} width="100%">
-            <OrderDetailsBottom
-              id={id}
-              refetchOrderDetails={refetch}
-              refetchTrackData={refetchTrackOrder}
-              trackData={trackOrderData}
-            />
-          </Box>
-        )}
-      {trackOrderData && trackOrderData?.order_status === "failed" && (
-        <PaymentUpdate
-          id={id}
-          refetchOrderDetails={refetch}
-          refetchTrackData={refetchTrackOrder}
-          trackData={trackOrderData}
-        />
+                <NoDeliveryManImage />
+                <Typography> No delivery man assigned </Typography>
+              </CustomStackFullWidth>
+            )}
+          </>
+        );
+        break;
+      case "track-order":
+        return (
+          <TrackOrder
+            trackOrderData={trackOrderData}
+            configData={configData}
+            t={t}
+          />
+        );
+        break;
+      default:
+        break;
+    }
+  };
+
+  return (
+    <CustomStackFullWidth alignItems="center" justifyContent="center" mb="2rem">
+      {isSmall ? (
+        <CustomPaperBigCard padding="14px">
+          <TopDetails
+            data={data}
+            trackData={trackOrderData}
+            currentTab={currentTab}
+            configData={configData}
+            id={id}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            refetchOrderDetails={refetch}
+            refetchTrackData={refetchTrackOrder}
+            dataIsLoading={dataIsLoading}
+          />
+          <CustomDivider border="1px" />
+          <ProfileTab
+            menuData={
+              data && data.module_type === "parcel"
+                ? orderDetailsMenuDataForParcel
+                : orderDetailsMenuData
+            }
+            marginright="20px"
+            fontSize="14px"
+            padding="15px 15px 15px 25px"
+            borderRadius="5px"
+            page={currentTab}
+            handlePage={handleTab}
+          />
+          {trackOrderData && activeTabPanel()}
+        </CustomPaperBigCard>
+      ) : (
+        <>
+          <TopDetails
+            data={data}
+            trackData={trackOrderData}
+            currentTab={currentTab}
+            configData={configData}
+            id={id}
+            openModal={openModal}
+            setOpenModal={setOpenModal}
+            refetchOrderDetails={refetch}
+            refetchTrackData={refetchTrackOrder}
+            dataIsLoading={dataIsLoading}
+          />
+          <CustomDivider />
+          <ProfileTab
+            menuData={
+              data && data.module_type === "parcel"
+                ? orderDetailsMenuDataForParcel
+                : orderDetailsMenuData
+            }
+            marginright="20px"
+            fontSize="14px"
+            padding="15px 15px 15px 25px"
+            borderRadius="5px"
+            page={currentTab}
+            handlePage={handleTab}
+          />
+          {trackOrderData && activeTabPanel()}
+        </>
       )}
       <RefundModal
         open={openModal}
@@ -354,6 +211,14 @@ const OtherOrder = (props) => {
         formSubmit={formSubmitHandler}
         // refundIsLoading={refundIsLoading}
       />
+      {sideDrawerOpen && trackOrderData && (
+        <TrackParcelOrderDrawer
+          orderId={trackOrderData?.id}
+          sideDrawerOpen={sideDrawerOpen}
+          setSideDrawerOpen={setSideDrawerOpen}
+          closeHandler={() => setSideDrawerOpen(false)}
+        />
+      )}
     </CustomStackFullWidth>
   );
 };

@@ -8,11 +8,11 @@ export const CustomDrawerForSideDrawer = styled(Drawer)(({ theme }) => ({
   display: "flex",
 }));
 
-export const SideDrawerWrapper = styled(Box)(({ theme }) => ({
+export const SideDrawerWrapper = styled(Box)(({ theme, maxWidth }) => ({
   backgroundColor: theme.palette.neutral[100],
-  width: "17rem",
-  [theme.breakpoints.up("md")]: {
-    width: "26rem",
+  width: "maxWidth",
+  [theme.breakpoints.down("md")]: {
+    width: "100%",
   },
 }));
 export const CustomAppbarFilter = styled(MuiAppBar)(({ theme, loyalty }) => ({

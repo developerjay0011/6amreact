@@ -21,6 +21,7 @@ const OrderSuccessPage = ({ configData }) => {
           mb="3rem"
           alignItems="center"
           justifyContent="center"
+          mt="1rem"
         >
           <CustomPaperBigCard>
             {(status && status === "fail") || status === "cancel" ? (

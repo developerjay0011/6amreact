@@ -41,6 +41,7 @@ const RateAndReview = () => {
       alignItems="center"
       justifyContent="center"
       spacing={2}
+      mt="1rem"
     >
       {isRefetching ? (
         <Skeleton variant="ractangle" width="100px" height="100%" />

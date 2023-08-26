@@ -72,6 +72,7 @@ const InterestOptions = ({ configData }) => {
       spacing={1}
       alignItems="center"
       justifyContent="center"
+      mt="2rem"
     >
       <H1 text="Choose Your Interests" />
       <Typography variant="h6" color="customColor.textGray">
@@ -99,6 +100,15 @@ const InterestOptions = ({ configData }) => {
                   sx={{
                     border: handleBorder(item.id) && "2px solid",
                     borderColor: handleBorder(item.id) && "primary.main",
+                    div: {
+                      borderRadius: "8px",
+                      overflow: "hidden",
+                    },
+                    "&:hover": {
+                      img: {
+                        transform: "scale(1.14)",
+                      },
+                    },
                   }}
                 >
                   <CustomStackFullWidth spacing={1}>

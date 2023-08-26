@@ -4,8 +4,8 @@ import CustomImageContainer from "../CustomImageContainer";
 import { Stack } from "@mui/system";
 import { Typography, useTheme } from "@mui/material";
 import { t } from "i18next";
-import distanceImage from "../../../public/static/image 45.svg";
-import deliveryImage from "../../../public/static/image 46.svg";
+import distanceImage from "../../../public/static/distance.png";
+import deliveryImage from "../../../public/static/fee.png";
 import { element } from "prop-types";
 import { Skeleton } from "@mui/material";
 import { getAmountWithSign } from "../../helper-functions/CardHelpers";
@@ -16,6 +16,7 @@ const DeliveryFree = ({
   senderLocation,
   receiverLocation,
   configData,
+  extraChargeLoading,
 }) => {
   const theme = useTheme();
   return (
@@ -59,9 +60,13 @@ const DeliveryFree = ({
         />
         <Stack flexWrap="wrap">
           <Typography>{t("Delivery Fee")}</Typography>
-          <Typography color={theme.palette.primary.main} fontWeight="600">
-            {getAmountWithSign(parcelDeliveryFree())}
-          </Typography>
+          {extraChargeLoading ? (
+            <Skeleton width="30px" height="10px" variant="rectangular" />
+          ) : (
+            <Typography color={theme.palette.primary.main} fontWeight="600">
+              {getAmountWithSign(parcelDeliveryFree())}
+            </Typography>
+          )}
         </Stack>
       </Stack>
     </CustomStackFullWidth>

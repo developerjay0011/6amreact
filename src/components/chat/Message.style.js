@@ -1,12 +1,15 @@
 import { styled } from "@mui/material/styles";
 import Box from "@mui/material/Box";
-import { Avatar, Card } from "@mui/material";
+import { alpha, Avatar, Card } from "@mui/material";
+import { Stack } from "@mui/system";
 
 export const ChatMessageWrapper = styled(Box)(
   ({ theme, authortype, usertype, language_direction }) => ({
     display: "flex",
     flexDirection: authortype === usertype ? "row-reverse" : "row",
-    maxWidth: 500,
+    alignItems: "center",
+    gap: "10px",
+
     marginLeft:
       authortype === usertype ? (language_direction === "rtl" ? 0 : "auto") : 0,
     marginBottom: "1rem",
@@ -23,24 +26,27 @@ export const CustomAvatar = styled(Avatar)(
     width: 32,
   })
 );
-export const BodyWrapper = styled(Box)(({ theme }) => ({
+export const BodyWrapper = styled(Box)(({ theme, authortype, usertype }) => ({
   flexGrow: 1,
   maxWidth: 500,
+  display: "flex",
+  flexDirection: "column",
+  alignItems: authortype === usertype ? "flex-end" : "flex-start",
+  width: "100%",
 }));
-export const CardWrapper = styled(Card)(({ theme, authortype, usertype }) => ({
+export const CardWrapper = styled(Stack)(({ theme, authortype, usertype }) => ({
   backgroundColor:
     authortype === usertype
-      ? theme.palette.neutral[200]
-      : theme.palette.neutral[700],
+      ? theme.palette.primary.main
+      : alpha(theme.palette.primary.main, 0.2),
 
   color:
     authortype === usertype
       ? theme.palette.primary.contrastText
       : "text.primary",
-  paddingLeft: "1rem",
-  paddingRight: "1rem",
-  paddingTop: ".1rem",
-  paddingBottom: ".5rem",
+  padding: "8px 20px",
+  borderRadius:
+    authortype === usertype ? "25px 25px 0px 25px" : "25px 25px 25px 0px",
 }));
 export const TimeWrapper = styled(Box)(({ theme, authortype, usertype }) => ({
   display: "flex",

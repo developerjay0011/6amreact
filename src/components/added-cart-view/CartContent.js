@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import PropTypes from "prop-types";
-import { Grid, Paper, Typography } from "@mui/material";
+import { Grid, Paper, Typography, useMediaQuery } from "@mui/material";
 import CustomImageContainer from "../CustomImageContainer";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import {
@@ -24,13 +24,19 @@ import ProductDetailModal from "../product-detail.modal";
 import VariationContent from "./VariationContent";
 import { toast } from "react-hot-toast";
 import { t } from "i18next";
-import { out_of_stock } from "../../utils/toasterMessages";
+import { out_of_limits, out_of_stock } from "../../utils/toasterMessages";
 import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
 import ModuleModal from "../cards/ModuleModal";
+import { CartIncrementStack } from "./Cart.style";
+import Divider from "@mui/material/Divider";
+import CustomDivider from "../CustomDivider";
+import { useTheme } from "@emotion/react";
 
 const CartContent = (props) => {
   const { cartItem, imageBaseUrl } = props;
   const { configData } = useSelector((state) => state.configData);
+  const theme = useTheme();
+  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const dispatch = useDispatch();
   const [updateModalOpen, setUpdateModalOpen] = useState(false);
 
@@ -39,9 +45,23 @@ const CartContent = (props) => {
       if (cartItem?.stock <= cartItem?.quantity) {
         toast.error(t(out_of_stock));
       } else {
-        dispatch(setIncrementToCartItem(cartItem));
+        if (cartItem?.maximum_cart_quantity) {
+          if (cartItem?.maximum_cart_quantity <= cartItem?.quantity) {
+            toast.error(t(out_of_limits));
+          } else {
+            dispatch(setIncrementToCartItem(cartItem));
+          }
+        } else {
+          dispatch(setIncrementToCartItem(cartItem));
+        }
       }
     } else {
+      if (cartItem?.maximum_cart_quantity) {
+        if (cartItem?.maximum_cart_quantity <= cartItem?.quantity) {
+          toast.error(t(out_of_limits));
+        } else {
+        }
+      }
       dispatch(setIncrementToCartItem(cartItem));
     }
   };
@@ -68,101 +88,90 @@ const CartContent = (props) => {
 
   return (
     <>
-      <Paper elevation={8} sx={{ marginY: "10px", padding: "5px" }}>
-        <Grid container spacing={1}>
-          <Grid
-            item
-            xs={4}
-            onClick={() => handleUpdateModalOpen()}
-            sx={{ cursor: "pointer" }}
-          >
-            <CustomImageContainer
-              height="90px"
-              width="90px"
-              src={`${imageBaseUrl}/${cartItem?.image}`}
-              borderRadius=".7rem"
+      <CustomStackFullWidth
+        direction="row"
+        sx={{
+          padding: ".2rem 2rem .2rem 1.3rem",
+          marginTop: { xs: ".5rem", sm: "1rem", md: "1rem" },
+        }}
+        gap="10px"
+      >
+        <Stack
+          onClick={() => handleUpdateModalOpen()}
+          sx={{ cursor: "pointer" }}
+        >
+          <CustomImageContainer
+            height="80px"
+            width="80px"
+            smWidth="65px"
+            smHeight="65px"
+            src={`${imageBaseUrl}/${cartItem?.image}`}
+            borderRadius=".7rem"
+            objectfit="cover"
+          />
+        </Stack>
+        <Stack width="0px" flexGrow="1" justifyContent="center" spacing={0.2}>
+          <Typography fontWeight="500" fontSize={{ xs: "12px", md: "14px" }}>
+            {cartItem?.name}
+          </Typography>
+          <VariationContent cartItem={cartItem} />
+          <Typography fontWeight="500" fontSize={{ xs: "13px", md: "16px" }}>
+            {getAmountWithSign(
+              getDiscountedAmount(
+                cartItem?.totalPrice,
+                cartItem?.discount,
+                cartItem?.discount_type,
+                cartItem?.store_discount,
+                cartItem?.quantity
+              )
+            )}
+          </Typography>
+        </Stack>
+        <CartIncrementStack>
+          {cartItem?.quantity === 1 ? (
+            <IconButton
+              aria-label="delete"
+              size="small"
+              color="error"
+              sx={{ padding: "2px" }}
+              onClick={() => handleRemove()}
+            >
+              <DeleteIcon sx={{ width: "16px" }} />
+            </IconButton>
+          ) : (
+            <IconButton
+              aria-label="delete"
+              size="small"
+              sx={{ padding: "2px" }}
+            >
+              <RemoveIcon
+                size="small"
+                sx={{
+                  color: (theme) => theme.palette.primary.main,
+                  width: "16px",
+                }}
+                onClick={() => handleDecrement()}
+              />
+            </IconButton>
+          )}
+          <Typography fontSize="12px" fontWeight="500">
+            {cartItem?.quantity}
+          </Typography>
+          <IconButton aria-label="delete" sx={{ padding: "2px" }}>
+            <AddIcon
+              sx={{
+                color: (theme) => theme.palette.primary.main,
+                width: "16px",
+              }}
+              size="small"
+              onClick={() => handleIncrement()}
             />
-          </Grid>
-          <Grid item xs={8} container>
-            <CustomStackFullWidth height="100%" justifyContent="center">
-              <Typography fontWeight="bold">{cartItem?.name}</Typography>
-              <VariationContent cartItem={cartItem} />
-              <CustomStackFullWidth
-                direction="row"
-                justifyContent="space-between"
-                alignItems="center"
-              >
-                <Typography color="primary.main" fontSize="16px">
-                  {/*{getAmountWithSign(cartItem?.totalPrice)}*/}
-                  {getCurrentModuleType() === "food"
-                    ? getAmountWithSign(handleFoodItemTotalPriceWithAddons())
-                    : getAmountWithSign(
-                        getDiscountedAmount(
-                          cartItem?.totalPrice,
-                          cartItem?.discount,
-                          cartItem?.discount_type,
-                          cartItem?.store_discount,
-                          cartItem?.quantity
-                        )
-                      )}
-                </Typography>
-                <Stack direction="row" alignItems="center" spacing={1}>
-                  {cartItem?.quantity === 1 ? (
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      color="error"
-                      onClick={() => handleRemove()}
-                    >
-                      <DeleteIcon fontSize="inherit" />
-                    </IconButton>
-                  ) : (
-                    <IconButton
-                      aria-label="delete"
-                      size="small"
-                      sx={{
-                        width: "24px",
-                        height: "24px",
-                        background: (theme) => theme.palette.neutral[200],
-                        borderRadius: "11px",
-                      }}
-                    >
-                      <RemoveIcon
-                        size="small"
-                        sx={{
-                          color: (theme) => theme.palette.neutral[1000],
-                          padding: "3px",
-                        }}
-                        onClick={() => handleDecrement()}
-                      />
-                    </IconButton>
-                  )}
-                  <Typography>{cartItem?.quantity}</Typography>
-                  <IconButton
-                    aria-label="delete"
-                    size="small"
-                    sx={{
-                      width: "24px",
-                      height: "24px",
-                      background: (theme) => theme.palette.neutral[200],
-                      borderRadius: "11px",
-                    }}
-                  >
-                    <AddIcon
-                      sx={{
-                        color: (theme) => theme.palette.neutral[1000],
-                        padding: "3px",
-                      }}
-                      size="small"
-                      onClick={() => handleIncrement()}
-                    />
-                  </IconButton>
-                </Stack>
-              </CustomStackFullWidth>
-            </CustomStackFullWidth>
-          </Grid>
-        </Grid>
-      </Paper>
+          </IconButton>
+        </CartIncrementStack>
+      </CustomStackFullWidth>
+      <Stack paddingLeft="1rem">
+        <CustomDivider paddingTop={isSmall ? ".5rem" : "1rem"} border="2px" />
+      </Stack>
       {updateModalOpen && cartItem?.module_type === "food" ? (
         <FoodDetailModal
           open={updateModalOpen}

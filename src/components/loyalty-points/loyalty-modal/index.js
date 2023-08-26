@@ -5,7 +5,8 @@ import { Paper, Typography } from "@mui/material";
 import { getAmountWithSign } from "../../../helper-functions/CardHelpers";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 import Form from "./Form";
-import {Stack} from "@mui/system";
+import IconButton from "@mui/material/IconButton";
+import CloseIcon from "@mui/icons-material/Close";
 
 const LoyaltyModal = (props) => {
   const {
@@ -22,8 +23,32 @@ const LoyaltyModal = (props) => {
   return (
     <CustomModal openModal={openModal} handleClose={handleClose}>
       <Paper sx={{ p: "2rem" }}>
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-end"
+          sx={{ position: "relative" }}
+        >
+          <IconButton
+            onClick={handleClose}
+            sx={{
+              zIndex: "99",
+              position: "absolute",
+              top: -30,
+              right: -25,
+              backgroundColor: (theme) => theme.palette.neutral[100],
+              borderRadius: "50%",
+              [theme.breakpoints.down("md")]: {
+                top: -25,
+                right: -20,
+              },
+            }}
+          >
+            <CloseIcon sx={{ fontSize: "12px", fontWeight: "500" }} />
+          </IconButton>
+        </CustomStackFullWidth>
         <CustomStackFullWidth spacing={3}>
-          <CustomStackFullWidth alignItems='center' justifyContent='center'>
+          <CustomStackFullWidth>
             <Typography
               align="center"
               color={theme.palette.neutral[1000]}
@@ -34,26 +59,16 @@ const LoyaltyModal = (props) => {
                 "Your loyalty point will convert to currency and transfer to wallet"
               )}
             </Typography>
-            <Stack direction='row' alignItems='center' spacing={.5}>
-              <Typography
-                  align="center"
-                  color="primary.main"
-                  fontWeight="bold"
-                  variant="subtitle1"
-              >
-                {`${
-                    configData?.loyalty_point_exchange_rate
-                } ${point}`} =
-              </Typography>
-              <Typography
-                  align="center"
-                  color="primary.main"
-                  fontWeight="bold"
-                  variant="subtitle1"
-              >
-                {`${getAmountWithSign(1)}`}
-              </Typography>
-            </Stack>
+            <Typography
+              align="center"
+              color="primary.main"
+              fontWeight="bold"
+              variant="subtitle1"
+            >
+              {`${
+                configData?.loyalty_point_exchange_rate
+              } ${point} = ${getAmountWithSign(1)}`}
+            </Typography>
           </CustomStackFullWidth>
           <Form
             loyalitydata={loyalitydata}

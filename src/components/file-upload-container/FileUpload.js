@@ -15,7 +15,7 @@ import {
 } from "../../styled-components/CustomTypographies.style";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import FileFormatInfo from "../file-format-text/FileFormatInfo";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const FileUpload = (props) => {
   const {
@@ -29,7 +29,7 @@ const FileUpload = (props) => {
     alignItems,
   } = props;
 
-  const {t} = useTranslation()
+  const { t } = useTranslation();
 
   return (
     <Stack width="100%" spacing={3}>
@@ -46,15 +46,17 @@ const FileUpload = (props) => {
           width={width}
           errorStatus={errorStatus}
         >
-          <Stack alignItems="center" justifyContent="center">
+          <Stack alignItems="center" justifyContent="center" spacing={1.5}>
             <ImageContainerFileUpload>
-              <CloudUploadIcon />
+              <CloudUploadIcon style={{ width: "40px", height: "40px" }} />
               {/*<img src={cloudIcon.src} alt="cloudIcon" />*/}
             </ImageContainerFileUpload>
             <Tooltip title={labelText}>
               <FileUploadTextContainer>
-                <CustomTypographyEllipsis variant="h6">
-                  {labelText ? labelText : t('File upload')}
+                <CustomTypographyEllipsis
+                  sx={{ fontSize: "13px", fontWeight: "400" }}
+                >
+                  {labelText ? labelText : t("File upload")}
                 </CustomTypographyEllipsis>
               </FileUploadTextContainer>
             </Tooltip>

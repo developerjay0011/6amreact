@@ -17,9 +17,11 @@ import {
   IconButton,
   NoSsr,
   styled,
+  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+
 import { useSelector } from "react-redux";
 import {
   IconButtonGray,
@@ -31,13 +33,16 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { handleDiscountChip } from "../../food-details/foodDetail-modal/helper-functions/handleDiscountChip";
 import { getLanguage } from "../../../helper-functions/getLanguage";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 
 const ChildrenImageWrapper = styled(Box)(({ theme, index, image_index }) => ({
   cursor: "pointer",
   border: index === image_index && `2px solid ${theme.palette.primary.main}`,
   borderRadius: ".5rem",
   boxSizing: "border-box",
-  height: "80px",
+  height: "100%",
+  width: "100%",
   filter: "drop-shadow(0px 3.41085px 8.52713px rgba(0, 0, 0, 0.1))",
   position: "relative",
 }));
@@ -47,6 +52,9 @@ const ProductImageView = ({
   productThumbImage,
   imageBaseUrl,
   configData,
+  addToWishlistHandler,
+  removeFromWishlistHandler,
+  isWishlisted,
 }) => {
   const [preViewImage, setPreViewImage] = useState(null);
   const [imageIndex, setImageIndex] = useState(0);
@@ -66,7 +74,33 @@ const ProductImageView = ({
   return (
     <Stack justifyContent="flex-start" spacing={2} width="100%">
       <NoSsr>
-        <Stack>
+        <Stack sx={{ position: "relative" }}>
+          <Stack
+            position="absolute"
+            right="10px"
+            top={{ xs: "48px", sm: "48px", md: "10px" }}
+            zIndex="99"
+          >
+            {isWishlisted ? (
+              <IconButton
+                sx={{ backgroundColor: (theme) => theme.palette.neutral[300] }}
+                onClick={(e) => removeFromWishlistHandler(e)}
+              >
+                <FavoriteIcon
+                  style={{ width: "15px", height: "15px", color: borderColor }}
+                />
+              </IconButton>
+            ) : (
+              <IconButton
+                sx={{ backgroundColor: (theme) => theme.palette.neutral[300] }}
+                onClick={(e) => addToWishlistHandler(e)}
+              >
+                <FavoriteBorderIcon
+                  style={{ width: "15px", height: "15px", color: borderColor }}
+                />
+              </IconButton>
+            )}
+          </Stack>
           <ReactImageMagnify
             className="magnify-container"
             {...{
@@ -102,7 +136,15 @@ const ProductImageView = ({
       </NoSsr>
 
       {productThumbImage?.length > 0 && (
-        <SliderCustom>
+        <SliderCustom
+          sx={{
+            margin: {
+              xs: "58px 0px 0px 0px !important",
+              sm: "40px 0px 0px 0px !important",
+              md: "10px 0px 0px 0px !important",
+            },
+          }}
+        >
           <Slider {...ProductsThumbnailsSettings}>
             {productThumbImage?.map((item, index) => {
               return (
@@ -116,7 +158,7 @@ const ProductImageView = ({
                     src={`${imageBaseUrl}/${item}`}
                     width="100%"
                     height="100%"
-                    objectfit="contained"
+                    objectFit="cover"
                     borderRadius=".5rem"
                   />
                 </ChildrenImageWrapper>

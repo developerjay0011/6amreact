@@ -16,6 +16,7 @@ const getData = async (pageParams) => {
 
 export default function useGetMyOrdersList(pageParams) {
   return useQuery("my-orders-list", () => getData(pageParams), {
+    staleTime: 60000,
     enabled: false,
     onError: onSingleErrorResponse,
   });

@@ -12,13 +12,13 @@ import {
 } from "../../src/styled-components/CustomStyles.style";
 import CategoriesDetails from "../../src/components/categories-details";
 import {getServerSideProps} from "../index";
+import SEO from "../../components/seo";
 
 const Index = ({ configData }) => {
   const [type, setType] = useState("all");
   const [offset, setOffset] = useState(1);
   const [page_limit, setPageLimit] = useState(10);
   const router = useRouter();
-  //const { id } = router.query;
   const id = router.query.id.split("-")[0];
   const [category_id, setCategoryId] = useState(id);
 
@@ -55,7 +55,11 @@ const Index = ({ configData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Category - ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `Category` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
       <MainLayout configData={configData}>
         <CustomStackFullWidth>
           <CustomPaperBigCard nopadding="true" sx={{ padding: "1rem" }}>

@@ -51,7 +51,7 @@ const DeleteAddress = ({ open, handleClose, addressId, refetch }) => {
               <Button
                 sx={{
                   backgroundColor: (theme) => theme.palette.neutral[300],
-                  color: "black",
+                  color: (theme) => theme.palette.neutral[1000],
                   width: "120px",
                   "&:hover": {
                     backgroundColor: (theme) => theme.palette.neutral[400],

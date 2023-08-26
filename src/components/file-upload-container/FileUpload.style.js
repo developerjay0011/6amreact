@@ -18,9 +18,9 @@ export const FileUploadHeader = styled(CustomBoxFullWidth)(({ theme }) => ({
 }));
 export const DashedBox = styled(Box)(
   ({ theme, width, color, errorStatus }) => ({
-    height: "8.75rem",
-    width: width ? width : "8.75rem",
-    border: "1px dashed",
+    height: "7.75rem",
+    width: width ? width : "7.75rem",
+    border: "1.3px dashed",
     borderColor: color
       ? "red"
       : theme.palette.neutral[400] && errorStatus

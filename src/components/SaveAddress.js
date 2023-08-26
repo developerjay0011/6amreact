@@ -9,6 +9,8 @@ import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
 import AddNewAddress from "./address/add-new-address";
 import { Skeleton } from "@mui/material";
+import AddNewAddressButton from "./address/add-new-address/AddNewAddressButton";
+import { useSelector } from "react-redux";
 const SaveAddress = ({
   handleSenderLocation,
   configData,
@@ -22,8 +24,10 @@ const SaveAddress = ({
 }) => {
   const { t } = useTranslation();
   const theme = useTheme();
+  const { profileInfo } = useSelector((state) => state.profileInfo);
   const [selectedAddress, setSelectedAddress] = useState(null);
   const { data, refetch, isRefetching, isLoading } = useGetAddressList();
+  const { openAddressModal } = useSelector((state) => state.addressModel);
   useEffect(() => {
     refetch();
   }, []);
@@ -46,12 +50,16 @@ const SaveAddress = ({
     <CustomStackFullWidth spacing={2.5}>
       <Stack direction="row" justifyContent="space-between" alignItems="center">
         <Typography fontWeight="bold">{t("Saved Addresses")}</Typography>
-        <AddNewAddress
-          refetch={refetch}
-          t={t}
-          configData={configData}
-          parcel="true"
-        />
+        <AddNewAddressButton parcel="true" />
+        {openAddressModal && (
+          <AddNewAddress
+            refetch={refetch}
+            t={t}
+            configData={configData}
+            openAddressModal={openAddressModal}
+            profileInfo={profileInfo}
+          />
+        )}
       </Stack>
       <SimpleBar style={{ maxHeight: 130 }}>
         {data?.addresses?.length > 0 &&
@@ -77,13 +85,15 @@ const SaveAddress = ({
                 />
                 <Stack>
                   <Typography
-                    fontSize="14px"
+                    fontSize={{ xs: "12px", md: "14px" }}
                     fontWeight="600"
                     textTransform="capitalize"
                   >
                     {t(adds?.address_type)}
                   </Typography>
-                  <Typography fontSize="14px">{adds?.address}</Typography>
+                  <Typography fontSize={{ xs: "12px", md: "14px" }}>
+                    {adds?.address}
+                  </Typography>
                 </Stack>
               </Stack>
             );

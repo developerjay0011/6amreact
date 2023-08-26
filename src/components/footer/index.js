@@ -9,33 +9,45 @@ import FooterTop from "./footer-top/FooterTop";
 import FooterMiddle from "./footer-middle/FooterMiddle";
 import { useRouter } from "next/router";
 import CustomContainer from "../container";
+import { useTheme } from "@emotion/react";
 
 const FooterComponent = (props) => {
   const { configData, landingPageData } = props;
   const router = useRouter();
   const isLandingPage = router.pathname === "/" ? "true" : "false";
+  const theme = useTheme()
   return (
-      <CustomStackFullWidth sx={{ mt: { xs: "6rem", sm: "3rem", md: "2rem" } }}>
-        <FooterTop landingPageData={landingPageData} />
-        <StyledFooterBackground
-            nobottommargin={isLandingPage}
-            sx={{ mt: "-20px" }}
+    <CustomStackFullWidth
+      sx={{
+        mt: {
+          xs: "6rem",
+          sm: "3rem",
+          md: router.pathname === "/" ? "2rem" : "6rem",
+        },
+      }}
+    >
+      <FooterTop landingPageData={landingPageData} />
+      <StyledFooterBackground
+        nobottommargin={isLandingPage}
+      >
+        <CustomStackFullWidth
+          height="100%"
+          alignItems="center"
+          justifyContent="space-between"
+          spacing={2}
         >
-          <CustomStackFullWidth
-              height="100%"
-              alignItems="center"
-              justifyContent="space-between"
-              spacing={2}
-          >
-            <CustomContainer>
-              <CustomStackFullWidth spacing={3}>
-                <FooterMiddle configData={configData} landingPageData={landingPageData} />
-              </CustomStackFullWidth>
-            </CustomContainer>
-            <FooterBottom configData={configData} />
-          </CustomStackFullWidth>
-        </StyledFooterBackground>
-      </CustomStackFullWidth>
+          <CustomContainer>
+            <CustomStackFullWidth spacing={3}>
+              <FooterMiddle
+                configData={configData}
+                landingPageData={landingPageData}
+              />
+            </CustomStackFullWidth>
+          </CustomContainer>
+          <FooterBottom configData={configData} />
+        </CustomStackFullWidth>
+      </StyledFooterBackground>
+    </CustomStackFullWidth>
   );
 };
 

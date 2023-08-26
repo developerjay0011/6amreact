@@ -1,5 +1,6 @@
-import React, { useEffect, useReducer } from "react";
-import { Box } from "@mui/system";
+import React, { useEffect, useReducer, useState } from "react";
+import { Box, Stack } from "@mui/system";
+import AddIcon from "@mui/icons-material/Add";
 import {
   Button,
   IconButton,
@@ -10,19 +11,16 @@ import {
 } from "@mui/material";
 import CustomModal from "../../modal";
 import CloseIcon from "@mui/icons-material/Close";
-import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
+import {
+  AddressTypeStack,
+  CustomIconButton,
+  CustomStackFullWidth,
+} from "../../../styled-components/CustomStyles.style";
 import SimpleBar from "simplebar-react";
 import "simplebar-react/dist/simplebar.min.css";
-import CustomMapSearch from "../../Map/CustomMapSearch";
+
 import { ACTIONS, initialState, reducer } from "../states";
-import {
-  handleAgreeLocation,
-  handleChange,
-  handleChangeForSearch,
-  handleClick,
-  handleCloseLocation,
-  handleCloseModal,
-} from "../HelperFunctions";
+import { handleClick, handleCloseModal } from "../HelperFunctions";
 import { useGeolocated } from "react-geolocated";
 import useGetAutocompletePlace from "../../../api-manage/hooks/react-query/google-api/usePlaceAutoComplete";
 import useGetGeoCode from "../../../api-manage/hooks/react-query/google-api/useGetGeoCode";
@@ -31,12 +29,35 @@ import useGetPlaceDetails from "../../../api-manage/hooks/react-query/google-api
 import GoogleMapComponent from "../../Map/GoogleMapComponent";
 import AddressForm from "./AddressForm";
 import useGetAddressList from "../../../api-manage/hooks/react-query/address/useGetAddressList";
+import AddCircleOutlineIcon from "@mui/icons-material/AddCircleOutline";
+import CustomImageContainer from "../../CustomImageContainer";
+import home from "../../checkout/assets/image 1256.png";
+import office from "../assets/office.png";
+import plusIcon from "../assets/plus.png";
+import { CustomButtonPrimary } from "../../../styled-components/CustomButtons.style";
+import { useDispatch, useSelector } from "react-redux";
+import { setOpenAddressModal } from "../../../redux/slices/addAddress";
 
 const AddNewAddress = (props) => {
-  const { configData, refetch, t, parcel } = props;
-  const [state, dispatch] = useReducer(reducer, initialState);
-  //useEffect calls for getting data
+  const {
+    configData,
+    refetch,
+    t,
+    parcel,
+    align,
+    fromModal,
+    open,
+    openAddressModal,
+    editAddress,
+    setEditAddress,
+  } = props;
 
+  const [state, dispatch] = useReducer(reducer, initialState);
+  const { profileInfo } = useSelector((state) => state.profileInfo);
+  const reduxDispatch = useDispatch();
+  const [addressType, setAddressType] = useState("");
+  const personName = `${profileInfo?.f_name} ${profileInfo?.l_name}`;
+  //useEffect calls for getting data
   //****getting current location/***/
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
@@ -47,6 +68,11 @@ const AddNewAddress = (props) => {
       isGeolocationEnabled: true,
     });
 
+  const editLocation = {
+    lat: editAddress?.latitude,
+    lng: editAddress?.longitude,
+  };
+
   useEffect(() => {
     dispatch({
       type: ACTIONS.setLocation,
@@ -54,6 +80,12 @@ const AddNewAddress = (props) => {
     });
   }, []);
 
+  // useEffect(() => {
+  //   dispatch({
+  //     type: ACTIONS.setLocation,
+  //     payload: editLocation,
+  //   });
+  // }, [editAddress]);
   const { data: places, isLoading } = useGetAutocompletePlace(
     state.searchKey,
     state.enabled
@@ -112,114 +144,146 @@ const AddNewAddress = (props) => {
   }, [state.placeDescription]);
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
-
-
+  const handleClick = (name) => {
+    setAddressType(name);
+    if (editAddress) {
+      setEditAddress({ ...editAddress, address_type: name });
+    }
+  };
+  const closePopover = () => {
+    reduxDispatch(setOpenAddressModal(false));
+  };
   return (
     <Box>
-      {parcel === "true" ? (
-        <Button onClick={() => handleClick(dispatch)}>
-          <Typography>{t("Add New Address")}</Typography>
-        </Button>
-      ) : (
-        <Button
-          variant="contained"
-          onClick={() => handleClick(dispatch)}
-          sx={{
-            width: { xs: "40px", sm: "inherit" },
-            color: (theme) => theme.palette.whiteContainer.main,
-          }}
-        >
-          {isSmall ? t("Add+") : t("Add new address +")}
-        </Button>
-      )}
-
-      {state.openModal && (
+      {openAddressModal && (
         <CustomModal
-          openModal={state.openModal}
-          handleClose={() => handleCloseModal(dispatch)}
+          openModal={openAddressModal}
+          handleClose={() => reduxDispatch(setOpenAddressModal(false))}
         >
           <Paper
             sx={{
               position: "relative",
-              width: { xs: "300px", sm: "450px", md: "550px", lg: "600px" },
-              p: "1.5rem",
+              width: { xs: "300px", sm: "450px", md: "550px", lg: "750px" },
+              p: "1.4rem",
             }}
           >
             <IconButton
-              onClick={() => handleCloseModal(dispatch)}
+              onClick={() => reduxDispatch(setOpenAddressModal(false))}
               sx={{ position: "absolute", top: 0, right: 0 }}
             >
               <CloseIcon sx={{ fontSize: "16px" }} />
             </IconButton>
-            <SimpleBar style={{ maxHeight: "60vh" }}>
-              <CustomStackFullWidth alignItems="center" justifyContent="center" sx={{marginBottom:'1rem'}}>
-                <Typography variant="h6" mb="5px">
-                  {t("Add new address")}
-                </Typography>
-                <CustomMapSearch
-                  showCurrentLocation={state.showCurrentLocation}
-                  predictions={state.predictions}
-                  handleChange={(event, value) =>
-                    handleChange(event, value, dispatch)
-                  }
-                  HandleChangeForSearch={(event) =>
-                    handleChangeForSearch(event, dispatch)
-                  }
-                  handleAgreeLocation={() =>
-                    handleAgreeLocation(coords, dispatch)
-                  }
-                  currentLocation={state.currentLocation}
-                  handleCloseLocation={() => handleCloseLocation(dispatch)}
-                  currentLocationValue={{
-                    description: state.currentLocation,
-                  }}
-                  frommap="false"
-                  fromParcel="false"
-                  isLoading={isFetchingGeoCode}
-                />
-                {/*<SimpleBar style={{ maxHeight: "60vh" }}></SimpleBar>*/}
-              </CustomStackFullWidth>
-              <GoogleMapComponent
-                height="250px"
-                key={state.rerenderMap}
-                setLocation={(values) =>{
-                  dispatch({
-                    type: ACTIONS.setLocation,
-                    payload: values,
-                  })
 
+            <CustomStackFullWidth
+              alignItems="center"
+              justifyContent="center"
+              sx={{ marginBottom: "1rem" }}
+            >
+              {/*<SimpleBar style={{ maxHeight: "60vh" }}></SimpleBar>*/}
+            </CustomStackFullWidth>
+            <GoogleMapComponent
+              height="236px"
+              key={state.rerenderMap}
+              setLocation={(values) => {
+                dispatch({
+                  type: ACTIONS.setLocation,
+                  payload: editAddress ? editLocation : values,
+                });
+              }}
+              // setCurrentLocation={setCurrentLocation}
+              // locationLoading={locationLoading}
+              location={editAddress ? editLocation : state.location}
+              setPlaceDetailsEnabled={(value) =>
+                dispatch({
+                  type: ACTIONS.setPlaceDetailsEnabled,
+                  payload: value,
+                })
+              }
+              placeDetailsEnabled={state.placeDetailsEnabled}
+              locationEnabled={state.locationEnabled}
+            />
+
+            <CustomStackFullWidth pt="20px">
+              <Typography>{t("Label As")}</Typography>
+              <Stack direction="row" spacing={2.5} pt="10px">
+                <AddressTypeStack
+                  value="home"
+                  addressType={
+                    editAddress?.address_type
+                      ? editAddress?.address_type
+                      : addressType
+                  }
+                  onClick={() => handleClick("home")}
+                >
+                  <CustomImageContainer
+                    src={home.src}
+                    width="24px"
+                    height="24px"
+                  />
+                </AddressTypeStack>
+                <AddressTypeStack
+                  value="office"
+                  addressType={
+                    editAddress?.address_type
+                      ? editAddress?.address_type
+                      : addressType
+                  }
+                  onClick={() => handleClick("office")}
+                >
+                  <CustomImageContainer
+                    src={office.src}
+                    width="24px"
+                    height="24px"
+                  />
+                </AddressTypeStack>
+                <AddressTypeStack
+                  value="other"
+                  addressType={
+                    editAddress?.address_type
+                      ? editAddress?.address_type
+                      : addressType
+                  }
+                  onClick={() => handleClick("other")}
+                >
+                  <CustomImageContainer
+                    src={plusIcon.src}
+                    width="24px"
+                    height="24px"
+                  />
+                </AddressTypeStack>
+              </Stack>
+            </CustomStackFullWidth>
+            <CustomStackFullWidth mt="1.3rem">
+              <AddressForm
+                atModal="true"
+                setAddressType={setAddressType}
+                addressType={
+                  editAddress?.address_type
+                    ? editAddress?.address_type
+                    : addressType
                 }
+                configData={configData}
+                deliveryAddress={
+                  editAddress
+                    ? editAddress?.address
+                    : geoCodeResults?.results[0]?.formatted_address
                 }
-                // setCurrentLocation={setCurrentLocation}
-                // locationLoading={locationLoading}
-                location={state.location}
-                setPlaceDetailsEnabled={(value) =>
-                  dispatch({
-                    type: ACTIONS.setPlaceDetailsEnabled,
-                    payload: value,
-                  })
+                personName={
+                  editAddress ? editAddress?.contact_person_name : personName
                 }
-                placeDetailsEnabled={state.placeDetailsEnabled}
-                locationEnabled={state.locationEnabled}
+                phone={
+                  editAddress
+                    ? editAddress?.contact_person_number
+                    : profileInfo?.phone
+                }
+                lat={editAddress ? editAddress?.lat : state.location?.lat}
+                lng={editAddress ? editAddress?.lng : state.location?.lng}
+                popoverClose={closePopover}
+                refetch={refetch}
+                isRefetcing={isFetchingGeoCode}
+                editAddress={editAddress}
               />
-              <CustomStackFullWidth mt="1.3rem">
-                <AddressForm
-                  configData={configData}
-                  deliveryAddress={
-                    geoCodeResults?.results[0]?.formatted_address
-                  }
-                  personName={data?.f_name}
-                  phone={data?.phone}
-                  lat={state.location?.lat || ""}
-                  lng={state.location?.lng || ""}
-                  popoverClose={() =>
-                    dispatch({ type: ACTIONS.setOpenModal, payload: false })
-                  }
-                  refetch={refetch}
-                  isRefetcing={isFetchingGeoCode}
-                />
-              </CustomStackFullWidth>
-            </SimpleBar>
+            </CustomStackFullWidth>
           </Paper>
         </CustomModal>
       )}

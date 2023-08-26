@@ -1,15 +1,24 @@
 import { alpha, InputBase, styled } from "@mui/material";
+import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
+import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
+import { ModuleTypes } from "../../helper-functions/moduleTypes";
 
-export const Search = styled("div")(({ theme }) => ({
-  position: "relative",
-  //borderRadius: theme.shape.borderRadius,
-  backgroundColor: theme.palette.neutral[200],
+export const Search = styled(CustomStackFullWidth)(({ theme, type2 }) => ({
+  backgroundColor: theme.palette.neutral[100],
   color: theme.palette.neutral[600],
-  border: `1px solid ${theme.palette.primary.main}`,
-  borderRadius: "5px",
-  height: "35px",
-  //margin: 'auto',
-  [theme.breakpoints.up("sm")]: {},
+  height: "45px",
+  border:
+    type2 &&
+    `1px solid ${alpha(
+      getCurrentModuleType() === ModuleTypes.FOOD
+        ? theme.palette.moduleTheme.food
+        : theme.palette.primary.main,
+      0.4
+    )}`,
+  borderRadius: type2 ? "10px" : "5px",
+  // [theme.breakpoints.up("sm")]: {
+  //   height: "45px",
+  // },
 }));
 export const SearchIconWrapper = styled("div")(
   ({ theme, language_direction }) => ({
@@ -26,15 +35,14 @@ export const SearchIconWrapper = styled("div")(
 
 export const StyledInputBase = styled(InputBase)(
   ({ theme, language_direction }) => ({
-    color: "inherit",
+    color:
+      getCurrentModuleType() === ModuleTypes.FOOD
+        ? theme.palette.moduleTheme.food
+        : "primary.main",
     width: "100%",
 
     "& .MuiInputBase-input": {
-      padding: theme.spacing(0.8, 0, 1.5, 0),
-      // vertical padding + font size from searchIcon
-      paddingLeft: `calc(1em + ${theme.spacing(3)})`,
-      paddingRight:
-        language_direction === "rtl" && `calc(1em + ${theme.spacing(4)})`,
+      padding: "13px 17px",
       transition: theme.transitions.create("width"),
       width: "100%",
     },

@@ -1,51 +1,20 @@
-import React, { useEffect, useState } from "react";
-import H4 from "../../typographies/H4";
-import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
-import { Grid, styled } from "@mui/material";
 import { Box } from "@mui/system";
-import useGetItemCampaigns from "../../../api-manage/hooks/react-query/useGetItemCampaigns";
-import { useDispatch, useSelector } from "react-redux";
-import { Skeleton } from "@mui/material";
-import CustomImageContainer from "../../CustomImageContainer";
-import SliderShimmer from "../SliderShimmer";
 import { useRouter } from "next/router";
-import { getModuleId } from "../../../helper-functions/getModuleId";
-import { setCampaignItem } from "../../../redux/slices/cart";
-import { HomeComponentsWrapper } from "../HomePageComponents";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import useGetItemCampaigns from "../../../api-manage/hooks/react-query/useGetItemCampaigns";
 import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
-import FoodDetailModal from "../../food-details/foodDetail-modal/FoodDetailModal";
-import { ACTION } from "../../product-details/product-details-section/states";
+import { getModuleId } from "../../../helper-functions/getModuleId";
+import { ModuleTypes } from "../../../helper-functions/moduleTypes";
+import { setCampaignItem } from "../../../redux/slices/cart";
 import { setRunningCampaigns } from "../../../redux/slices/storedData";
+import FoodDetailModal from "../../food-details/foodDetail-modal/FoodDetailModal";
+import H2 from "../../typographies/H2";
+import { HomeComponentsWrapper } from "../HomePageComponents";
+import SliderShimmer from "../SliderShimmer";
+import Grocery from "./Grocery";
+import Pharmacy from "./pharmacy";
 
-const ImageContainer = styled(Box)(({ theme }) => ({
-  //position: "related",
-  width: "100%",
-  borderRadius: "8px",
-  maxHeight: "200px",
-  maxWidth: "200px",
-  [theme.breakpoints.up("md")]: {
-    height: "200px",
-  },
-  "&:hover": {
-    boxShadow: "5px 0px 20px rgba(0, 54, 85, 0.15)",
-    transform: "scale(1.03)",
-    transition: "ease .5s",
-  },
-}));
-
-const Shimmer = () => (
-  <>
-    {[...Array(4)].map((item, index) => {
-      return (
-        <Grid item xs={4} sm={4} md={2.4} key={index} align="center">
-          <ImageContainer>
-            <Skeleton variant="rectangle" height="100%" width="100%" />
-          </ImageContainer>
-        </Grid>
-      );
-    })}
-  </>
-);
 const RunningCampaigns = () => {
   const { configData } = useSelector((state) => state.configData);
   const [openModal, setOpenModal] = useState(false);
@@ -56,20 +25,13 @@ const RunningCampaigns = () => {
   const { runningCampaigns } = useSelector((state) => state.storedData);
   const dispatch = useDispatch();
   useEffect(() => {
-    if (runningCampaigns.length === 0) {
-      refetch();
-    }
-  }, [runningCampaigns]);
+    refetch();
+  }, []);
   useEffect(() => {
-    if (data) {
-      dispatch(setRunningCampaigns(data));
-    }
+    dispatch(setRunningCampaigns(data));
   }, [data]);
   const handleClick = (product) => {
-    if (getCurrentModuleType() === "food") {
-      setCampaignsData(product);
-      setOpenModal(true);
-    } else {
+    if (getCurrentModuleType() === "ecommerce") {
       dispatch(setCampaignItem(product));
       router.push(
         {
@@ -83,10 +45,44 @@ const RunningCampaigns = () => {
         undefined,
         { shallow: true }
       );
+    } else {
+      setCampaignsData(product);
+      setOpenModal(true);
     }
   };
   const handleClose = () => {
     setOpenModal(false);
+  };
+  const getModuleWiseView = () => {
+    switch (getCurrentModuleType()) {
+      case ModuleTypes.GROCERY:
+        return (
+          <Grocery
+            runningCampaigns={runningCampaigns}
+            handleClick={handleClick}
+            configData={configData}
+            isFetching={isFetching}
+          />
+        );
+      case ModuleTypes.PHARMACY:
+        return (
+          <Pharmacy
+            runningCampaigns={runningCampaigns}
+            handleClick={handleClick}
+            configData={configData}
+            isFetching={isFetching}
+          />
+        );
+      case ModuleTypes.ECOMMERCE:
+        return (
+          <Pharmacy
+            runningCampaigns={runningCampaigns}
+            handleClick={handleClick}
+            configData={configData}
+            isFetching={isFetching}
+          />
+        );
+    }
   };
   return (
     <>
@@ -94,41 +90,16 @@ const RunningCampaigns = () => {
         <SliderShimmer />
       ) : (
         <>
-          {runningCampaigns && runningCampaigns.length > 0 && (
-            <HomeComponentsWrapper alignItems="flex-start">
-              <H4 text="Running Campaigns" />
-              <Box sx={{ width: "100%", mt: "1rem" }}>
-                <Grid container spacing={2}>
-                  {runningCampaigns?.map((item, index) => {
-                    return (
-                      <Grid
-                        item
-                        xs={4}
-                        sm={3}
-                        md={2.4}
-                        lg={2}
-                        key={index}
-                        align="center"
-                        onClick={() => handleClick(item)}
-                        sx={{ cursor: "pointer" }}
-                      >
-                        <ImageContainer>
-                          <CustomImageContainer
-                            src={`${configData?.base_urls?.campaign_image_url}/${item?.image}`}
-                            alt={item?.title}
-                            height="100%"
-                            width="100%"
-                            objectfit="cover"
-                            borderRadius="8px"
-                          />
-                        </ImageContainer>
-                      </Grid>
-                    );
-                  })}
-                  {isFetching && <Shimmer />}
-                </Grid>
+          {/*need to remove the exclamatory mark*/}
+          {runningCampaigns?.length > 0 ? (
+            <HomeComponentsWrapper alignItems="flex-start" mt="30px">
+              {/*<H2 text="Just For You" />*/}
+              <Box sx={{ width: "100%", mt: ".3rem" }}>
+                {getModuleWiseView()}
               </Box>
             </HomeComponentsWrapper>
+          ) : (
+            ""
           )}
         </>
       )}

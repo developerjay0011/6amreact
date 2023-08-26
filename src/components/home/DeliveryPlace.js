@@ -22,7 +22,7 @@ const DeliveryPlace = () => {
   }
 
   return (
-    <Stack>
+    <Stack pb="10px">
       <Typography align="center" color={theme.palette.neutral[500]}>
         {t("Delivering to")}:{" "}
       </Typography>

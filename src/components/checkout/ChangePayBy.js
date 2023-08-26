@@ -28,17 +28,26 @@ const ChangePayBy = ({ paidBy, setPaidBy, zoneData }) => {
             backgroundColor={
               paidBy === "sender" && alpha(theme.palette.primary.main, 0.1)
             }
-            sx={{ borderRadius: "15px" }}
-            padding="14px"
+            sx={{ borderRadius: "5px" }}
+            direction="row"
+            alignItems="center"
+            spacing={1}
+            padding="8px 30px"
+            border="1px solid"
+            borderColor={
+              paidBy === "sender"
+                ? theme.palette.primary.main
+                : theme.palette.neutral[400]
+            }
           >
             <CustomImageContainer
               src={senderImage.src}
-              height="36px"
-              width="36px"
+              height="30px"
+              width="30x"
               objectfit="contain"
             />
+            <Typography align="center">{t("Sender")}</Typography>
           </Stack>
-          <Typography align="center">{t("Sender")}</Typography>
         </Stack>
         {zoneData?.data?.zone_data?.[0]?.cash_on_delivery && (
           <Stack
@@ -52,17 +61,26 @@ const ChangePayBy = ({ paidBy, setPaidBy, zoneData }) => {
               backgroundColor={
                 paidBy === "receiver" && alpha(theme.palette.primary.main, 0.1)
               }
-              sx={{ borderRadius: "15px" }}
-              padding="14px"
+              sx={{ borderRadius: "5px" }}
+              direction="row"
+              alignItems="center"
+              spacing={1}
+              padding="8px 20px"
+              border="1px solid"
+              borderColor={
+                paidBy === "receiver"
+                  ? theme.palette.primary.main
+                  : theme.palette.neutral[400]
+              }
             >
               <CustomImageContainer
                 src={receiverImage.src}
-                height="36px"
-                width="36px"
+                height="30px"
+                width="30px"
                 objectfit="contain"
               />
+              <Typography align="center">{t("Receiver")}</Typography>
             </Stack>
-            <Typography align="center">{t("Receiver")}</Typography>
           </Stack>
         )}
       </CustomStackFullWidth>

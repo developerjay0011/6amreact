@@ -10,13 +10,19 @@ import Address from "../../src/components/address";
 import AuthGuard from "../../src/components/route-guard/AuthGuard";
 import { useRouter } from "next/router";
 import {getServerSideProps} from "../index";
+import SEO from "../../components/seo";
+
 const Index = ({ configData }) => {
   const { t } = useTranslation();
   const router = useRouter();
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Address - ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `Address` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
       <MainLayout configData={configData}>
         <NoSsr>
           <AuthGuard from={router.pathname.replace("/", "")}>

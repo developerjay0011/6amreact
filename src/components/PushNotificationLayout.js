@@ -1,12 +1,8 @@
 import React, { useEffect, useState } from "react";
-import * as firebase from "firebase/app";
 import "firebase/messaging";
-import { firebaseCloudMessaging } from "../firebase";
-
-import { useSelector } from "react-redux";
-import { onMessageListener, fetchToken } from "../firebase";
+import { fetchToken, onMessageListener } from "../firebase";
 import { toast } from "react-hot-toast";
-import { alpha, Stack, Typography, useTheme } from "@mui/material";
+import { Stack, Typography, useTheme } from "@mui/material";
 import { useRouter } from "next/router";
 import { useStoreFcm } from "../api-manage/hooks/react-query/push-notifications/usePushNotification";
 
@@ -28,7 +24,14 @@ const PushNotificationLayout = ({ children, refetch, pathName }) => {
       },
       position: "top-center",
     });
-  fetchToken(setTokenFound, setFcmToken).then();
+  useEffect(() => {
+    handleFetchToken();
+  }, []);
+
+  const handleFetchToken = async () => {
+    await fetchToken(setTokenFound, setFcmToken);
+  };
+
   useEffect(() => {
     if (typeof window !== undefined) {
       setUserToken(localStorage.getItem("token"));

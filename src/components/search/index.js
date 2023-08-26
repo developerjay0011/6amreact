@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import MetaData from "../../../pages/meta-data";
 import { useRouter } from "next/router";
 
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
@@ -7,6 +6,8 @@ import SearchFilterWithResults from "./SearchFilterWithResults";
 import useGetSearch from "../../api-manage/hooks/react-query/search/useGetSearch";
 import { useSelector } from "react-redux";
 import { getFilterChoices } from "./getFilterChoices";
+import SEO from "../seo";
+
 const tabsData = [
   {
     title: "Items",
@@ -102,7 +103,12 @@ const ProductSearchPage = ({ configData }) => {
 
   return (
     <>
-      <MetaData title={`${searchValue} on ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `${searchValue}` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
+
       <CustomStackFullWidth>
         <SearchFilterWithResults
           tabsData={tabsData}

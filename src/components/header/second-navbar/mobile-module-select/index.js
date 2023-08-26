@@ -33,7 +33,13 @@ const MobileModuleSelection = () => {
         title={t("Modules")}
         sx={{ display: router.pathname === "/" && "none" }}
       >
-        <IconButton sx={{paddingInlineStart:'0px'}} onClick={() => setOpenModuleSelection(true)}>
+        <IconButton
+          sx={{
+            paddingInlineStart: "0px",
+            color: (theme) => theme.palette.neutral[400],
+          }}
+          onClick={() => setOpenModuleSelection(true)}
+        >
           <GridViewRoundedIcon />
         </IconButton>
       </Tooltip>

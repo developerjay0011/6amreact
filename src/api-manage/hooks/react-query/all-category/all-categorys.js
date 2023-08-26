@@ -34,7 +34,7 @@ const getFeaturedData = async () => {
 };
 export const useGetFeaturedCategories = () => {
   return useQuery("featured-categories-list", () => getFeaturedData(), {
-    enabled: false,
+    // enabled: false,
     staleTime: 1000 * 60 * 8,
     cacheTime: 1000 * 60 * 8,
     onError: onErrorResponse,

@@ -9,12 +9,18 @@ export const initialState = {
   placeDetailsEnabled: false,
   searchKey: "",
   enabled: false,
-  currentLocation: "ff",
+  currentLocation: "",
   location: null,
   openLocation: false,
   rerenderMap: false,
+  streetNumber: "",
+  houseNumber: "",
+  floor: "",
+  note: "",
+  addressType: "",
 };
 export const reducer = (state, action) => {
+  console.log("action", action.payload);
   switch (action.type) {
     case "setOpenModal":
       return {
@@ -86,6 +92,26 @@ export const reducer = (state, action) => {
         ...state,
         rerenderMap: !state.rerenderMap,
       };
+    case "setStreetNumber":
+      return {
+        ...state,
+        streetNumber: action.payload,
+      };
+    case "setHouseNumber":
+      return {
+        ...state,
+        houseNumber: action.payload,
+      };
+    case "setFloor":
+      return {
+        ...state,
+        floor: action.payload,
+      };
+    case "setAddressType":
+      return {
+        ...state,
+        addressType: action.payload,
+      };
     default:
       return state;
   }
@@ -106,4 +132,8 @@ export const ACTIONS = {
   setLocation: "setLocation",
   setOpenLocation: "setOpenLocation",
   setRerenderMap: "setRerenderMap",
+  setStreetNumber: "setStreetNumber",
+  setHouseNumber: "setHouseNumber",
+  setFloor: "setFloor",
+  setAddressType: "setAddressType",
 };

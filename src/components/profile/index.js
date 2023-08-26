@@ -14,9 +14,20 @@ import BasicInformation from "./basic-information";
 import { setWalletAmount } from "../../redux/slices/cart";
 import { setUser } from "../../redux/slices/profileInfo";
 import { useDispatch } from "react-redux";
+import { useTranslation } from "react-i18next";
 
 const Profile = (props) => {
-  const { configData, t } = props;
+  const {
+    configData,
+    setEditProfile,
+    editProfile,
+    setAddAddress,
+    addAddress,
+    editAddress,
+    addressRefetch,
+    setEditAddress,
+  } = props;
+  const { t } = useTranslation();
   const router = useRouter();
   const dispatch = useDispatch();
   const handleSuccess = (res) => {
@@ -30,62 +41,19 @@ const Profile = (props) => {
   // }, []);
   return (
     <>
-      {data ? (
-        <>
-          <Grid
-            container
-            spacing={3}
-            sx={{ paddingTop: "30px", paddingBottom: "15px" }}
-          >
-            <Grid item xs={6} sm={6} md={3}>
-              <ProfileStatistics
-                value={data?.member_since_days}
-                title="Days since Joining"
-                image={user.src}
-                pathname="/profile"
-              />
-            </Grid>
-
-            {configData?.customer_wallet_status !== 0 && (
-              <Grid item xs={6} sm={6} md={3}>
-                <ProfileStatistics
-                  value={getAmountWithSign(data?.wallet_balance)}
-                  title="Amount in Wallet"
-                  image={wallet.src}
-                  pathname="/wallet"
-                />
-              </Grid>
-            )}
-            <Grid item xs={6} sm={6} md={3}>
-              <ProfileStatistics
-                value={data?.order_count}
-                title="My Orders"
-                image={order.src}
-                pathname="/my-orders"
-              />
-            </Grid>
-            {configData?.loyalty_point_status !== 0 && (
-              <Grid item xs={6} sm={6} md={3}>
-                <ProfileStatistics
-                  value={data?.loyalty_point}
-                  title="Loyalty Points"
-                  image={loyalty.src}
-                  pathname="/loyalty-points"
-                />
-              </Grid>
-            )}
-          </Grid>
-
-          <BasicInformation
-            data={data}
-            refetch={refetch}
-            configData={configData}
-            t={t}
-          />
-        </>
-      ) : (
-        <CustomShimmerForProfile />
-      )}
+      <BasicInformation
+        data={data}
+        refetch={refetch}
+        configData={configData}
+        t={t}
+        editProfile={editProfile}
+        setEditProfile={setEditProfile}
+        addAddress={addAddress}
+        setAddAddress={setAddAddress}
+        editAddress={editAddress}
+        addressRefetch={addressRefetch}
+        setEditAddress={setEditAddress}
+      />
     </>
   );
 };

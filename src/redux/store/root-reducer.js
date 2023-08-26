@@ -11,6 +11,8 @@ import wishListReducer from "../slices/wishList";
 import searchFilterReducer from "../slices/searchFilter";
 import fbCredentialSliceReducer from "../slices/fbCredentials";
 import storedDataSliceReducer from "../slices/storedData";
+import languageChangeReducer from "../slices/languageChange";
+import AddAddressModalReducer from "../slices/addAddress";
 
 //register all reducers here
 export const rootReducer = combineReducers({
@@ -26,4 +28,6 @@ export const rootReducer = combineReducers({
   searchFilterStore: searchFilterReducer,
   fbCredentialsStore: fbCredentialSliceReducer,
   storedData: storedDataSliceReducer,
+  languageChange: languageChangeReducer,
+  addressModel: AddAddressModalReducer,
 });

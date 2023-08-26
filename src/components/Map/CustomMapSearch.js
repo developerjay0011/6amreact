@@ -26,106 +26,118 @@ const CustomMapSearch = ({
   isLoading,
   noleftborder,
   testLocation,
+  borderRadius,
+  toReceiver,
 }) => {
   return (
-      <>
-        {!showCurrentLocation ? (
-            <Autocomplete
-                fullWidth
-                options={predictions}
-                getOptionLabel={(option) => option.description}
-                onChange={(event, value) => handleChange(event, value)}
-                value={currentLocationValue}
-                clearOnBlur={false}
-                loading={frommap === "true" ? placesIsLoading : null}
-                loadingText={
-                  frommap === "true" ? t("Search suggestions are loading...") : ""
-                }
-                renderInput={(params) => (
-                    <SearchLocationTextField
-                        noleftborder={noleftborder}
-                        frommap={frommap}
-                        fromparcel={fromparcel}
-                        id="outlined-basic"
-                        {...params}
-                        placeholder={t("Search location here...")}
-                        onChange={(event) => HandleChangeForSearch(event)}
-                        InputProps={{
-                          ...params.InputProps,
-                          endAdornment:
-                              frommap === "true" ? (
-                                  <IconButton
-                                      sx={{
-                                        mr: "-65px",
-                                        backgroundColor: (theme) =>
-                                            alpha(theme.palette.primary.main, 0.2),
-                                        borderRadius: "0px",
-                                        padding: "7px 10px",
-                                      }}
-                                      // onClick={() => handleAgreeLocation()}
-                                  >
-                                    <SearchIcon color="primary" />
-                                  </IconButton>
-                              ) : currentLocationValue?.description ? (
-                                  <IconButton
-                                      sx={{
-                                        mr: "-61px",
-                                      }}
-                                  >
-                                    <CloseIcon
-                                        style={{ cursor: "pointer", height: "23px" }}
-                                        onClick={() => handleCloseLocation()}
-                                    />
-                                  </IconButton>
-                              ) : (
-                                  <IconButton
-                                      sx={{
-                                        mr: fromparcel === "true" ? "-61px" : "-31px",
-                                        display: "none",
-                                      }}
-                                      //onClick={() => handleAgreeLocation()}
-                                  >
-                                    <SearchIcon color="primary" />
-                                  </IconButton>
-                              ),
-                        }}
-                        required={true}
-                    />
-                )}
-            />
-        ) : (
+    <>
+      {!showCurrentLocation ? (
+        <Autocomplete
+          fullWidth
+          options={predictions}
+          getOptionLabel={(option) => option.description}
+          onChange={(event, value) => handleChange(event, value)}
+          value={currentLocationValue}
+          clearOnBlur={false}
+          loading={frommap === "true" ? placesIsLoading : null}
+          loadingText={
+            frommap === "true" ? t("Search suggestions are loading...") : ""
+          }
+          renderInput={(params) => (
             <SearchLocationTextField
-                margin_top="true"
-                size="small"
-                variant="outlined"
-                id="outlined-basic"
-                placeholder={t("Search location here...")}
-                value={testLocation ? testLocation : currentLocation}
-                onChange={(event) => HandleChangeForSearch(event)}
-                required={true}
-                frommap={frommap}
-                fromparcel={fromparcel}
-                InputProps={{
-                  endAdornment: !showCurrentLocation ? (
-                      <IconButton onClick={() => handleAgreeLocation()}>
-                        <GpsFixedIcon color="primary" />
-                      </IconButton>
+              noleftborder={noleftborder}
+              frommap={frommap}
+              fromparcel={fromparcel}
+              id="outlined-basic"
+              {...params}
+              placeholder={t("Search location here...")}
+              onChange={(event) => HandleChangeForSearch(event)}
+              InputProps={{
+                ...params.InputProps,
+                endAdornment:
+                  frommap === "true" ? (
+                    <IconButton
+                      sx={{
+                        mr: "-31px",
+
+                        borderRadius: borderRadius ? borderRadius : "0px",
+                        padding: "7px 10px",
+                      }}
+                      // onClick={() => handleAgreeLocation()}
+                    >
+                      <SearchIcon />
+                    </IconButton>
+                  ) : currentLocationValue?.description ? (
+                    <IconButton
+                      sx={{
+                        mr: "-61px",
+                        padding: "5px",
+                      }}
+                    >
+                      <CloseIcon
+                        style={{
+                          cursor: "pointer",
+                          height: "20px",
+                        }}
+                        onClick={() => handleCloseLocation()}
+                      />
+                    </IconButton>
                   ) : (
-                      <>
-                        {isLoading ? (
-                            <FacebookCircularProgress />
-                        ) : (
-                            <CloseIcon
-                                style={{ cursor: "pointer" }}
-                                onClick={() => handleCloseLocation()}
-                            />
-                        )}
-                      </>
+                    <>
+                      {toReceiver === "true" ? null : (
+                        <IconButton
+                          sx={{
+                            mr: fromparcel === "true" ? "-61px" : "-31px",
+                            padding: "5px",
+                            display: fromparcel !== "true" && "none",
+                          }}
+                          onClick={() => handleAgreeLocation()}
+                        >
+                          <GpsFixedIcon color="primary" />
+                        </IconButton>
+                      )}
+                    </>
                   ),
-                }}
+              }}
+              required={true}
             />
-        )}
-      </>
+          )}
+        />
+      ) : (
+        <SearchLocationTextField
+          margin_top="true"
+          size="small"
+          variant="outlined"
+          id="outlined-basic"
+          placeholder={t("Search location here...")}
+          value={testLocation ? testLocation : currentLocation}
+          onChange={(event) => HandleChangeForSearch(event)}
+          required={true}
+          frommap={frommap}
+          fromparcel={fromparcel}
+          InputProps={{
+            endAdornment: !showCurrentLocation ? (
+              <IconButton onClick={() => handleAgreeLocation()}>
+                <GpsFixedIcon color="primary" />
+              </IconButton>
+            ) : (
+              <>
+                {isLoading ? (
+                  <FacebookCircularProgress />
+                ) : (
+                  <IconButton sx={{ padding: "5px" }}>
+                    <CloseIcon
+                      style={{ cursor: "pointer" }}
+                      onClick={() => handleCloseLocation()}
+                    />
+                  </IconButton>
+                )}
+              </>
+            ),
+          }}
+        />
+      )}
+    </>
   );
 };
 

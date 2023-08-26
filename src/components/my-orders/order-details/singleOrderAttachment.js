@@ -15,8 +15,12 @@ const SingleOrderAttachment = (props) => {
   };
 
   return (
-    <CustomStackFullWidth alignItems="flex-start" spacing={2} mt="1rem">
-      <Typography variant="h6">{t(title)}</Typography>
+    <CustomStackFullWidth
+      alignItems="flex-start"
+      spacing={2}
+      pl={{ xs: "0px", sm: "0px", md: "28px" }}
+      pb="20px"
+    >
       <Stack
         onClick={() => handleImageOnClick(attachment)}
         sx={{ cursor: "pointer" }}
@@ -25,7 +29,10 @@ const SingleOrderAttachment = (props) => {
           src={`${configData?.base_urls?.order_attachment_url}/${attachment}`}
           width="100px"
           height="100px"
-          objectfit="cover"
+          alt="prescription"
+          borderRadius="2px"
+          smWidth="60px"
+          smHeight="60px"
         />
       </Stack>
       <CustomModal
@@ -53,6 +60,7 @@ const SingleOrderAttachment = (props) => {
             width="600px"
             smWidth="300px"
             objectfit="contain"
+            alt="prescription"
           />
         </Stack>
       </CustomModal>

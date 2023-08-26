@@ -4,6 +4,7 @@ import { Grid, Stack, Typography } from "@mui/material";
 
 import {
   CustomFavButton,
+  CustomFavICon,
   FoodSubTitleTypography,
   FoodTitleTypographyDetails,
   RatingStarIcon,
@@ -16,13 +17,17 @@ import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import {
   CustomOverlayBox,
+  CustomStackForFoodModal,
   CustomStackFullWidth,
 } from "../../../styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
 import { VegNonveg } from "../../checkout/item-checkout/RegularOrders";
 import { isAvailable } from "../../../utils/CustomFunctions";
 import NotAvailableCard from "./NotAvailableCard";
-import {getModuleId} from "../../../helper-functions/getModuleId";
+import { getModuleId } from "../../../helper-functions/getModuleId";
+import FoodRating from "../../FoodRating";
+import CustomRatingBox from "../../CustomRatingBox";
+import { FoodVegNonVegFlag } from "../../cards/SpecialCard";
 
 const FoodDetailsManager = (props) => {
   const {
@@ -33,34 +38,32 @@ const FoodDetailsManager = (props) => {
     product,
     t,
     router,
-    isInList,
-    deleteWishlistItem,
-    addToFavorite,
+    addToWishlistHandler,
+    removeFromWishlistHandler,
+    isWishlisted,
     theme,
     imageBaseUrl,
   } = props;
   return (
-    <Grid
-      container
-      spacing={{ xs: 1, sm: 2, md: 2 }}
-      direction="row"
-      paddingRight={{ xs: "10px", md: "0px" }}
-    >
-      <Grid item xs={12} sm={5} md={5} position="relative">
+    <Grid container direction="row">
+      <Grid item xs={12} md={12} position="relative">
         {handleDiscountChip(product, t)}
-        { modalData?.length> 0  &&  !isAvailable(
-          modalData[0]?.available_time_starts,
-          modalData[0]?.available_time_ends
-        ) && (
-          <CustomOverlayBox height="40%" top="126px">
-            <NotAvailableCard
-              endTime={modalData.length > 0 && modalData[0].available_time_ends}
-              startTime={
-                modalData.length > 0 && modalData[0].available_time_starts
-              }
-            />
-          </CustomOverlayBox>
-        )}
+        {modalData?.length > 0 &&
+          !isAvailable(
+            modalData[0]?.available_time_starts,
+            modalData[0]?.available_time_ends
+          ) && (
+            <CustomOverlayBox height="40%" top="126px">
+              <NotAvailableCard
+                endTime={
+                  modalData.length > 0 && modalData[0].available_time_ends
+                }
+                startTime={
+                  modalData.length > 0 && modalData[0].available_time_starts
+                }
+              />
+            </CustomOverlayBox>
+          )}
 
         <CustomImageContainer
           src={`${imageBaseUrl}/${product?.image}`}
@@ -68,10 +71,55 @@ const FoodDetailsManager = (props) => {
           width="100%"
           height="200px"
           alt="The house from the offer."
+          objectfit="cover"
         />
+        <CustomStackForFoodModal width="100%" spacing={2}>
+          <Stack spacing={1.4} alignItems="start">
+            {!product?.available_date_ends && (
+              <CustomRatingBox rating={product?.avg_rating} />
+            )}
+            {router.pathname !== `/store/[id]` ? (
+              <Typography
+                sx={{ cursor: "pointer" }}
+                fontSize="14px"
+                fontWeight="400"
+                color={theme.palette.whiteContainer.main}
+
+                //onClick={handleClick}
+              >
+                {product?.store_name}
+              </Typography>
+            ) : (
+              <Typography
+                fontSize="14px"
+                fontWeight="400"
+                color={theme.palette.whiteContainer.main}
+              >
+                {product?.store_name}
+              </Typography>
+            )}
+          </Stack>
+          {!product?.available_date_ends && (
+            <>
+              {!isWishlisted ? (
+                <CustomFavICon>
+                  <IconButton onClick={addToWishlistHandler}>
+                    <FavoriteBorderIcon color="primary" />
+                  </IconButton>
+                </CustomFavICon>
+              ) : (
+                <CustomFavICon>
+                  <IconButton onClick={(e) => removeFromWishlistHandler(e)}>
+                    <FavoriteIcon color="primary" />
+                  </IconButton>
+                </CustomFavICon>
+              )}
+            </>
+          )}
+        </CustomStackForFoodModal>
       </Grid>
-      <Grid item md={5} sm={5} xs={12}>
-        <Stack paddingLeft={{ xs: "10px", md: "0px" }} width="100%">
+      <Grid item md={12} sm={12} xs={12}>
+        <Stack paddingX="1rem" width="100%" spaicing={1} paddingTop="1rem">
           <CustomStackFullWidth>
             <CustomStackFullWidth
               direction="row"
@@ -80,118 +128,28 @@ const FoodDetailsManager = (props) => {
               flexWrap="wrap"
               spacing={0.5}
             >
-              <Typography variant="h6" fontWeight="500">
+              <Typography fontSize="16px" fontWeight="500">
                 {modalData.length > 0 && modalData[0].name}
               </Typography>
               {modalData.length > 0 &&
                 modalData[0]?.module?.module_type === "food" && (
-                  <Typography color="primary.main" sx={{ fontSize: "14px" }}>
-                    {Number(product?.veg) === 0 ? t("(Non-Veg)") : t("(Veg)")}
-                  </Typography>
+                  <FoodVegNonVegFlag
+                    veg={modalData[0]?.veg === 0 ? "false" : "true"}
+                  />
                 )}
             </CustomStackFullWidth>
-            {router?.pathname !== `/store/[id]` ? (
-              <Link href={`/store/${product?.store_id}?module_id=${getModuleId()}`}>
-                <FoodSubTitleTypography
-                  variant="subtitle1"
-                  sx={{
-                    cursor: "pointer",
-                    textAlign: "left",
-                  }}
-                >
-                  {modalData.length > 0 && modalData[0].store_name}
-                </FoodSubTitleTypography>
-              </Link>
-            ) : (
-              <FoodSubTitleTypography
-                variant="subtitle1"
-                sx={{
-                  cursor: "pointer",
-                  textAlign: "left",
-                }}
-              >
-                {modalData.length > 0 && modalData[0].store_name}
-              </FoodSubTitleTypography>
-            )}
           </CustomStackFullWidth>
-          <CustomStackFullWidth direction="row">
-            <RatingWrapTypography
-              variant="subtitle2"
-              sx={{
-                textAlign: "left",
-              }}
-            >
-              {modalData.length > 0 && modalData[0]?.avg_rating?.toFixed(1)}
-              <RatingStarIcon
-                fontSize="small"
-                sx={{
-                  ml: "3px",
-                  color: (theme) => theme.palette.primary.main,
-                }}
-              />
-            </RatingWrapTypography>
-          </CustomStackFullWidth>
-
-          <FoodTitleTypographyDetails
-            sx={{
-              fontSize: "1rem",
-              marginTop: ".8rem",
-              marginBottom: ".4rem",
-              textAlign: "left",
-            }}
-          >
-            {t("Description")}
-          </FoodTitleTypographyDetails>
           <FoodSubTitleTypography
-            variant="subtitle1"
             color={theme.palette.neutral[400]}
             sx={{
               textAlign: "left",
+              fontSize: "12px",
             }}
           >
             {modalData.length > 0 && modalData[0].description}
           </FoodSubTitleTypography>
         </Stack>
       </Grid>
-      {!product?.available_date_ends && (
-        <Grid
-          item
-          sm={2}
-          xs={12}
-          md={2}
-          paddingLeft={{ xs: "10px", md: "0px" }}
-        >
-          {/*{isInList(product.id) ? (*/}
-          {/*  <Stack*/}
-          {/*    paddingLeft={{*/}
-          {/*      xs: "10px",*/}
-          {/*      md: "0px",*/}
-          {/*    }}*/}
-          {/*    width="44px"*/}
-          {/*  >*/}
-          {/*    <CustomFavButton onClick={() => deleteWishlistItem(product.id)}>*/}
-          {/*      <IconButton>*/}
-          {/*        <FavoriteIcon fontSize="medium" color="primary" />*/}
-          {/*      </IconButton>*/}
-          {/*    </CustomFavButton>*/}
-          {/*  </Stack>*/}
-          {/*) : (*/}
-          {/*  <Stack*/}
-          {/*    paddingLeft={{*/}
-          {/*      xs: "10px",*/}
-          {/*      md: "0px",*/}
-          {/*    }}*/}
-          {/*    width="44px"*/}
-          {/*  >*/}
-          {/*    <CustomFavButton onClick={() => addToFavorite()}>*/}
-          {/*      <IconButton>*/}
-          {/*        <FavoriteBorderIcon fontSize="medium" color="primary" />*/}
-          {/*      </IconButton>*/}
-          {/*    </CustomFavButton>*/}
-          {/*  </Stack>*/}
-          {/*)}*/}
-        </Grid>
-      )}
     </Grid>
   );
 };

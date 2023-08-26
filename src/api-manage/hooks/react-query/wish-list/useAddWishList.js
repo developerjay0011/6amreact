@@ -9,5 +9,5 @@ const addTOWishList = async (wishListId) => {
   return data;
 };
 export const useAddToWishlist = () => {
-  return useMutation("delete_wishlist", addTOWishList);
+  return useMutation("add_wishlist", addTOWishList);
 };

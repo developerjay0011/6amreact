@@ -4,18 +4,20 @@ import SimpleBar from "simplebar-react";
 import CustomImageContainer from "../../../CustomImageContainer";
 import { getAmountWithSign } from "../../../../helper-functions/CardHelpers";
 import { Stack } from "@mui/system";
-import OrderCalculation from "./OrderCalculation";
+import OrderCalculation, {
+  OrderSummaryCalculationCard,
+} from "./OrderCalculation";
 import { useTranslation } from "react-i18next";
 import { CustomStackFullWidth } from "../../../../styled-components/CustomStyles.style";
 
 const Shimmer = () => {
   const { t } = useTranslation();
   return (
-    <Grid container mt="1rem">
-      <Grid item xs={12} md={12} align="center">
-        <Typography fontWeight="bold">{t("Order Summery")}</Typography>
+    <Grid container mt="1rem" paddingLeft="20px" paddingRight="40px">
+      <Grid item xs={12} md={12} align="left">
+        <Typography>{t("Order Summery")}</Typography>
       </Grid>
-      <Grid item xs={12} md={12} align="center" mt="1rem">
+      <Grid item xs={12} md={8} align="center" mt="1rem">
         <SimpleBar style={{ maxHeight: "300px" }}>
           <Grid
             container
@@ -36,17 +38,9 @@ const Shimmer = () => {
             </Grid>
           </Grid>
         </SimpleBar>
-        <Grid item md={12} xs={12} mb="10px">
-          <Stack
-            width="100%"
-            sx={{
-              mt: "20px",
-              borderBottom: (theme) =>
-                `2px solid ${theme.palette.neutral[300]}`,
-            }}
-          ></Stack>
-        </Grid>
-        <Grid item xs={12} md={12}>
+      </Grid>
+      <Grid item xs={12} md={4}>
+        <OrderSummaryCalculationCard spacing={1.5}>
           <CustomStackFullWidth spacing={1}>
             <CustomStackFullWidth
               direction="row"
@@ -54,7 +48,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold">{t("Items Price")}</Typography>
+              <Typography>{t("Items Price")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -63,7 +57,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold"> {t("Addons Price")}</Typography>
+              <Typography> {t("Addons Price")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <Divider />
@@ -73,7 +67,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold"> {t("Subtotal")}</Typography>
+              <Typography> {t("Subtotal")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -82,7 +76,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold"> {t("Discount")}</Typography>
+              <Typography> {t("Discount")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -91,7 +85,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold"> {t("Coupon Discount")}</Typography>
+              <Typography> {t("Coupon Discount")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -100,7 +94,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold">{t("VAT")}</Typography>
+              <Typography>{t("VAT")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -109,9 +103,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold">
-                {t("Delivery man tips")}
-              </Typography>
+              <Typography>{t("Delivery man tips")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <CustomStackFullWidth
@@ -120,7 +112,7 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold">{t("Delivery fee")}</Typography>
+              <Typography>{t("Delivery fee")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
             <Stack
@@ -137,13 +129,11 @@ const Shimmer = () => {
               justifyContent="space-between"
               spacing={2}
             >
-              <Typography fontWeight="bold" color="primary.main">
-                {t("Total")}
-              </Typography>
+              <Typography color="primary.main">{t("Total")}</Typography>
               <Skeleton variant="text" width="100px" />
             </CustomStackFullWidth>
           </CustomStackFullWidth>
-        </Grid>
+        </OrderSummaryCalculationCard>
       </Grid>
     </Grid>
   );

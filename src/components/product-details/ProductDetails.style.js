@@ -27,4 +27,7 @@ export const CustomSizeBox = styled(Stack)(({ theme, productsize, size }) => ({
     productsize === size
       ? theme.palette.neutral[100]
       : theme.palette.neutral[1000],
+  [theme.breakpoints.down("md")]: {
+    padding: " 8px 6px",
+  },
 }));

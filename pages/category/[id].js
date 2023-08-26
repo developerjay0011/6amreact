@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import CssBaseline from "@mui/material/CssBaseline";
-import MetaData from "../meta-data";
 import MainLayout from "../../src/components/layout/MainLayout";
-import { NoSsr, Typography } from "@mui/material";
+import { NoSsr } from "@mui/material";
 import { useRouter } from "next/router";
 import useGetCategories from "../../src/api-manage/hooks/react-query/categories-details/useCategoriesDetails";
 import useGetCategoriesForStore from "../../src/api-manage/hooks/react-query/categories-details/useCategoriesDetailsForStore";
@@ -11,8 +10,12 @@ import {
   CustomStackFullWidth,
 } from "../../src/styled-components/CustomStyles.style";
 import CategoriesDetails from "../../src/components/categories-details";
-import {getServerSideProps} from "../index";
-const Index = ({ configData , landingPageData}) => {
+import { getServerSideProps } from "../index";
+
+import SEO from "../../src/components/seo";
+import CustomContainer from "../../src/components/container";
+
+const Index = ({ configData }) => {
   const [type, setType] = useState("all");
   const [offset, setOffset] = useState(1);
   const [page_limit, setPageLimit] = useState(10);
@@ -54,28 +57,34 @@ const Index = ({ configData , landingPageData}) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Category - ${configData?.business_name}`} />
-      <MainLayout configData={configData} landingPageData={landingPageData}>
-        <CustomStackFullWidth>
-          <CustomPaperBigCard nopadding="true" sx={{ padding: "1rem" }}>
-            <NoSsr>
-              <CategoriesDetails
-                id={id}
-                data={data}
-                category_id={category_id}
-                setCategoryId={setCategoryId}
-                storeData={storeData}
-                offset={offset}
-                type={type}
-                setType={setType}
-                page_limit={page_limit}
-                setOffset={setOffset}
-                isLoading={isLoading}
-                isRefetching={isRefetching}
-                itemIsLoading={itemIsLoading}
-              />
-            </NoSsr>
-          </CustomPaperBigCard>
+      <SEO
+        title={configData ? atob(router?.query?.name) : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
+      <MainLayout configData={configData}>
+        <CustomStackFullWidth mt="1rem">
+          <CustomContainer>
+            <CustomPaperBigCard nopadding="true" sx={{ padding: "1rem" }}>
+              <NoSsr>
+                <CategoriesDetails
+                  id={id}
+                  data={data}
+                  category_id={category_id}
+                  setCategoryId={setCategoryId}
+                  storeData={storeData}
+                  offset={offset}
+                  type={type}
+                  setType={setType}
+                  page_limit={page_limit}
+                  setOffset={setOffset}
+                  isLoading={isLoading}
+                  isRefetching={isRefetching}
+                  itemIsLoading={itemIsLoading}
+                />
+              </NoSsr>
+            </CustomPaperBigCard>
+          </CustomContainer>
         </CustomStackFullWidth>
       </MainLayout>
     </>
@@ -83,4 +92,4 @@ const Index = ({ configData , landingPageData}) => {
 };
 
 export default Index;
-export {getServerSideProps}
+export { getServerSideProps };

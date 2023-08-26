@@ -1,12 +1,13 @@
-import React from "react";
 import { Skeleton, styled, Tooltip } from "@mui/material";
 import { Box, Stack } from "@mui/system";
-import CustomImageContainer from "../CustomImageContainer";
+import React from "react";
 import { setSelectedModule } from "../../redux/slices/utils";
+import CustomImageContainer from "../CustomImageContainer";
+import { setFeaturedCategories } from "../../redux/slices/storedData";
 
 const Container = styled(Stack)(({ theme }) => ({
   position: "fixed",
-  zIndex: "999",
+  zIndex: 1000,
   top: 150,
   right: 0,
   boxShadow: "0px 0px 29.7006px rgba(71, 71, 71, 0.1)",
@@ -18,7 +19,7 @@ const Container = styled(Stack)(({ theme }) => ({
   },
 }));
 const ModuleContainer = styled(Box)(({ theme, selected }) => ({
-  zIndex: 100000,
+  zIndex: 1000,
   cursor: "pointer",
   width: "62px",
   height: "62px",
@@ -28,12 +29,21 @@ const ModuleContainer = styled(Box)(({ theme, selected }) => ({
   justifyContent: "center",
   backgroundColor: "rgba(227, 227, 227, 0.2)",
   border: "2px solid",
+  transition: "all ease 0.5s",
   borderColor: selected
     ? theme.palette.primary.main
     : theme.palette.background.paper,
   background:
     selected &&
     "radial-gradient(50% 50% at 50% 50%, rgba(0, 202, 108, 0) 0%, rgba(0, 255, 137, 0.2) 100%)",
+  "&:hover": {
+    borderColor: theme.palette.primary.main,
+    background:
+      "radial-gradient(50% 50% at 50% 50%, rgba(0, 202, 108, 0) 0%, rgba(0, 255, 137, 0.2) 100%)",
+    "img, svg": {
+      transform: "scale(1.1)",
+    },
+  },
 }));
 
 export const zoneWiseModule = (data) => {
@@ -78,7 +88,7 @@ const ModuleSelect = ({
                   width="36px"
                   height="36px"
                   alt="mobile"
-                  objectFit="contained"
+                  objectFit="cover"
                 />
               </ModuleContainer>
             </Tooltip>

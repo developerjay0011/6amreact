@@ -27,7 +27,7 @@ const Menu = ({ onClose }) => {
   const { configData } = useSelector((state) => state.configData);
   const dispatch = useDispatch();
   const router = useRouter();
-  const handleLogout =  () => {
+  const handleLogout = async () => {
     setIsLogoutLoading(true);
     try {
       setTimeout(() => {
@@ -37,9 +37,31 @@ const Menu = ({ onClose }) => {
         toast.success(t(logoutSuccessFull));
         router.push("/home");
         setOpenModal(false);
+
+        // dispatch(removeToken())
+        // let a = []
+        // dispatch(clearWishList(a))
+        // dispatch(setClearCart())
+        //
+        // toast.success(t(logoutSuccessFull))
+        // onClose?.()
+        // if (router.pathname === '/') {
+        //   router.push('/')
+        // } else {
+        //   router.push('/home')
+        // }
       }, 500);
     } catch (err) {
+      //   toast.error('Unable to logout.');
     }
+  };
+  const handleClick = (item) => {
+    router.push({
+      pathname: "/profile",
+      query: {
+        page: item?.name,
+      },
+    });
   };
   return (
     <Box>
@@ -52,22 +74,33 @@ const Menu = ({ onClose }) => {
           ) {
             return null;
           } else {
-            return (
-              <Link key={index} href={`${item?.path}`}>
+            if (item?.id !== 8) {
+              return (
                 <MenuItem
+                  key={index}
+                  onClick={() => handleClick(item)}
                   sx={{
                     "&:hover": {
                       backgroundColor: (theme) =>
                         theme.palette.primary.semiLight,
-                      color:theme=> theme.palette.neutral[900]
+                      color: (theme) =>
+                        theme.palette.mode === "dark"
+                          ? theme.palette.neutral[100]
+                          : theme.palette.neutral[1000],
                     },
                   }}
                 >
                   <ListItemIcon>{item?.icon}</ListItemIcon>
-                  <ListItemText>{t(item.name)}</ListItemText>
+                  <ListItemText
+                    sx={{
+                      textTransform: "capitalize",
+                    }}
+                  >
+                    {t(item?.name?.replace("-", " "))}
+                  </ListItemText>
                 </MenuItem>
-              </Link>
-            );
+              );
+            }
           }
         })}
         <Divider />
@@ -76,7 +109,6 @@ const Menu = ({ onClose }) => {
           sx={{
             "&:hover": {
               backgroundColor: (theme) => theme.palette.primary.semiLight,
-              color:theme=> theme.palette.neutral[900]
             },
           }}
         >

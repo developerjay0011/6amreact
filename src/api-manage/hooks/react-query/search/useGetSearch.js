@@ -1,7 +1,10 @@
 import MainApi from "../../../MainApi";
-import { useQuery } from "react-query";
+import { useInfiniteQuery, useQuery } from "react-query";
 
-import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponses";
+import {
+  onErrorResponse,
+  onSingleErrorResponse,
+} from "../../../api-error-response/ErrorResponses";
 import { suggestedProducts_api } from "../../../ApiRoutes";
 
 const getSearch = async (pageParams) => {
@@ -10,17 +13,34 @@ const getSearch = async (pageParams) => {
     searchValue,
     offset,
     page_limit,
+    pageParam,
   } = pageParams;
   const { data } = await MainApi.get(
-    `/api/v1/${search_type}/search?name=${searchValue}&offset=${offset}&limit=${page_limit}`
+    `/api/v1/${search_type}/search?name=${searchValue}&offset=${
+      pageParam ? pageParam : offset
+    }&limit=${page_limit}`
   );
   return data;
 };
 
-export default function useGetSearch(pageParams, handleAPiCallOnSuccess) {
-  return useQuery("search-products", () => getSearch(pageParams), {
-    enabled: false,
-    onSuccess: handleAPiCallOnSuccess,
-    onError: onSingleErrorResponse,
-  });
+export default function useGetSearch(pageParams) {
+  return useInfiniteQuery(
+    ["search-products", pageParams?.currentTab],
+    ({ pageParam = 1 }) => getSearch({ ...pageParams, pageParam }),
+    {
+      getNextPageParam: (lastPage, allPages) => {
+        const nextPage = allPages.length + 1;
+        return (pageParams?.currentTab === 1
+          ? lastPage?.stores?.length
+          : lastPage?.items?.length) > 0
+          ? nextPage
+          : undefined;
+      },
+      getPreviousPageParam: (firstPage, allPages) => firstPage.prevCursor,
+      retry: 3,
+      enabled: false,
+      onError: onSingleErrorResponse,
+      cacheTime: "0",
+    }
+  );
 }

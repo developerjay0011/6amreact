@@ -19,7 +19,7 @@ const initialState = {
   bestReviewedItems: {
     products: [],
   },
-  modules: [],
+  AllSaveAddress: [],
 };
 
 export const storedDataSlice = createSlice({
@@ -66,8 +66,8 @@ export const storedDataSlice = createSlice({
         products: action.payload.products,
       };
     },
-    setModules: (state, action) => {
-      state.modules = action.payload;
+    setAllSaveAddress: (state, action) => {
+      state.AllSaveAddress = action.payload;
     },
     setResetStoredData: (state, action) => {
       return initialState;
@@ -88,7 +88,7 @@ export const {
   setRunningCampaigns,
   setNewArrivalStores,
   setBestReviewedItems,
-  setModules,
   setResetStoredData,
+  setAllSaveAddress,
 } = storedDataSlice.actions;
 export default storedDataSlice.reducer;

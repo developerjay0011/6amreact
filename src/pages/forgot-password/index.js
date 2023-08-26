@@ -1,19 +1,24 @@
 import React from "react";
 import ForgotPassword from "../../src/components/auth/ForgotPassword/ForgotPassword";
-import MetaData from "../meta-data";
 import CssBaseline from "@mui/material/CssBaseline";
 import MainLayout from "../../src/components/layout/MainLayout";
 import {getServerSideProps} from "../index";
-const index = ({ configData }) => {
-  return (
-    <>
-      <CssBaseline />
-      <MetaData title={`Forgot password - ${configData?.business_name}`} />
-      <MainLayout configData={configData}>
-        <ForgotPassword />
-      </MainLayout>
-    </>
-  );
+import SEO from "../../components/seo";
+
+const index = ({configData, landingPageData}) => {
+    return (
+        <>
+            <CssBaseline/>
+            <SEO
+                title={configData ? `Forgot password` : "Loading..."}
+                image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+                businessName={configData?.business_name}
+            />
+            <MainLayout configData={configData} landingPageData={landingPageData}>
+                <ForgotPassword/>
+            </MainLayout>
+        </>
+    );
 };
 
 export default index;

@@ -11,7 +11,7 @@ const SignInForm = ({
   handleOnChange,
   passwordHandler,
 }) => {
-  const lanDirection = getLanguage() ? getLanguage() : 'ltr';
+  const lanDirection = getLanguage() ? getLanguage() : "ltr";
 
   return (
     <CustomStackFullWidth alignItems="center" spacing={{ xs: 2, md: 2 }}>
@@ -22,6 +22,7 @@ const SignInForm = ({
         touched={loginFormik.touched.phone}
         errors={loginFormik.errors.phone}
         lanDirection={lanDirection}
+        height="45px"
       />
       <CustomTextFieldWithFormik
         required="true"

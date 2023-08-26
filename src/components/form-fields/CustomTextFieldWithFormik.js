@@ -20,6 +20,7 @@ const CustomTextFieldWithFormik = (props) => {
     onChangeHandler,
     rows,
     disabled,
+    height,
   } = props;
   const [inputValue, setInputValue] = useState(value);
   const [showPassword, setShowPassword] = useState(false);
@@ -36,6 +37,7 @@ const CustomTextFieldWithFormik = (props) => {
       return (
         <CustomTextFieldContainer>
           <CustomTextFieldStyle
+            height={height}
             //inputRef={(input) => input && input.focus()}
             disabled={disabled}
             fullWidth
@@ -52,6 +54,9 @@ const CustomTextFieldWithFormik = (props) => {
             type={showPassword ? "text" : type}
             kout
             InputProps={{
+              style: {
+                height: "45px", // Set your desired height value here
+              },
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
@@ -85,8 +90,15 @@ const CustomTextFieldWithFormik = (props) => {
             onChange={onChangeHandlerForField}
             onBlur={onBlurHandler}
             type={type}
+            height={height}
             InputProps={{
               inputProps: { min: 0 },
+              style: {
+                height: "45px", // Set your desired height value here
+              },
+            }}
+            InputLabelProps={{
+              shrink: true,
             }}
             {...fieldProps}
           />
@@ -94,7 +106,7 @@ const CustomTextFieldWithFormik = (props) => {
       );
     }
   };
-  return <Box sx={{ width: "100%", height: "60px" }}>{renderHandler()}</Box>;
+  return <Box sx={{ width: "100%", height: "55px" }}>{renderHandler()}</Box>;
 };
 
 export default CustomTextFieldWithFormik;

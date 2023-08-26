@@ -1,18 +1,27 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Rating } from "@mui/material";
 import { Stack } from "@mui/material";
 import { CustomColouredTypography } from "../../styled-components/CustomStyles.style";
 import { useTheme } from "@mui/material/styles";
 
-const CustomRatings = ({ handleChangeRatings, ratingValue, readOnly }) => {
-  const [value, setValue] = useState(ratingValue ? ratingValue : 0);
+const CustomRatings = ({
+  handleChangeRatings,
+  ratingValue,
+  readOnly,
+  fontSize,
+  color,
+}) => {
+  const [value, setValue] = useState(0);
   const handleChange = (event, newValue) => {
     if (!readOnly) {
       setValue(newValue);
       handleChangeRatings?.(newValue);
     }
   };
+  useEffect(() => {
+    setValue(ratingValue);
+  }, [ratingValue]);
 
   return (
     <Stack direction="row" alignItems="center" justifyContent="flex-start">
@@ -22,10 +31,11 @@ const CustomRatings = ({ handleChangeRatings, ratingValue, readOnly }) => {
         value={value}
         onChange={(event, newValue) => handleChange(event, newValue)}
         sx={{
-          color: (theme) => theme.palette.primary.main,
-          borderColor: (theme) => theme.palette.primary.main,
+          fontSize: fontSize ? fontSize : "inherit",
+          color: color ? color : (theme) => theme.palette.primary.main,
+          borderColor: color ? color : (theme) => theme.palette.primary.main,
           "& .MuiSvgIcon-root": {
-            fill: (theme) => theme.palette.primary.main,
+            fill: color ? color : (theme) => theme.palette.primary.main,
           },
         }}
       />

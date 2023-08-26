@@ -1,15 +1,27 @@
 import React, { useRef, useState } from "react";
-import { TextField, Box, Tooltip, IconButton, styled } from "@mui/material";
+import {
+  TextField,
+  Box,
+  Tooltip,
+  IconButton,
+  styled,
+  InputAdornment,
+  useMediaQuery,
+  alpha,
+} from "@mui/material";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-
+import insertImageIcon from "./asset/inportImage.png";
+import Picker from "emoji-picker-react";
 import InsertPhotoIcon from "@mui/icons-material/InsertPhoto";
 import SendIcon from "@mui/icons-material/Send";
+import InsertEmoticonIcon from "@mui/icons-material/InsertEmoticon";
 import { toast } from "react-hot-toast";
 import { t } from "i18next";
 import ChatImage from "./ChatImage";
 import { message_sending_image_limit } from "../../utils/toasterMessages";
 import { getLanguage } from "../../helper-functions/getLanguage";
-const CssTextField = styled(TextField)({
+import { Stack } from "@mui/system";
+const CssTextField = styled(TextField)(({ theme }) => ({
   "& label.Mui-focused": {
     color: "#EF7822",
     background: "#fff",
@@ -22,7 +34,12 @@ const CssTextField = styled(TextField)({
     border: "none",
   },
   "& .MuiOutlinedInput-root": {
-    border: "2px solid #D1D5DB",
+    border: "1px solid #EAEEF2",
+    padding: "13px 14px",
+    borderRadius: "5px",
+    [theme.breakpoints.down("md")]: {
+      padding: "8px 14px",
+    },
     "& fieldset": {
       // borderColor: '#EF7822',
     },
@@ -33,13 +50,23 @@ const CssTextField = styled(TextField)({
       borderColor: "#EF7822",
     },
   },
-});
+}));
+const AttachmentBox = styled(Box)(({ theme }) => ({
+  border: "1px solid",
+  padding: "11px",
+  borderColor: alpha(theme.palette.neutral[400], 0.5),
+  borderRadius: "5px",
+  [theme.breakpoints.down("md")]: {
+    padding: "7.5px",
+  },
+}));
 const ChatMessageAdd = ({ onSend }) => {
+  const [openEmoji, setOpenEmoji] = useState(false);
   const [body, setBody] = useState({
     text: "",
     file: [],
   });
-
+  const xSmall = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const fileInputRef = useRef(null);
   const handleChange = (event) => {
     setBody({ ...body, text: event.target.value });
@@ -72,20 +99,40 @@ const ChatMessageAdd = ({ onSend }) => {
 
   const removeImage = (name) => {
     const tempData = body.file.filter((item) => item.name !== name);
-    setBody({ file: tempData });
+    setBody({ ...body, file: tempData });
+  };
+  const onEmojiClick = (event, emojiObject) => {
+    setBody({ ...body, text: body.text + event?.emoji });
+    setOpenEmoji(false);
   };
 
   return (
-    <Box
+    <Stack
+      direction="row"
+      spacing={1.5}
+      alignItems="center"
       sx={{
-        alignItems: "center",
-        backgroundColor: (theme) => theme.palette.neutral[200],
-        display: "flex",
-        flexShrink: 0,
-        p: 3,
         position: "relative",
       }}
+      padding={{ xs: "10px", md: "20px" }}
     >
+      <Tooltip title={t("Attach photo")}>
+        <AttachmentBox>
+          <IconButton
+            disabled={body.file.length >= 3}
+            sx={{ padding: "0px" }}
+            onClick={handleAttach}
+          >
+            <InsertPhotoIcon
+              color="primary"
+              sx={{
+                width: { xs: "20px", md: "24px" },
+                height: { xs: "20px", md: "24px" },
+              }}
+            />
+          </IconButton>
+        </AttachmentBox>
+      </Tooltip>
       {/*<Avatar*/}
       {/*    sx={{*/}
       {/*        display: {*/}
@@ -96,63 +143,58 @@ const ChatMessageAdd = ({ onSend }) => {
       {/*    }}*/}
       {/*    src={user.avatar}*/}
       {/*/>*/}
+      <Stack sx={{ position: "absolute", bottom: "80%" }}>
+        {openEmoji && (
+          <Picker pickerStyle={{ width: "100%" }} onEmojiClick={onEmojiClick} />
+        )}
+      </Stack>
       <CssTextField
         // disabled={disabled}
         fullWidth
         onChange={handleChange}
         onKeyUp={handleKeyUp}
-        placeholder={t("Leave a message")}
+        placeholder={t("Start a new message")}
         value={body.text}
         size="small"
         multiline
+        InputProps={{
+          height: "50px",
+          endAdornment: (
+            <InputAdornment position="start">
+              {!xSmall && (
+                <InsertEmoticonIcon
+                  sx={{ cursor: "pointer", marginRight: "-10px" }}
+                  onClick={() => setOpenEmoji((prevState) => !prevState)}
+                />
+              )}
+            </InputAdornment>
+          ),
+        }}
       />
 
-      <Box
-        sx={{
-          alignItems: "center",
-          display: "flex",
-          m: -2,
-          ml: getLanguage() !== "rtl" && 2,
-          mr: getLanguage() === "rtl" && "1rem",
-        }}
-      >
-        <Tooltip title={t("Attach photo")}>
-          <Box
+      <Tooltip title={t("Send")}>
+        <AttachmentBox>
+          <IconButton
+            disabled={body.text === "" && body?.file?.length === 0}
             sx={{
-              m: 1,
+              color: "primary.contrastText",
+              flexDirection: "row-reverse",
+              padding: "0px",
+              transform: getLanguage() === "rtl" && "rotate(180deg)",
             }}
+            onClick={handleSend}
           >
-            <IconButton
-              // disabled={disabled}
-              edge="end"
-              onClick={handleAttach}
-            >
-              <InsertPhotoIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        </Tooltip>
-
-        <Tooltip title={t("Send")}>
-          <Box sx={{ m: 1 }}>
-            <IconButton
-              color="primary"
-              disabled={body.text === "" && body.file.length === 0}
+            <SendIcon
               sx={{
-                backgroundColor: "primary.main",
-                color: "primary.contrastText",
-                flexDirection: "row-reverse",
-                transform: getLanguage() === "rtl" && "rotate(180deg)",
-                "&:hover": {
-                  backgroundColor: "primary.dark",
-                },
+                width: { xs: "20px", md: "24px" },
+                height: { xs: "20px", md: "24px" },
+                color: "primary.main",
               }}
-              onClick={handleSend}
-            >
-              <SendIcon fontSize="small" />
-            </IconButton>
-          </Box>
-        </Tooltip>
-      </Box>
+            />
+          </IconButton>
+        </AttachmentBox>
+      </Tooltip>
+
       <input
         hidden
         ref={fileInputRef}
@@ -163,7 +205,7 @@ const ChatMessageAdd = ({ onSend }) => {
       {body.file.length > 0 && (
         <ChatImage body={body} removeImage={removeImage} />
       )}
-    </Box>
+    </Stack>
   );
 };
 export default ChatMessageAdd;

@@ -43,12 +43,30 @@ const Chatting = ({ configData }) => {
   const [searchValue, setSearchValue] = useState("");
   const [receiver, setReceiver] = useState();
   const [receiverImage, setReceiverImage] = useState();
+  const [userType, setUserType] = useState("");
   const mdUp = useMediaQuery((theme) => theme.breakpoints.up("md"));
   const mdDown = useMediaQuery((theme) => theme.breakpoints.down("md"));
   const router = useRouter();
-  const { id, type, routeName, conversationId, chatFrom } = router.query;
+  const {
+    id,
+    type,
+    routeName,
+    conversationId,
+    chatFrom,
+    deliveryman_name,
+    deliveryManData_image,
+  } = router.query;
+  const [deliveryInfo, setDeliveryInfo] = useState({});
   //const { configData } = useSelector((state) => state.configDataSettings);
   const [scrollBottom, setScrollBottom] = useState(true);
+  console.log("all", conversationId);
+
+  useEffect(() => {
+    setDeliveryInfo({
+      name: deliveryman_name,
+      image: deliveryManData_image,
+    });
+  }, [deliveryman_name]);
 
   const handleCloseSidebar = () => {
     setIsSidebarOpen(false);
@@ -64,7 +82,7 @@ const Chatting = ({ configData }) => {
     isFetched,
     isLoading: channelLoading,
   } = useGetChannelList(handleChatListOnSuccess);
-
+  console.log();
   const handleConFetchOnSuccess = (res) => {
     setConversationData(res.pages[0]);
   };
@@ -78,7 +96,7 @@ const Chatting = ({ configData }) => {
     isRefetching: conversationDataRefetching,
     hasPreviousPage,
   } = useGetConversation({ channelId, apiFor, page_limit, offset });
-
+  console.log({ channelList });
   // from notification
 
   useEffect(() => {
@@ -112,11 +130,15 @@ const Chatting = ({ configData }) => {
             return item?.sender?.deliveryman_id == id;
           }
         });
+      console.log("ffff", tempReceiver[0]);
       setReceiver(tempReceiver[0]);
+      setReceiverImage(tempReceiver[0]?.receiver?.image);
       setChannelId(id);
       setReceiverId(id);
       setReceiverType(type);
       setApiFor(routeName);
+      setIsSidebarOpen(false);
+      setUserType(type);
     }
   }, [id, type, routeName, chatFrom, channelList]);
 
@@ -125,6 +147,7 @@ const Chatting = ({ configData }) => {
       refetch();
     }
   }, [channelId]);
+
   useEffect(() => {
     setMessagesData([data]);
   }, [data]);
@@ -139,6 +162,7 @@ const Chatting = ({ configData }) => {
       // setReceiverName(configData.business_name);
       setReceiverImage(value?.receiver?.image);
       setReceiver(value);
+      setIsSidebarOpen(false);
     } else {
       setApiFor("conversation_id");
       setChannelId(value.id);
@@ -147,11 +171,12 @@ const Chatting = ({ configData }) => {
       setReceiverName(value.receiver.f_name);
       setReceiverImage(value?.receiver?.image);
       setReceiver(value);
+      setIsSidebarOpen(false);
     }
-
-    mdDown && setIsSidebarOpen((prevState) => !prevState);
+    setDeliveryInfo(null);
+    mdDown && setIsSidebarOpen(false);
   };
-
+  console.log({ deliveryInfo });
   useEffect(() => {
     refetchChannelList().then();
   }, []);
@@ -219,13 +244,41 @@ const Chatting = ({ configData }) => {
       return configData?.base_urls?.delivery_man_image_url;
     } else configData?.base_urls?.business_logo_url;
   };
-  const userImage = receiverImage;
-
+  const userImage = deliveryInfo?.image ? deliveryInfo?.image : receiverImage;
+  console.log({ receiverImage });
   return (
     <PushNotificationLayout refetch={refetch} pathName="chat">
-      <CustomBoxFullWidth>
+      <CustomBoxFullWidth mt={{ xs: "1rem", md: "2rem" }}>
         <CustomStackFullWidth spacing={1} direction="row">
-          <Stack>
+          {mdDown ? (
+            <>
+              {isSidebarOpen && (
+                <Stack width="100%">
+                  <ChatSideBar
+                    onClose={handleCloseSidebar}
+                    handleToggleSidebar={handleToggleSidebar}
+                    open={isSidebarOpen}
+                    handleChannelOnClick={handleChannelOnClick}
+                    isFetched={isFetched}
+                    channelList={channelList}
+                    searchValue={searchValue}
+                    setSearchValue={setSearchValue}
+                    handleSearch={handleSearch}
+                    // isLoading={isLoading}
+                    handleReset={handleReset}
+                    searchSubmitHandler={searchSubmitHandler}
+                    channelLoading={channelLoading}
+                    selectedId={receiver?.id}
+                    chatFrom={chatFrom}
+                    setIsSidebarOpen={setIsSidebarOpen}
+                    userType={userType}
+                    setUserType={setUserType}
+                    setChannelId={setChannelId}
+                  />
+                </Stack>
+              )}
+            </>
+          ) : (
             <ChatSideBar
               onClose={handleCloseSidebar}
               handleToggleSidebar={handleToggleSidebar}
@@ -243,10 +296,14 @@ const Chatting = ({ configData }) => {
               selectedId={receiver?.id}
               chatFrom={chatFrom}
               setIsSidebarOpen={setIsSidebarOpen}
+              userType={userType}
+              setUserType={setUserType}
+              setChannelId={setChannelId}
             />
-          </Stack>
-          <CustomStackFullWidth>
-            {receiver && (
+          )}
+
+          <Stack width={mdDown ? (isSidebarOpen ? "" : "100%") : "100%"}>
+            {!isSidebarOpen && (
               <ConversationInfoTop
                 receiver={receiver}
                 mdUp={mdUp}
@@ -254,22 +311,28 @@ const Chatting = ({ configData }) => {
                 ChatImageUrl={ChatImageUrl}
                 userImage={userImage}
                 theme={theme}
+                deliveryman_name={deliveryInfo?.name}
+                deliveryManImage={deliveryInfo?.image}
+                deliveryUrl={configData?.base_urls?.delivery_man_image_url}
               />
             )}
 
-            {channelId && messagesData.length > 0 && !isFetchingNextPage && (
-              <ChatView
-                conversationData={messagesData?.[0]?.pages}
-                handleChatMessageSend={handleChatMessageSend}
-                channelList={channelList}
-                handleScroll={handleScroll}
-                scrollBottom={scrollBottom}
-              />
-            )}
+            {channelId &&
+              messagesData.length > 0 &&
+              !isFetchingNextPage &&
+              !isSidebarOpen && (
+                <ChatView
+                  conversationData={messagesData?.[0]?.pages}
+                  handleChatMessageSend={handleChatMessageSend}
+                  channelList={channelList}
+                  handleScroll={handleScroll}
+                  scrollBottom={scrollBottom}
+                />
+              )}
             {isFetchingNextPage && <LoadingBox />}
 
-            {!channelId && <EmptyView />}
-          </CustomStackFullWidth>
+            {!channelId && !mdDown && <EmptyView />}
+          </Stack>
         </CustomStackFullWidth>
       </CustomBoxFullWidth>
     </PushNotificationLayout>

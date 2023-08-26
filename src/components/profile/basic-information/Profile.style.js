@@ -3,15 +3,14 @@ import { Box, Button, Grid } from "@mui/material";
 import LoadingButton from "@mui/lab/LoadingButton";
 
 export const SaveButton = styled(LoadingButton)(({ theme }) => ({
-  color: "#ffffff !important",
+  color: "#ffffff",
+  borderRadius: "5px",
 
   [theme.breakpoints.up("xs")]: {
-    width: "170px",
     height: "42.04px",
   },
   [theme.breakpoints.up("md")]: {
-    width: "170px",
-    color: "black",
+    color: "#ffffff",
   },
 }));
 

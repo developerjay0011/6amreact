@@ -8,7 +8,7 @@ import H1 from "../typographies/H1";
 
 const ReviewPage = ({ id }) => {
   return (
-    <CustomStackFullWidth>
+    <CustomStackFullWidth mt="1rem">
       <CustomPaperBigCard>
         <CustomStackFullWidth spacing={4}>
           <H1 text="Reviews" textAlign="left" />

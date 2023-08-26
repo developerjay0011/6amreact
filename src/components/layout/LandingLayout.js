@@ -12,13 +12,14 @@ export const LandingLayout = ({ children, configData, landingPageData }) => {
   return (
     <MainLayoutRoot justifyContent="space-between">
       <header>
-        <NoSsr>
-          <HeaderComponent configData={configData} />
-        </NoSsr>
+        <HeaderComponent configData={configData} />
       </header>
       {children}
       <footer>
-        <FooterComponent configData={configData} landingPageData={landingPageData} />
+        <FooterComponent
+          configData={configData}
+          landingPageData={landingPageData}
+        />
       </footer>
     </MainLayoutRoot>
   );

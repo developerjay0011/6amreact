@@ -1,5 +1,4 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Stack } from "@mui/system";
 import { Typography, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -24,8 +23,13 @@ const ClosedNowOverlay = ({ borderRadius }) => {
         borderRadius: borderRadius ? borderRadius : ".5rem",
       }}
     >
-      <Typography align="center" color={theme.palette.neutral[100]}>
-        {t("Closed Now")}
+      <Typography
+        align="center"
+        color={theme.palette.neutral[100]}
+        fontWeight="600"
+        fontSize="12px"
+      >
+        {t("CLOSED NOW")}
       </Typography>
     </Stack>
   );

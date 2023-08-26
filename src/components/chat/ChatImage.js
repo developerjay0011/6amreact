@@ -1,9 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { IconButton, Paper, Stack } from "@mui/material";
-import CustomImageContainer from "../CustomImageContainer";
 import CloseIcon from "@mui/icons-material/Close";
-import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
+import { IconButton, Paper, Stack } from "@mui/material";
 import { useTheme } from "@mui/material/styles";
+import React, { useEffect, useState } from "react";
+import CustomImageContainer from "../CustomImageContainer";
 const ChatImage = ({ body, removeImage }) => {
   const theme = useTheme();
   const [files, setFiles] = useState();
@@ -20,6 +19,7 @@ const ChatImage = ({ body, removeImage }) => {
         display: "flex",
         flexDirection: "row",
         gap: "20px",
+        flexWrap: "wrap",
       }}
     >
       {files?.map((item, index) => {
@@ -30,7 +30,7 @@ const ChatImage = ({ body, removeImage }) => {
             key={index}
           >
             <CustomImageContainer
-              objectFit="contained"
+              objectFit="cover"
               src={URL.createObjectURL(item)}
               height="70px"
               width="100px"

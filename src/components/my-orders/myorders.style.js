@@ -12,11 +12,10 @@ export const OrderIdTypography = styled(Typography)(({ theme }) => ({
 }));
 export const DateTypography = styled(Typography)(({ theme }) => ({
   color: theme.palette.text.secondary,
-  [theme.breakpoints.up("xs")]: {
-    fontSize: "12px",
-  },
-  [theme.breakpoints.up("md")]: {
-    fontSize: "16px",
+  fontSize: "12px",
+
+  [theme.breakpoints.down("md")]: {
+    fontSize: "10px",
   },
 }));
 export const OrderAmountTypography = styled(Typography)(({ theme }) => ({
@@ -63,19 +62,21 @@ export const PendingButton = styled(Box)(({ theme }) => ({
 }));
 export const TrackOrderButton = styled(Button)(({ theme }) => ({
   width: "100%",
-  height: "32px",
-  background: theme.palette.primary.main,
-  border: "1px solid rgba(239, 120, 34, 0.3)",
+  color: theme.palette.primary.main,
   borderRadius: "5px",
-  color: "white",
-  gap: "5px",
+  alignItems: "center",
+  padding: "6px 12px",
+
   "&:hover": {
     backgroundColor: theme.palette.primary.dark,
+    color: theme.palette.whiteContainer.main,
   },
-  [theme.breakpoints.up("md")]: {
-    width: "150px",
-    height: "32px",
-    fontSize: "16px",
+  [theme.breakpoints.down("md")]: {
+    padding: "2px 5px",
+    fontSize: "12px",
+    backgroundColor: theme.palette.primary.main,
+    color: theme.palette.whiteContainer.main,
+    fontWeight: 500,
   },
 }));
 export const HeadingBox = styled(Box)(() => ({
@@ -94,7 +95,27 @@ export const OrderStatusGrid = styled(Grid)(({ theme }) => ({
   rowGap: "10px",
 }));
 export const InformationGrid = styled(Grid)(({ theme }) => ({
-  background: alpha(theme.palette.primary.main, 0.1),
+  background: theme.palette.primary.custom6,
   borderRadius: "14px",
   padding: "20px",
+  [theme.breakpoints.down("md")]: {
+    background: theme.palette.neutral[100],
+    padding: "12px",
+  },
 }));
+export const OrderStatusButton = styled(Button)(
+  ({ theme, background, fontcolor }) => ({
+    backgroundColor: background,
+    color: theme.palette.neutral[100],
+    textTransform: "capitalize",
+    padding: "6px 10px",
+    borderRadius: "8px",
+    "&:hover": {
+      backgroundColor: alpha(background, 0.9),
+    },
+    [theme.breakpoints.down("md")]: {
+      padding: "5px 5px",
+      fontSize: "10px",
+    },
+  })
+);

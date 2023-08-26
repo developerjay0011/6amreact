@@ -44,13 +44,16 @@ const MainLayout = ({ children, configData, landingPageData }) => {
       <header>
         <HeaderComponent configData={configData} />
       </header>
-      <CustomStackFullWidth mt={isSmall ? "5rem" : "7rem"}>
+      <CustomStackFullWidth mt={isSmall ? "3.5rem" : "5.9rem"}>
         <CustomStackFullWidth sx={{ minHeight: "70vh" }}>
-          <CustomContainer>{children}</CustomContainer>
+          {children}
         </CustomStackFullWidth>
       </CustomStackFullWidth>
       <footer>
-        <FooterComponent configData={configData} landingPageData={landingPageData} />
+        <FooterComponent
+          configData={configData}
+          landingPageData={landingPageData}
+        />
       </footer>
       {isSmall && <BottomNav />}
     </MainLayoutRoot>

@@ -1,78 +1,92 @@
-import React from "react";
-import PropTypes from "prop-types";
-import List from "@mui/material/List";
-import ListItem from "@mui/material/ListItem";
-import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
+import React, { useReducer, useState } from "react";
+import CreateIcon from "@mui/icons-material/Create";
+import {
+  CustomList,
+  CustomListItem,
+  CustomStackFullWidth,
+} from "../../../styled-components/CustomStyles.style";
 import ListItemText from "@mui/material/ListItemText";
-import { alpha, Typography } from "@mui/material";
+import { alpha, IconButton, Typography } from "@mui/material";
 import Radio from "@mui/material/Radio";
 import Divider from "@mui/material/Divider";
 import CustomAlert from "../../alert/CustomAlert";
 // import CustomCheckOutShimmer from '../../CustomShimmerForCheckout/CustomCheckOutShimmer'
 import { useTheme } from "@mui/material/styles";
+import AddNewAddress from "../../address/add-new-address";
+import { ACTIONS, initialState, reducer } from "../../address/states";
+import { Stack } from "@mui/system";
+import SimpleBar from "simplebar-react";
+import { CustomTypographyEllipsis } from "../../../styled-components/CustomTypographies.style";
 
 const AddressSelectionList = (props) => {
   const theme = useTheme();
-  const { data, allAddress, handleLatLng, t, address, isRefetching } = props;
-
+  const {
+    data,
+    allAddress,
+    handleLatLng,
+    t,
+    address,
+    isRefetching,
+    refetch,
+    configData,
+    setSelectedAddress,
+    renderOnNavbar,
+  } = props;
+  console.log({ data });
   return (
     <>
-      <List
-        sx={{
-          width: "100%",
-          bgcolor: "background.paper",
-        }}
-      >
+      <CustomList>
         {data &&
           allAddress?.length > 0 &&
-          allAddress?.map((adres, index) => (
-            <>
-              <ListItem
-                onClick={() => handleLatLng(adres)}
+          allAddress?.map((item, index) => (
+            <Stack key={item.id}>
+              <CustomListItem
+                border={
+                  item.id === address?.id &&
+                  `1px solid ${theme.palette.primary.main}`
+                }
+                onClick={() => handleLatLng(item)}
                 alignItems="flex-start"
-                key={adres.id}
-                sx={{
-                  cursor: "pointer",
-                  "&:hover": {
-                    backgroundColor: alpha(theme.palette.primary.main, 0.2),
-                  },
-                }}
-                selected={adres.id === address?.id}
+                selected={item.id === address?.id}
+                cursor="pointer"
                 // className="selected"
               >
-                <CustomStackFullWidth direction="row" alignItems="center">
-                  <ListItemText
-                    primary={
-                      <Typography textTransform="capitalize">
-                        {t(adres.address_type)}
-                      </Typography>
-                    }
-                    secondary={<React.Fragment>{adres.address}</React.Fragment>}
-                  />
+                <CustomStackFullWidth direction="row" alignItems="flex-start">
                   <Radio
-                    checked={adres.id === address?.id}
+                    checked={item.id === address?.id}
                     row
                     aria-labelledby="demo-row-radio-buttons-group-label"
                     name="row-radio-buttons-group"
+                    sx={{ marginTop: "-2px" }}
                   />
-                  {/*<Box*/}
-                  {/*    sx={{*/}
-                  {/*        height: '20px',*/}
-                  {/*        width: '20px',*/}
-                  {/*        borderRadius: '50%',*/}
-                  {/*        display:*/}
-                  {/*            address?.address ===*/}
-                  {/*            adres.address*/}
-                  {/*                ? 'inherit'*/}
-                  {/*                : 'none',*/}
-                  {/*        background: (theme) =>*/}
-                  {/*            theme.palette.neutral[300],*/}
-                  {/*    }}*/}
-                  {/*/>*/}
+                  <ListItemText
+                    primary={
+                      <Typography
+                        textTransform="capitalize"
+                        fontSize={{ xs: "13px", sm: "14px", md: "16px" }}
+                        fontWeight={item.id === address?.id ? "600" : "600"}
+                      >
+                        {t(item.address_type)}
+                      </Typography>
+                    }
+                    secondary={
+                      <CustomTypographyEllipsis
+                        sx={{
+                          fontSize: {
+                            xs: "10px",
+                            md: "12px",
+                            maxWidth:
+                              renderOnNavbar === "true" ? "220px" : "100%",
+                          },
+                        }}
+                      >
+                        {item.address}
+                      </CustomTypographyEllipsis>
+                    }
+                  />
                 </CustomStackFullWidth>
-              </ListItem>
-              <Divider variant="inset" sx={{ marginLeft: "0px" }} />
-            </>
+              </CustomListItem>
+            </Stack>
           ))}
         {!isRefetching && allAddress?.length === 0 && (
           <CustomAlert
@@ -81,7 +95,7 @@ const AddressSelectionList = (props) => {
           />
         )}
         {/*{!data && <CustomCheckOutShimmer />}*/}
-      </List>
+      </CustomList>
     </>
   );
 };

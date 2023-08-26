@@ -14,6 +14,7 @@ import CardView from "../added-cart-view";
 import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { getCartListModuleWise } from "../../helper-functions/getCartListModuleWise";
+import WishListCardView from "../wishlist";
 
 const styles = {
   maxWidth: 2000,
@@ -29,13 +30,16 @@ const BottomNav = () => {
   const { selectedModule } = useSelector((state) => state.utilsData);
   const totalWishList = wishLists?.item?.length + wishLists?.store?.length;
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
-
+  const [wishListSideDrawerOpen, setWishListSideDrawerOpen] = useState(false);
   const router = useRouter();
   const currentRoute = router.pathname.replace("/", "");
   const handleCartDrawerOpen = () => {
     setSideDrawerOpen(true);
   };
-
+  const handleWishListsDrawerOpen = () => {
+    setWishListSideDrawerOpen(true);
+  };
+  const handleChange = () => {};
   return (
     <CustomStackFullWidth>
       <Paper
@@ -46,18 +50,28 @@ const BottomNav = () => {
           right: 0,
           padding: "5px",
           width: "100%",
-          zIndex: 111,
+          zIndex: 1111,
         }}
         elevation={3}
       >
         <SimpleBar style={styles}>
           <BottomNavigation
+            showLabels
             value={currentRoute}
             onChange={(event, newValue) => {
-              if (newValue !== "cart")
-                router.push(`/${newValue}`, undefined, { shallow: true });
+              if (newValue !== "cart" && newValue !== "wishlist")
+                if (newValue !== "home") {
+                  router.push(
+                    { pathname: "/profile", query: { page: newValue } },
+                    undefined,
+                    {
+                      shallow: true,
+                    }
+                  );
+                } else {
+                  router.push(`/${newValue}`);
+                }
             }}
-            showLabels
           >
             <CustomBottomNavigationAction
               label={t("Home")}
@@ -92,7 +106,7 @@ const BottomNav = () => {
 
             <CustomBottomNavigationAction
               label={t("Chat")}
-              value="chatting"
+              value="inbox"
               icon={
                 <Badge badgeContent={0} color="error">
                   <SmsRoundedIcon />
@@ -108,6 +122,7 @@ const BottomNav = () => {
             <CustomBottomNavigationAction
               label={t("WishList")}
               value="wishlist"
+              onClick={() => handleWishListsDrawerOpen()}
               icon={
                 <Badge badgeContent={totalWishList} color="error">
                   <FavoriteIcon />
@@ -121,6 +136,13 @@ const BottomNav = () => {
             sideDrawerOpen={sideDrawerOpen}
             setSideDrawerOpen={setSideDrawerOpen}
             cartList={cartList}
+          />
+        )}
+
+        {!!wishListSideDrawerOpen && (
+          <WishListCardView
+            sideDrawerOpen={wishListSideDrawerOpen}
+            setSideDrawerOpen={setWishListSideDrawerOpen}
           />
         )}
       </Paper>

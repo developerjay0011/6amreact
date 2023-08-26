@@ -11,7 +11,7 @@ import { Skeleton } from "@mui/material";
 import Shimmer from "../home/stores-with-filter/Shimmer";
 import useMediaQuery from "@mui/material/useMediaQuery";
 
-const StoreList = ({ storeType, type, setType, data, isLoading }) => {
+const StoreList = ({ storeType, type, setType, data }) => {
   const { selectedModule } = useSelector((state) => state.utilsData);
   const matchesXs = useMediaQuery("(max-width:470px)");
   const { configData } = useSelector((state) => state.configData);
@@ -32,36 +32,29 @@ const StoreList = ({ storeType, type, setType, data, isLoading }) => {
           </Grid>
         )}
 
-        {data &&
-          data?.length > 0 &&
-          data?.map((store) => {
-            return (
-              <Grid
-                key={store?.id}
-                item
-                xs={matchesXs ? 12 : 6}
-                sm={6}
-                md={3}
-                lg={2.4}
-              >
-                <StoresInfoCard
-                  image={`${store_image_url}/${store?.logo}`}
-                  title={store?.name}
-                  avgRating={store?.avg_rating}
-                  address={store?.address}
-                  id={store?.id}
-                  data={store}
-                  moduleId={getModuleId()}
-                />
-              </Grid>
-            );
-          })}
+        {data?.map((store) => {
+          return (
+            <Grid
+              key={store?.id}
+              item
+              xs={matchesXs ? 12 : 6}
+              sm={6}
+              md={3}
+              lg={2.4}
+            >
+              <StoresInfoCard
+                image={`${store_image_url}/${store?.logo}`}
+                title={store?.name}
+                avgRating={store?.avg_rating}
+                address={store?.address}
+                id={store?.id}
+                data={store}
+                moduleId={getModuleId()}
+              />
+            </Grid>
+          );
+        })}
       </Grid>
-      {isLoading && (
-        <Box marginTop="40px">
-          <Shimmer count="10" />
-        </Box>
-      )}
     </Box>
   );
 };

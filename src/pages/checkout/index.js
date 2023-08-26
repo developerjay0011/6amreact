@@ -11,8 +11,9 @@ import CustomAlert from "../../src/components/alert/CustomAlert";
 import { getCartListModuleWise } from "../../src/helper-functions/getCartListModuleWise";
 import PrescriptionCheckout from "../../src/components/checkout/Prescription";
 import {getServerSideProps} from "../index";
+import SEO from "../../components/seo";
 
-const CheckOutPage = ({ configData }) => {
+const CheckOutPage = ({ configData,landingPageData }) => {
   const [rendered, setIsRendered] = useState(false);
   const router = useRouter();
   const { page, store_id, id } = router.query;
@@ -59,8 +60,12 @@ const CheckOutPage = ({ configData }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`Checkout - ${configData?.business_name}`} />
-      <MainLayout configData={configData}>
+      <SEO
+        title={configData ? `Checkout` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
+      <MainLayout configData={configData} landingPageData={landingPageData}>
         <AuthGuard from="checkout">
           {rendered && (
             <>

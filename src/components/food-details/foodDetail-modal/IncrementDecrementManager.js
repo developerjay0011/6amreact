@@ -23,14 +23,22 @@ const IncrementDecrementManager = (props) => {
       >
         <RemoveIcon
           size="small"
-          sx={{ color: (theme) => theme.palette.neutral[1000] }}
+          sx={{
+            color: (theme) => theme.palette.neutral[1000],
+            width: "16px",
+            height: "16px",
+          }}
         />
       </CustomFab>
       <Typography variant="h6">{quantity}</Typography>
       <CustomFab color="primary" aria-label="add" onClick={incrementPrice}>
         <AddIcon
           size="small"
-          sx={{ color: (theme) => theme.palette.neutral[1000] }}
+          sx={{
+            color: (theme) => theme.palette.neutral[1000],
+            width: "16px",
+            height: "16px",
+          }}
         />
       </CustomFab>
     </Stack>

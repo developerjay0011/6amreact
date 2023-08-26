@@ -16,10 +16,13 @@ export const subCategories_api = "/api/v1/categories/childes";
 export const most_reviewed_items_api = "/api/v1/items/most-reviewed";
 export const latest_store_api = "/api/v1/stores/latest";
 export const latest_items_api = "/api/v1/items/latest";
+export const more_from_store = "/api/v1/items/related-items";
+export const new_arrivals = "/api/v1/items/new-arrival";
 export const parcel_category_api = "/api/v1/parcel-category";
 export const distance_api = "/api/v1/config/distance-api";
 export const new_arrival_stores_api = "/api/v1/stores/latest";
 export const filtered_stores_api = "/api/v1/stores/get-stores";
+export const top_rated_stores = "/api/v1/stores/top-rated";
 export const store_details_api = "/api/v1/stores/details";
 export const signUp_api = "/api/v1/auth/sign-up";
 export const signIn_api = "/api/v1/auth/login";
@@ -32,6 +35,9 @@ export const remove_account_api = "/api/v1/customer/remove-account";
 export const profile_update_api = "/api/v1/customer/update-profile";
 export const coupon_list_api = "/api/v1/coupon/list";
 export const similar_product_api = "/api/v1/items/related-items";
+export const discounted_product_api = "/api/v1/items/discounted";
+export const discounted_stores_api = "/api/v1/stores/discounted";
+export const popular_items_in_store = "/api/v1/stores/popular-items";
 export const wallet_transactions_list_api =
   "/api/v1/customer/wallet/transactions";
 export const LP_transactions_list_api =
@@ -41,6 +47,7 @@ export const Loyalty_points_transfer_api =
 
 export const address_list_api = "/api/v1/customer/address/list";
 export const add_address_api = "/api/v1/customer/address/add";
+export const update_address_api = "/api/v1/customer/address/update";
 export const delete_address_api = "/api/v1/customer/address/delete";
 export const refund_policy_api = "/refund";
 export const product_reviews_api = "/api/v1/items/reviews";
@@ -53,6 +60,7 @@ export const store_message_api = "/api/v1/customer/message/send";
 export const channel_search_api = "/api/v1/customer/message/search-list";
 export const cm_firebase_token_api = "/api/v1/customer/cm-firebase-token";
 export const suggestedProducts_api = "/api/v1/customer/suggested-items";
+export const suggested_items_stores = "/api/v1/items/item-or-store-search";
 export const order_details_api = "/api/v1/customer/order/details";
 export const track_order_api = "/api/v1/customer/order/track";
 export const order_cancel_api = "/api/v1/customer/order/cancel";
@@ -75,5 +83,10 @@ export const submit_items_review_api = "/api/v1/items/reviews/submit";
 export const submit_deliveryman_review_api =
   "/api/v1/delivery-man/reviews/submit";
 
-export const update_interest_api = '/api/v1/customer/update-interest'
+export const update_interest_api = "/api/v1/customer/update-interest";
 export const landing_page_api = "/api/v1/react-landing-page";
+export const most_trips = "/api/v1/most-tips";
+
+export const wallet_bonuses = "/api/v1/customer/wallet/bonuses";
+export const add_fund_to_wallet = "api/v1/customer/wallet/add-fund";
+export const product_review_api = "/api/v1/items/related-items";

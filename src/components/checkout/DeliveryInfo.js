@@ -41,20 +41,26 @@ const DeliveryInfo = ({ parcelInfo, configData }) => {
           <Stack
             width="100%"
             padding="1.3rem"
-            backgroundColor={alpha(theme.palette.primary.main, 0.1)}
+            backgroundColor={theme.palette.neutral[300]}
             borderRadius="7px"
             spacing={2}
             direction="row"
+            alignItems="center"
           >
             <CustomImageContainer
-              width="56px"
-              height="56px"
+              width="50px"
+              height="50px"
               src={`${configData?.base_urls?.parcel_category_image_url}/${parcelInfo?.image}`}
               objectfit="contain"
             />
-            <Stack spacing={1}>
-              <Typography variant="h6">{parcelInfo?.name}</Typography>
-              <Typography color={theme.palette.neutral[500]}>
+            <Stack>
+              <Typography
+                fontSize={{ xs: "14px", sm: "16px", md: "16px" }}
+                fontWeight="500"
+              >
+                {parcelInfo?.name}
+              </Typography>
+              <Typography color={theme.palette.neutral[500]} fontSize="12px">
                 {parcelInfo?.description}
               </Typography>
             </Stack>

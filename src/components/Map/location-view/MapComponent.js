@@ -1,11 +1,32 @@
-import React, { useCallback, useEffect, useMemo, useReducer } from "react";
-import { GoogleMap, Marker, useJsApiLoader } from "@react-google-maps/api";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useReducer,
+  useState,
+} from "react";
+import {
+  GoogleMap,
+  Marker,
+  useJsApiLoader,
+  LoadScript,
+  Polyline,
+  DirectionsRenderer,
+  OverlayView,
+} from "@react-google-maps/api";
 import { CircularProgress } from "@mui/material";
 import { Stack } from "@mui/system";
+import { useTheme } from "@emotion/react";
+import CustomImageContainer from "../../CustomImageContainer";
+import ddd from "../assets/meeting-point.svg";
+import DeliveryManMapMarker from "../../parcel/DeliveryManMapMarker";
 
 const containerStyle = {
   width: "100%",
-  height: "450px",
+  height: "348px",
+  borderRadius: "10px",
+  boxShadow: "0px 4px 4px 0px rgba(0, 0, 0, 0.10) inset",
+  border: "1px solid #EAEEF2",
 };
 const initialState = {
   isMounted: false,
@@ -32,11 +53,19 @@ const ACTION = {
   setMap: "setMap",
 };
 const MapComponent = (props) => {
-  const { latitude, longitude } = props;
+  const { latitude, longitude, isSmall, deliveryManLat, deliveryManLng } =
+    props;
+  const theme = useTheme();
+  const lineColor = theme.palette.primary.main;
   const [state, dispatch] = useReducer(reducer, initialState);
+  const [directionsResponse, setDirectionsResponse] = useState(null);
   const center = {
     lat: parseFloat(latitude),
     lng: parseFloat(longitude),
+  };
+  const center1 = {
+    lat: parseFloat(deliveryManLat),
+    lng: parseFloat(deliveryManLng),
   };
 
   const options = useMemo(
@@ -65,8 +94,26 @@ const MapComponent = (props) => {
       dispatch({ type: ACTION.setIsMounted, payload: true });
     }
   }, [state.map]);
+
+  const directionRoute = async () => {
+    if (google && google.maps) {
+      const directionsService = new google.maps.DirectionsService();
+      const results = await directionsService.route({
+        origin: center,
+        destination: center1,
+        travelMode: google.maps.TravelMode.DRIVING,
+      });
+      setDirectionsResponse(results);
+    }
+  };
+  useEffect(() => {
+    if (deliveryManLat) {
+      directionRoute();
+    }
+  }, [deliveryManLat, deliveryManLng, latitude, longitude]);
+
   return isLoaded ? (
-    <Stack className="map">
+    <Stack>
       <GoogleMap
         mapContainerStyle={containerStyle}
         center={center}
@@ -75,28 +122,51 @@ const MapComponent = (props) => {
         onUnmount={onUnmount}
         options={options}
       >
-        {state.isMounted ? (
-          <Marker
-            position={center}
-            // icon={{
-            //     url: require('../../../../public/static/markerIcon.png'),
-            //     scale: 7,
-            // }}
-          ></Marker>
-        ) : (
-          <Stack
-            alignItems="center"
-            style={{
-              zIndex: 3,
-              position: "absolute",
-              marginTop: -37,
-              marginLeft: -11,
-              left: "50%",
-              top: "50%",
+        {directionsResponse && (
+          <DirectionsRenderer
+            options={{
+              suppressMarkers: true,
+              polylineOptions: {
+                strokeColor: lineColor, // Customize the route path color
+
+                strokeWeight: 4, // Customize the route path thickness
+              },
             }}
+            directions={directionsResponse}
+          />
+        )}
+
+        {directionsResponse && (
+          <OverlayView
+            position={{
+              lat: directionsResponse.routes[0].legs[0].start_location.lat(),
+              lng: directionsResponse.routes[0].legs[0].start_location.lng(),
+            }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            getPixelPositionOffset={(width, height) => ({
+              x: -width / 3,
+              y: -height / 1.5,
+            })}
           >
-            <CircularProgress />
-          </Stack>
+            <CustomImageContainer src={ddd.src} width="40px" height="40px" />
+          </OverlayView>
+        )}
+
+        {/* End Marker */}
+        {directionsResponse && (
+          <OverlayView
+            position={{
+              lat: directionsResponse.routes[0].legs[0].end_location.lat(),
+              lng: directionsResponse.routes[0].legs[0].end_location.lng(),
+            }}
+            mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}
+            getPixelPositionOffset={(width, height) => ({
+              x: -width / 2,
+              y: -height / 1.5,
+            })}
+          >
+            <DeliveryManMapMarker />
+          </OverlayView>
         )}
       </GoogleMap>
     </Stack>

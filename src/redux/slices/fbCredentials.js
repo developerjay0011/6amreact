@@ -14,7 +14,7 @@ export const fbCredentialSlice = createSlice({
     setJwtTokenByDispatch: (state, action) => {
       state.jwtToken = {
         credential: action.payload.accessToken,
-        clientId: action.payload.accessToken,
+        clientId: action?.payload?.userID || action?.payload?.id,
       };
     },
   },

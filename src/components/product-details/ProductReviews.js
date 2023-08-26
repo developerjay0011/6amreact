@@ -1,5 +1,6 @@
 import React, { useEffect, useRef } from "react";
 import {
+  CustomBoxFullWidth,
   CustomStackFullWidth,
   SliderCustom,
 } from "../../styled-components/CustomStyles.style";
@@ -21,41 +22,45 @@ import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
 import { ProductsReviewSettings } from "./ProductsReviewSettings";
 import useGetProductReviews from "../../api-manage/hooks/react-query/product-details/useProductReviews";
 import { t } from "i18next";
+import CustomPagination from "../custom-pagination";
 
-const ProductReviews = ({ productDetailsId }) => {
+const ProductReviews = ({
+  reviews,
+  configData,
+  offSet,
+  total_size,
+  setOffSet,
+  page_limits,
+  isExpanded,
+}) => {
   const theme = useTheme();
   const SliderRef = useRef(null);
-  const { data, refetch } = useGetProductReviews(productDetailsId);
-
-  useEffect(() => {
-    refetch();
-  }, []);
 
   return (
     <>
-      {data?.length > 0 && (
-        <CustomStackFullWidth spacing={1}>
-          <Typography fontWeight="600" variant="h5">
-            {t("Reviews")}
-          </Typography>
-          <Stack direction="row" spacing={2} sx={{ position: "relative" }}>
-            <Stack
-              width="100%"
-              paddingLeft={{ xs: "0px", md: "50px" }}
-              paddingRight={{ xs: "0px", md: "50px" }}
-            >
-              <SliderCustom>
-                <Slider ref={SliderRef} {...ProductsReviewSettings}>
-                  {data?.length > 0 &&
-                    data?.map((item) => (
-                      <ProductReviewCard key={item.id} review={item} />
-                    ))}
-                </Slider>
-              </SliderCustom>
-            </Stack>
-          </Stack>
-        </CustomStackFullWidth>
-      )}
+      <CustomBoxFullWidth>
+        {reviews?.length > 0 ? (
+          reviews?.map((review) => {
+            return (
+              <ProductReviewCard
+                key={review?.id}
+                review={review}
+                configData={configData}
+              />
+            );
+          })
+        ) : (
+          <>{isExpanded === "true" && "No reviews found"}</>
+        )}
+        {reviews?.length > 1 && (
+          <CustomPagination
+            total_size={total_size}
+            page_limit={page_limits}
+            offset={offSet}
+            setOffset={setOffSet}
+          />
+        )}
+      </CustomBoxFullWidth>
     </>
   );
 };

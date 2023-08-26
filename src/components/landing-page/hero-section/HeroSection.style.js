@@ -8,41 +8,47 @@ export const CustomSearchField = styled(Paper)(({ theme }) => ({
   border: "none",
 }));
 export const SearchLocationTextField = styled(TextField)(
-    ({ theme, language_direction, frommap, fromparcel, margin_top }) => ({
-        width: "100%",
-        backgroundColor: theme.palette.neutral[100],
-        height: "100%",
-        borderTopLeftRadius: "4px",
-        borderBottomLeftRadius: "4px",
-        border: "none",
-        "& .MuiOutlinedInput-notchedOutline": {
-            border: "none",
-        },
-        "& .MuiOutlinedInput-root": {
-            marginTop: margin_top === "true" && "8px",
-            paddingRight: "0px",
-            borderTopRightRadius:
-                frommap === "true" ? "0px" : fromparcel === "false" ? "0px" : "1px",
-            borderBottomRightRadius:
-                frommap === "true" ? "0px" : fromparcel === "false" ? "0px" : "1px",
-            borderTopLeftRadius: frommap === "true" && "0px",
-            borderBottomLeftRadius: frommap === "true" && "0px",
-            border: frommap === "true" ? "1px solid" : "1px solid",
-            borderColor: theme.palette.neutral[100],
-            "& fieldset": {
-                borderColor: theme.palette.primary.main,
-            },
-            "&:hover fieldset": {
-                borderColor: theme.palette.primary.main,
-            },
-            "&.Mui-focused fieldset": {
-                borderColor: theme.palette.primary.main,
-            },
-            [theme.breakpoints.down("sm")]: {
-                borderRadius: "4px",
-            },
-        },
-    })
+  ({ theme, language_direction, frommap, fromparcel, margin_top }) => ({
+    width: "100%",
+    backgroundColor: theme.palette.neutral[100],
+    height: "100%",
+    borderTopLeftRadius: "4px",
+    borderBottomLeftRadius: "4px",
+    border: "none",
+    "& .MuiOutlinedInput-notchedOutline": {
+      border: "none",
+    },
+    "& .MuiOutlinedInput-root": {
+      fontSize: fromparcel === "true" && "12px",
+      padding: fromparcel === "true" && "5px",
+      height: fromparcel === "true" && "45px",
+      marginTop: margin_top === "true" && "8px",
+      paddingRight: "0px",
+      borderTopRightRadius:
+        frommap === "true" ? "0px" : fromparcel === "false" ? "0px" : "8px",
+      borderBottomRightRadius:
+        frommap === "true" ? "0px" : fromparcel === "false" ? "0px" : "8px",
+      borderTopLeftRadius: frommap === "true" && "0px",
+      borderBottomLeftRadius: frommap === "true" && "0px",
+      border: frommap === "true" ? "1px solid" : "1px solid",
+      borderColor:
+        fromparcel === "true"
+          ? alpha(theme.palette.neutral[400], 0.4)
+          : theme.palette.neutral[100],
+      "& fieldset": {
+        borderColor: theme.palette.primary.main,
+      },
+      "&:hover fieldset": {
+        borderColor: theme.palette.primary.main,
+      },
+      "&.Mui-focused fieldset": {
+        borderColor: theme.palette.primary.main,
+      },
+      [theme.breakpoints.down("sm")]: {
+        borderRadius: "4px",
+      },
+    },
+  })
 );
 export const StyledButton = styled(CustomButtonPrimary)(
   ({ theme, radiuschange, language_direction }) => ({

@@ -8,51 +8,87 @@ import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style
 import CartContents from "./CartContents";
 import { getCartListModuleWise } from "../../helper-functions/getCartListModuleWise";
 import { useRouter } from "next/router";
-const DrawerHeader = styled("div")(({ theme }) => ({
-  width: 300,
-  marginTop: "60px",
-  display: "flex",
-  alignItems: "center",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-  justifyContent: "flex-start",
-  [theme.breakpoints.down("sm")]: {
-    marginTop: "10px",
-  },
-}));
+import { CartDrawer } from "./Cart.style";
+import CustomSideDrawer from "../side-drawer/CustomSideDrawer";
+import DrawerHeader from "./DrawerHeader";
+import CartIcon from "./assets/CartIcon";
+import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
+import Grocery from "../home/module-wise-components/Grocery";
+import Pharmacy from "../home/module-wise-components/pharmacy/Pharmacy";
+import FreeDeliveryProgressBar from "./FreeDeliveryProgressBar";
+import CartTotalPrice from "./CartTotalPrice";
+import { useTheme } from "@emotion/react";
+import { getAmountWithSign } from "../../helper-functions/CardHelpers";
+import { cartItemsTotalAmount } from "../../utils/CustomFunctions";
+
 const CardView = (props) => {
+  const theme = useTheme();
   const { sideDrawerOpen, setSideDrawerOpen, cartList } = props;
   const { configData } = useSelector((state) => state.configData);
   const imageBaseUrl = configData?.base_urls?.item_image_url;
   const router = useRouter();
+  const closeHandler = () => {
+    setSideDrawerOpen(false);
+  };
+
+  const getModuleWiseCartContent = () => {
+    return (
+      <CartContents
+        cartList={getCartListModuleWise(cartList)}
+        imageBaseUrl={imageBaseUrl}
+      />
+    );
+  };
+
   return (
-    <Drawer
+    <CustomSideDrawer
       anchor="right"
       open={sideDrawerOpen}
-      onClose={() => setSideDrawerOpen(false)}
+      onClose={closeHandler}
       variant="temporary"
-      style={{ zIndex: router.pathname === "/" && 1250 }}
+      maxWidth="420px"
+      width="100%"
     >
       <CustomStackFullWidth
         alignItems="center"
         justifyContent="space-between"
-        sx={{ height: "100%" }}
-        p="10px"
+        sx={{ height: "100vh" }}
       >
-        <DrawerHeader />
+        <DrawerHeader
+          CartIcon={
+            <CartIcon
+              width="18px"
+              height="18px"
+              color={theme.palette.primary.dark}
+            />
+          }
+          title="Shopping Cart"
+          closeHandler={closeHandler}
+        />
         {getCartListModuleWise(cartList)?.length === 0 ? (
-          <EmptyCart />
-        ) : (
-          <CartContents
+          <EmptyCart
             cartList={getCartListModuleWise(cartList)}
-            imageBaseUrl={imageBaseUrl}
+            setSideDrawerOpen={setSideDrawerOpen}
           />
+        ) : (
+          getModuleWiseCartContent()
         )}
-        {getCartListModuleWise(cartList).length > 0 && (
-          <CartActions setSideDrawerOpen={setSideDrawerOpen} />
-        )}
+        {getCartListModuleWise(cartList).length > 0 &&
+          configData?.free_delivery_over && (
+            <>
+              <FreeDeliveryProgressBar
+                configData={configData}
+                cartList={cartList}
+              />
+              <CartTotalPrice cartList={getCartListModuleWise(cartList)} />
+              <CartActions
+                setSideDrawerOpen={setSideDrawerOpen}
+                cartList={getCartListModuleWise(cartList)}
+              />
+            </>
+          )}
       </CustomStackFullWidth>
-    </Drawer>
+    </CustomSideDrawer>
   );
 };
 

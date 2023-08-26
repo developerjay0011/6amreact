@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/router";
 import jwt_decode from "jwt-decode";
 
@@ -27,6 +27,8 @@ const GoogleLoginComp = (props) => {
   const [openOtpModal, setOpenOtpModal] = useState(false);
   const [otpData, setOtpData] = useState({ phone: "" });
   const [mainToken, setMainToken] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const buttonDiv = useRef(null);
   const router = useRouter();
 
   const { mutate } = usePostEmail();
@@ -97,25 +99,27 @@ const GoogleLoginComp = (props) => {
 
   useEffect(() => {
     /* global google */
-    if (typeof window !== undefined) {
+    const initializeGoogleSignIn = () => {
       window?.google?.accounts?.id?.initialize({
         client_id: clientId,
         callback: handleCallBackResponse,
       });
-      window?.google?.accounts?.id?.renderButton(
-        document.getElementById("signInDiv"),
-        {
-          theme: "outline",
-          size: "large",
-        }
-      );
+      setIsInitialized(true);
+    };
+    if (!isInitialized) {
+      initializeGoogleSignIn();
     }
-  }, []);
-
-  // const handleOnError = (res) => {
-  //
-  // }
-
+  }, [clientId, isInitialized]);
+  useEffect(() => {
+    /* global google */
+    if (isInitialized && buttonDiv.current) {
+      window?.google?.accounts?.id?.renderButton(buttonDiv.current, {
+        theme: "outline",
+        size: "large",
+        width: "215px",
+      });
+    }
+  }, [isInitialized]);
   const handleRegistrationOnSuccess = (token) => {
     //registration on success func remaining
     setOpenModal(false);
@@ -139,7 +143,7 @@ const GoogleLoginComp = (props) => {
   return (
     <>
       <div
-        id="signInDiv"
+        ref={buttonDiv}
         style={{
           display: "flex",
           justifyContent: "center",

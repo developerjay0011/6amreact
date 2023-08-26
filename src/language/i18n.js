@@ -3,6 +3,7 @@ import { initReactI18next } from "react-i18next";
 import { english } from "./en";
 import { bengali } from "./bn";
 import { arabic } from "./ar";
+import { spain } from "./es";
 
 // the translations
 // (tip move them in a JSON file and import them,
@@ -10,6 +11,9 @@ import { arabic } from "./ar";
 const resources = {
   en: {
     translation: english,
+  },
+  es: {
+    translation: spain,
   },
   bn: {
     translation: bengali,

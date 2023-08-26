@@ -4,6 +4,7 @@ import MainLayout from "../../src/components/layout/MainLayout";
 import ProductDetails from "../../src/components/product-details/ProductDetails";
 import { useSelector } from "react-redux";
 import MetaData from "../meta-data";
+import SEO from "../../components/seo";
 
 const Index = ({ configData, productDetailsData, productType }) => {
   const { cartList, campaignItem } = useSelector((state) => state.cart);
@@ -11,7 +12,6 @@ const Index = ({ configData, productDetailsData, productType }) => {
   useEffect(() => {
     handleProductDetails();
   }, [productDetailsData, cartList]);
-
 
   const handleProductDetails = () => {
     if (productDetailsData) {
@@ -35,9 +35,14 @@ const Index = ({ configData, productDetailsData, productType }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData
-        title={`${productDetailsData?.name || productDetails[0]?.name || 'Loading' } - ${configData?.business_name}`}
-        ogImage={`${configData?.base_urls?.item_image_url}/${productDetailsData?.image}`}
+      <SEO
+        title={
+          configData
+            ? `${productDetailsData?.name || productDetails[0]?.name}`
+            : "Loading..."
+        }
+        image={`${configData?.base_urls?.item_image_url}/${productDetailsData?.image}`}
+        businessName={configData?.business_name}
         description={`${productDetailsData?.description}`}
       />
       <MainLayout configData={configData}>

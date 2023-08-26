@@ -1,6 +1,5 @@
 import {useTranslation} from "react-i18next";
 import CssBaseline from "@mui/material/CssBaseline";
-import MetaData from "../meta-data";
 import MainLayout from "../../src/components/layout/MainLayout";
 import {NoSsr} from "@mui/material";
 import UserLayout from "../../src/components/layout/UserLayout";
@@ -9,6 +8,7 @@ import Wallet from "../../src/components/wallet";
 import AuthGuard from "../../src/components/route-guard/AuthGuard";
 import {useRouter} from "next/router";
 import {getServerSideProps} from "../index";
+import SEO from "../../src/components/seo";
 
 const Index = ({configData, landingPageData}) => {
     const {t} = useTranslation();
@@ -16,7 +16,11 @@ const Index = ({configData, landingPageData}) => {
     return (
         <>
             <CssBaseline/>
-            <MetaData title={`Wallet - ${configData?.business_name}`}/>
+            <SEO
+                title={configData ? `Wallet` : "Loading..."}
+                image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+                businessName={configData?.business_name}
+            />
             <MainLayout configData={configData} landingPageData={landingPageData}>
                 <NoSsr>
                     <AuthGuard from={router.pathname.replace("/", "")}>

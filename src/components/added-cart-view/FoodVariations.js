@@ -37,16 +37,24 @@ const VisibleVariations = (props) => {
           spacing={0.5}
           flexWrap="wrap"
         >
-          <Typography color="customColor.textGray">{t("Variation")}</Typography>
-          <Typography>:</Typography>
+          <Typography color="customColor.textGray" fontSize="12px">
+            {t("Variation")}
+          </Typography>
+          <Typography fontSize="12px">:</Typography>
           {variationsWithChild.map((item, parentIndex) => {
             return (
               <Stack direction="row" alignItems="center" key={parentIndex}>
-                <Typography orderdetailscolor={orderDetailsColor}>
+                <Typography
+                  orderdetailscolor={orderDetailsColor}
+                  fontSize="12px"
+                >
                   {item?.variationName}
                 </Typography>
                 {item?.variationValues?.length > 0 && (
-                  <Typography orderdetailscolor={orderDetailsColor}>
+                  <Typography
+                    orderdetailscolor={orderDetailsColor}
+                    fontSize="12px"
+                  >
                     (
                     {item?.variationValues?.map(
                       (val, index) =>

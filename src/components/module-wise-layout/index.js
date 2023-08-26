@@ -1,6 +1,5 @@
-import React, { Suspense, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
-import { CustomContainer } from "../footer/Footer.style";
 import ModuleSelect from "../module-select/ModuleSelect";
 import HomePageComponents from "../home/HomePageComponents";
 import PercelComponents from "../parcel";
@@ -9,7 +8,8 @@ import { setSelectedModule } from "../../redux/slices/utils";
 import { useRouter } from "next/router";
 import { useMediaQuery } from "@mui/material";
 import useGetModule from "../../api-manage/hooks/react-query/useGetModule";
-import { setModules, setResetStoredData } from "../../redux/slices/storedData";
+import { setResetStoredData } from "../../redux/slices/storedData";
+import { setModules } from "../../redux/slices/configData";
 
 const ModuleWiseLayout = ({ configData }) => {
   const [rerender, setRerender] = useState(false);
@@ -17,12 +17,17 @@ const ModuleWiseLayout = ({ configData }) => {
   const { data, refetch } = useGetModule();
   const dispatch = useDispatch();
   const router = useRouter();
-
+  const { modules } = useSelector((state) => state.storedData);
   useEffect(() => {
     if (router.pathname === "/home") {
       refetch();
     }
   }, []);
+  useEffect(() => {
+    if (data?.length > 0) {
+      dispatch(setModules(data));
+    }
+  }, [data]);
   useEffect(() => {
     handleModuleSelect();
   }, [selectedModule]);
@@ -31,7 +36,10 @@ const ModuleWiseLayout = ({ configData }) => {
     setRerender((prevState) => !prevState);
   };
   const isSmall = useMediaQuery("(max-width:1180px)");
-  const moduleSelectHandler = (item) => {
+  const moduleSelectHandler = async (item) => {
+    if (router.query.search) {
+      await router.replace("/home");
+    }
     localStorage.setItem("module", JSON.stringify(item));
     if (item?.module_type === "parcel") {
       dispatch(setSelectedModule(item));
@@ -42,7 +50,7 @@ const ModuleWiseLayout = ({ configData }) => {
 
   return (
     <CustomStackFullWidth>
-      {!isSmall && data && data?.length > 1 && (
+      {!isSmall && data && data?.length > 1 && !router.query.search && (
         <ModuleSelect
           moduleSelectHandler={moduleSelectHandler}
           selectedModule={selectedModule}
@@ -51,11 +59,7 @@ const ModuleWiseLayout = ({ configData }) => {
           dispatch={dispatch}
         />
       )}
-      {selectedModule && selectedModule?.module_type === "parcel" ? (
-        <PercelComponents />
-      ) : (
-        <HomePageComponents key={rerender} configData={configData} />
-      )}
+      <HomePageComponents key={rerender} configData={configData} />
     </CustomStackFullWidth>
   );
 };

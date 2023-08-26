@@ -7,7 +7,7 @@ import { persistReducer } from "redux-persist";
 const persistConfig = {
   key: "sixam-mart",
   storage: storage,
-  blacklist: ["storedData"],
+  // blacklist: ["storedData"],
 };
 const persistedReducer = persistReducer(persistConfig, rootReducer);
 export const store = configureStore({

@@ -4,11 +4,12 @@ import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponse
 
 const getData = async (pageParams) => {
   const { tempDistance } = pageParams;
-
-  const { data } = await MainApi.get(
-    `/api/v1/vehicle/extra_charge?distance=${tempDistance}`
-  );
-  return data;
+  if (tempDistance === 0 || tempDistance) {
+    const { data } = await MainApi.get(
+      `/api/v1/vehicle/extra_charge?distance=${tempDistance}`
+    );
+    return data;
+  }
 };
 
 export default function useGetVehicleCharge(pageParams) {

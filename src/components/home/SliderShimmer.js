@@ -14,17 +14,7 @@ const SliderShimmer = () => {
         direction="row"
         alignItems="center"
         justifyContent="space-between"
-      >
-        <Skeleton width="10%" height="30px" variant="text" />
-        <Stack direction="row" alignItems="center" spacing={1}>
-          <ButtonLeft onClick={() => slider.current.slickPrev()}>
-            <KeyboardArrowLeftIcon color="whiteContainer.main" />
-          </ButtonLeft>
-          <ButtonRight onClick={() => slider.current.slickNext()}>
-            <KeyboardArrowRightIcon />
-          </ButtonRight>
-        </Stack>
-      </CustomStackFullWidth>
+      ></CustomStackFullWidth>
       <CustomStackFullWidth direction="row" alignItems="center" spacing={1}>
         {[...Array(6)].map((item, index) => (
           <Card key={index}>

@@ -1,49 +1,42 @@
 import React from "react";
 import PropTypes from "prop-types";
-import { Stack } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import { styled } from "@mui/material/styles";
-import { alpha, Button } from "@mui/material";
-
-const CustomButton = styled(Button)(({ theme, isactive }) => ({
-  borderRadius: "8px",
-  backgroundColor:
-    isactive === "true" ? "primary.main" : theme.palette.neutral[200],
-  color: isactive === "true" ? "white" : "black",
-  width: "178px",
-  "&:hover": {
-    color: "white",
-    backgroundColor: alpha(theme.palette.primary.main, 0.8),
-  },
-  [theme.breakpoints.down("sm")]: {
-    width: "100px",
-  },
-}));
+import { alpha, Button, Tab, Tabs } from "@mui/material";
+import { CustomTab } from "./tabs.style";
+import { setCurrentTab } from "../../redux/slices/utils";
+import { useDispatch } from "react-redux";
 
 const TabsTypeOne = (props) => {
-  const { currentTab, setCurrentTab, tabs, t } = props;
+  const { currentTab, tabs, t, width } = props;
+  const dispatch = useDispatch();
+
+  const handleChange = (event, newValue) => {
+    dispatch(setCurrentTab(newValue));
+  };
+
   return (
-    <Stack
-      alignItems="center"
-      justifyContent="center"
-      direction="row"
-      spacing={2}
-    >
-      {tabs &&
-        tabs.length > 0 &&
-        tabs.map((item, index) => {
-          return (
-            <CustomButton
-              variant="contained"
-              key={index}
-              isactive={currentTab === item?.value ? "true" : "false"}
-              onClick={() => setCurrentTab(item?.value)}
-              sx={{ textTransform: "capitalize" }}
-            >
-              {t(item?.title)}
-            </CustomButton>
-          );
-        })}
-    </Stack>
+    <Box>
+      <CustomTab
+        indicatorColor="secondary"
+        value={currentTab}
+        onChange={handleChange}
+        width={width ? width : "25px !important"}
+      >
+        {tabs &&
+          tabs.length > 0 &&
+          tabs.map((item, index) => {
+            return (
+              <Tab
+                sx={{ textTransform: "capitalize" }}
+                key={index}
+                label={item?.title}
+                value={item?.title}
+              ></Tab>
+            );
+          })}
+      </CustomTab>
+    </Box>
   );
 };
 

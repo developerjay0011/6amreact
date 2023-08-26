@@ -11,6 +11,7 @@ import {
   store_details_api,
 } from "../../../src/api-manage/ApiRoutes";
 import MetaData from "../../meta-data";
+import SEO from "../../../components/seo";
 
 const Index = ({ configData, storeDetails }) => {
   const dispatch = useDispatch();
@@ -37,7 +38,10 @@ const Index = ({ configData, storeDetails }) => {
       {!isSSR && (
         <>
           <CssBaseline />
-          <MetaData title={metaTitle} />
+          <SEO
+            image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+            businessName={configData?.business_name}
+          />
           <MainLayout configData={configData}>
             <StoreDetails storeDetails={storeDetails} configData={configData} />
           </MainLayout>

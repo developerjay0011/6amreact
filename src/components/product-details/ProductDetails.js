@@ -2,14 +2,16 @@ import React from "react";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { Grid, NoSsr } from "@mui/material";
 import ProductDetailsSection from "./product-details-section/ProductDetailsSection";
-import ProductReviews from "./ProductReviews";
-import MoreFromStore from "./MoreFromStore";
-import SimilarProducts from "./SimilarProducts";
-import useGetSimilarProduct from "../../api-manage/hooks/react-query/product-details/useGetSimilarProduct";
-import FoodDetails from "../food-details";
-import { useRouter } from "next/router";
+
+import StoreDetails from "./StoreDetails";
+import ProductsMoreFromTheStore from "./ProductsMoreFromTheStore";
+import FeaturedStores from "../home/module-wise-components/pharmacy/featured-stores";
+
+import DetailsAndReviews from "./details-and-reviews/DetailsAndReviews";
 
 const ProductDetails = ({ productDetailsData, configData }) => {
+  const storeImageBaseUrl = configData?.base_urls?.store_image_url;
+
   return (
     <CustomStackFullWidth
       spacing={5}
@@ -17,19 +19,54 @@ const ProductDetails = ({ productDetailsData, configData }) => {
       paddingBottom="2.5rem"
       sx={{ minHeight: "100vh" }}
     >
-      <ProductDetailsSection
-        productDetailsData={productDetailsData}
-        configData={configData}
-      />
-      {productDetailsData && !productDetailsData?.isCampaignItem && (
-        <>
-          <ProductReviews productDetailsId={productDetailsData?.id} />
-          <NoSsr>
-            <MoreFromStore productDetails={productDetailsData} />
-          </NoSsr>
-          <SimilarProducts productId={productDetailsData?.id} />
-        </>
-      )}
+      <Grid container spacing={4}>
+        <Grid item xs={12} md={8}>
+          <CustomStackFullWidth spacing={5}>
+            <ProductDetailsSection
+              productDetailsData={productDetailsData}
+              configData={configData}
+            />
+            <DetailsAndReviews
+              configData={configData}
+              description={productDetailsData?.description}
+              reviews={productDetailsData?.reviews}
+              productId={productDetailsData?.id}
+            />
+          </CustomStackFullWidth>
+        </Grid>
+        <Grid item xs={12} md={4}>
+          <CustomStackFullWidth spacing={3}>
+            <StoreDetails
+              storeDetails={productDetailsData?.store_details}
+              storeImageBaseUrl={storeImageBaseUrl}
+            />
+            <ProductsMoreFromTheStore productDetails={productDetailsData} />
+          </CustomStackFullWidth>
+        </Grid>
+
+        {/*<Grid item xs={12}>*/}
+        {/*  <LoveItem />*/}
+        {/*</Grid>*/}
+        {/* <Grid item xs={12}>
+          <SinglePoster />
+        </Grid> */}
+        <Grid item xs={12}>
+          <FeaturedStores title="Popular Store" configData={configData} />
+        </Grid>
+        {/* <Grid item xs={12}>
+          <DiscountedProductRedirectBanner />
+        </Grid> */}
+      </Grid>
+
+      {/*{productDetailsData && !productDetailsData?.isCampaignItem && (*/}
+      {/*  <>*/}
+      {/*    /!*<ProductReviews productDetailsId={productDetailsData?.id} />*!/*/}
+      {/*    /!*<NoSsr>*!/*/}
+      {/*    /!*  <MoreFromStore productDetails={productDetailsData} />*!/*/}
+      {/*    /!*</NoSsr>*!/*/}
+      {/*    /!*<SimilarProducts productId={productDetailsData?.id} />*!/*/}
+      {/*  </>*/}
+      {/*)}*/}
     </CustomStackFullWidth>
   );
 };

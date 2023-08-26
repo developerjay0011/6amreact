@@ -3,7 +3,8 @@
 const neutral = {
   100: "#000000",
   200: "#303032",
-  300: "#323232",
+  // 300: "#323232",
+  300: "#111827",
   400: "#9CA3AF",
   500: "#c5c5ca",
   600: "#f0f0fa",
@@ -13,6 +14,12 @@ const neutral = {
   1000: "#F3F4F6",
   1100: "#D6D6D6",
 };
+const moduleTheme = {
+  pharmacy: "#31C0F5",
+  ecommerce: "#EEF5FF",
+  food: "#EF7822",
+  parcel: "#D7EFE4",
+};
 
 const background = {
   default: "#0B0F19",
@@ -20,10 +27,17 @@ const background = {
   custom: "#282829",
   custom2: "#1F2937",
   custom3: neutral[800],
+  custom4: "#000000",
+  footer1: "#9f9f9f1a",
+  footer2: "#9f9f9f1a",
+  custom5: "#282829",
+  custom6: "#282829",
 };
-const horizontalCardBG = neutral[900]
+const horizontalCardBG = neutral[900];
 const divider = "#2D3748";
 const foodCardColor = neutral[800];
+const roundStackOne = "rgba(255, 255, 255, 0.04)";
+const roundStackTwo = "rgba(255, 255, 255, 0.06)";
 const primary = {
   main: "#039D55",
   light: "#909BEF",
@@ -33,6 +47,8 @@ const primary = {
   overLay: "#000000",
   customType2: "#3BB77E",
   lite: "rgba(3, 157, 85, 0.1)",
+  customType3: "#29CE00",
+  icon: "#ffffff",
 };
 
 const secondary = {
@@ -55,6 +71,9 @@ const info = {
   dark: "#0B79D0",
   lite: "#DBF5FF",
   contrastText: neutral[900],
+  contrastText1: "#F5F6F8",
+  blue: "#0D6EFD",
+  custom1: "#31C0F5",
 };
 
 const warning = {
@@ -62,7 +81,9 @@ const warning = {
   light: "#FFBF4C",
   dark: "#B27B16",
   lite: "#FFBD8B",
+  liter: "#FFF8F2",
   contrastText: neutral[900],
+  new: "#FFC817",
 };
 
 const error = {
@@ -70,6 +91,7 @@ const error = {
   light: "#DA6868",
   dark: "#922E2E",
   contrastText: neutral[900],
+  deepLight: "#FF725E",
 };
 
 const text = {
@@ -83,13 +105,15 @@ const footer = {
   inputButton: "#BBFFDF",
   inputButtonHover: "#67907e",
   bottom: "rgba(0, 98, 52, 0.3)",
+  foodBottom: "#686B78",
   appDownloadButtonBg: "#1A1A1A",
   appDownloadButtonBgGray: "#3E594D",
+  foodFooterBg: "#414141",
 };
 const customColor = {
   textGray: "#9c9c9c",
   textGrayDeep: "#787676",
-  buyButton: "#006371",
+  buyButton: "#F9E091",
 };
 const whiteContainer = {
   main: "#ffffff",
@@ -223,6 +247,9 @@ export const darkThemeOptions = {
     pink,
     paperBoxShadow,
     foodCardColor,
+    moduleTheme,
+    roundStackOne,
+    roundStackTwo,
   },
   shadows: [
     "none",

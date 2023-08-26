@@ -1,11 +1,12 @@
 export const initialState = {
   data: null,
   isSidebarOpen: false,
-  categoryId: 0,
+  categoryId: [],
   offSet: 1,
   searchKey: "",
   minMax: [0, 1],
   type: "all",
+  sortBy: "high2Low",
 };
 export const reducer = (state, action) => {
   switch (action.type) {
@@ -27,7 +28,7 @@ export const reducer = (state, action) => {
     case "setOffSet":
       return {
         ...state,
-        offSet: action.payload,
+        offSet: state.offSet + action.payload,
       };
     case "setSearchKey":
       return {
@@ -44,6 +45,11 @@ export const reducer = (state, action) => {
         ...state,
         minMax: action.payload,
       };
+    case "setSortBy":
+      return {
+        ...state,
+        sortBy: action.payload,
+      };
     default:
       return state;
   }
@@ -56,4 +62,5 @@ export const ACTION = {
   setSearchKey: "setSearchKey",
   setMinMax: "setMinMax",
   setType: "setType",
+  setSortBy: "setSortBy",
 };

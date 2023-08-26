@@ -19,6 +19,8 @@ const NavCategory = ({ openModal, setModal, setRestaurantModal }) => {
   const { configData } = useSelector((state) => state.configData);
   const catImageUrl = `${configData?.base_urls?.category_image_url}`;
 
+  const { selectedModule } = useSelector((state) => state.utilsData);
+
   const [anchorEl, setAnchorEl] = React.useState(null);
   const [anchorElSub, setAnchorElSub] = React.useState(null);
   const [categoryId, setCategoryId] = useState(null);
@@ -43,30 +45,29 @@ const NavCategory = ({ openModal, setModal, setRestaurantModal }) => {
 
     // handlePopoverOpen();
   };
-
-  const handlePopoverCloseSub = () => {
-    setAnchorElSub(null);
-  };
   const open = Boolean(anchorEl);
   const openSub = Boolean(anchorElSub);
   const { data: subCategory } = useGetSubCategories(categoryId, enable);
+  const handlePopoverCloseSub = () => {
+    setAnchorElSub(null);
+  };
 
   return (
     <div onMouseEnter={handlePopoverOpen} onMouseLeave={handlePopoverClose}>
       <NavMenuLink>
         {t("Categories")} <KeyboardArrowDownIcon />
-        <NavPopover
-          catImageUrl={catImageUrl}
-          open={open}
-          openSub={openSub}
-          handlePopoverOpenSub={handlePopoverOpenSub}
-          handlePopoverCloseSub={handlePopoverCloseSub}
-          anchorEl={anchorEl}
-          anchorElSub={anchorElSub}
-          subCategory={subCategory}
-          popoverFor="category"
-        />
       </NavMenuLink>
+      <NavPopover
+        catImageUrl={catImageUrl}
+        open={open}
+        openSub={openSub}
+        handlePopoverOpenSub={handlePopoverOpenSub}
+        handlePopoverCloseSub={handlePopoverClose}
+        anchorEl={anchorEl}
+        anchorElSub={anchorElSub}
+        subCategory={subCategory}
+        popoverFor="category"
+      />
     </div>
   );
 };

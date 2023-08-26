@@ -7,18 +7,6 @@ const VariationsManager = (props) => {
   const { t, modalData, radioCheckHandler, changeChoices } = props;
   return (
     <>
-      <FoodTitleTypography
-        gutterBottom
-        variant="h6"
-        component="h6"
-        sx={{
-          margin: "5px 0",
-          textAlign: "center",
-        }}
-        fontWeight="600"
-      >
-        {t("Select Variations")}
-      </FoodTitleTypography>
       {modalData.length > 0 && modalData[0].food_variations?.length > 0 ? (
         modalData[0].food_variations?.map((choice, choiceIndex) => (
           <ChoiceValues

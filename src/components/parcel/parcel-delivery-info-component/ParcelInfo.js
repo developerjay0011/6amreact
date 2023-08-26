@@ -13,8 +13,8 @@ const ParcelInfo = ({ parcelCategories }) => {
   const borderColor = theme.palette.primary.main;
 
   return (
-    <CustomStackFullWidth >
-      <Card sx={{ padding: "1.2rem ", }}>
+    <CustomStackFullWidth>
+      <Card sx={{ padding: "1.2rem " }}>
         <CustomStackFullWidth spacing={3}>
           <Stack direction="row" justifyCenter="center" alignItems="center">
             <Stack justifyCenter="center" alignItems="center" flexGrow="1">
@@ -30,37 +30,31 @@ const ParcelInfo = ({ parcelCategories }) => {
             {/*  </IconButton>*/}
             {/*</Stack>*/}
           </Stack>
-          <Card
-            sx={{
-              backgroundColor: (theme) =>
-                alpha(theme.palette.primary.main, 0.2),
-              borderRadius: "7.8px",
-            }}
+
+          <Stack
+            width="100%"
+            justifyContent="center"
+            alignItems="center"
+            spacing={2}
+            paddingTop="20px"
+            paddingBottom={{ xs: "20px", sm: "40px", md: "50px" }}
           >
-            <Stack
-              width="100%"
-              justifyContent="center"
-              alignItems="center"
-              spacing={2}
-              paddingTop="70px"
-              paddingBottom="70px"
-            >
-              <CustomImageContainer
-                src={`${configData?.base_urls?.parcel_category_image_url}/${parcelCategories?.image}`}
-                height="100px"
-                width="100px"
-                objectfit="contain"
-              />
-              <Stack width="100%" justifyContent="center" alignItems="center">
-                <Typography variant="h6" fontWeight="500">
-                  {parcelCategories?.name}
-                </Typography>
-                <Typography p=".7rem">
-                  {parcelCategories?.description}
-                </Typography>
-              </Stack>
+            <CustomImageContainer
+              src={`${configData?.base_urls?.parcel_category_image_url}/${parcelCategories?.image}`}
+              height="216px"
+              width="216px"
+              smWidth="172px"
+              smHeight="172px"
+              objectfit="contain"
+            />
+            <Stack width="100%" justifyContent="center" alignItems="center">
+              <Typography variant="h6" fontWeight="500">
+                {parcelCategories?.name}
+              </Typography>
+              <Typography>{parcelCategories?.description}</Typography>
             </Stack>
-          </Card>
+          </Stack>
+
           <Stack width="100%" paddingBottom="25px">
             <CustomButtonPrimary fullwidth="true" type="submit">
               {t("Proceed to Checkout")}

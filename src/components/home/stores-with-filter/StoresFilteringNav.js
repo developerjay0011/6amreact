@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 import { styled } from "@mui/material";
 import { Box } from "@mui/system";
-import H4 from "../../typographies/H4";
+import H2 from "../../typographies/H2";
 import FilterSelect from "./FilterSelect";
 import { t } from "i18next";
 import { getStoresOrRestaurants } from "../../../helper-functions/getStoresOrRestaurants";
@@ -51,7 +51,7 @@ const StoresFilteringNav = (props) => {
               isactive={storesType === item?.value ? "true" : "false"}
               onClick={() => setStoresType(item.value)}
             >
-              <H4 text={item?.title} />
+              <H2 text={item?.title} />
             </TitleWrapper>
           );
         })}

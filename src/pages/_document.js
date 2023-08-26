@@ -45,6 +45,16 @@ class CustomDocument extends Document {
             src="https://accounts.google.com/gsi/client"
             async
           />
+          <script
+            type="application/javascript"
+            async
+            src="https://www.gstatic.com/firebasejs/7.20.0/firebase-app.js"
+          />
+          <script
+            type="application/javascript"
+            async
+            src="https://www.gstatic.com/firebasejs/7.7.0/firebase-messaging.js"
+          />
           <meta name="theme-color" content="#111827" />
         </Head>
         <body>

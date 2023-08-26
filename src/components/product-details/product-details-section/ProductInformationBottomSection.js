@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Stack } from "@mui/system";
+import { Stack, styled } from "@mui/system";
 import { PrimaryButton } from "../../Map/map.style";
 import {
   alpha,
@@ -25,6 +25,13 @@ import { removeWishListItem } from "../../../redux/slices/wishList";
 import { isAvailable } from "../../../utils/CustomFunctions";
 import NotAvailableCard from "./NotAvailableCard";
 import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
+export const BottomStack = styled(Stack)(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    boxShadow: "0px -4px 4px 0px rgba(0, 0, 0, 0.05)",
+    borderRadius: "0px 0px 10px 10px",
+    padding: "14px",
+  },
+}));
 
 const ProductInformationBottomSection = ({
   addToCard,
@@ -36,6 +43,7 @@ const ProductInformationBottomSection = ({
   wishListCount,
   setWishListCount,
   cartItemQuantity,
+  handleModalClose,
 
   t,
 }) => {
@@ -113,9 +121,11 @@ const ProductInformationBottomSection = ({
         variationErrorToast();
       } else {
         handleRedirect();
+        handleModalClose();
       }
     } else {
       handleRedirect();
+      handleModalClose();
     }
   };
   const isInWishList = (id) => {
@@ -163,16 +173,6 @@ const ProductInformationBottomSection = ({
             <FavoriteIcon />
             <Typography>{wishListCount}</Typography>
           </Stack>
-          {/*{productDetailsData?.schedule_order ? (*/}
-          {/*  <Stack direction="row" spacing={1} alignItems="center">*/}
-          {/*    <FavoriteIcon />*/}
-          {/*    <Typography>{wishListCount}</Typography>*/}
-          {/*  </Stack>*/}
-          {/*) : (*/}
-          {/*  <Typography>*/}
-          {/*    {t("Added to wishlist")} ({wishListCount})*/}
-          {/*  </Typography>*/}
-          {/*)}*/}
         </Button>
       )}
       {!isInWishList(productDetailsData?.id) && (
@@ -181,31 +181,26 @@ const ProductInformationBottomSection = ({
             <FavoriteBorderOutlinedIcon />
             <Typography>{wishListCount}</Typography>
           </Stack>
-          {/*{productDetailsData?.schedule_order ? (*/}
-          {/*  <Stack direction="row" spacing={1} alignItems="center">*/}
-          {/*    <FavoriteBorderOutlinedIcon />*/}
-          {/*    <Typography>{wishListCount}</Typography>*/}
-          {/*  </Stack>*/}
-          {/*) : (*/}
-          {/*  <Typography>*/}
-          {/*    {t("Add to wishlist")} ({wishListCount})*/}
-          {/*  </Typography>*/}
-          {/*)}*/}
         </Button>
       )}
     </>
   );
 
   const actionsHandler = () => (
-    <Stack direction="row" width="100%" flexWrap={isXSmall && "wrap"} gap={1.2}>
+    <BottomStack direction="row" width="100%" gap={2.5}>
       {productDetailsData?.stock > 0 && isVariationAvailable() ? (
         <PrimaryButton
           onClick={() => handleRedirectToCheckoutClick()}
           sx={{
             backgroundColor: theme.palette.customColor.buyButton,
+            color: "black",
             width: {
               xs: "100%",
               sm: productDetailsData?.isCampaignItem ? "100%" : 200,
+            },
+            "&:hover": {
+              color: "black",
+              backgroundColor: alpha(theme.palette.customColor.buyButton, 0.8),
             },
           }}
         >
@@ -216,6 +211,7 @@ const ProductInformationBottomSection = ({
           onClick={() => handleRedirectToCheckoutClick()}
           sx={{
             backgroundColor: theme.palette.customColor.buyButton,
+            color: "black",
             width: "100%",
           }}
           disabled={productDetailsData?.stock === 0 || !isVariationAvailable()}
@@ -235,7 +231,7 @@ const ProductInformationBottomSection = ({
             isVariationAvailable() && (
               <PrimaryButton
                 onClick={() => handleVariationAvailability("add")}
-                sx={{ width: 200 }}
+                sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
                 disabled={productDetailsData?.stock === 0}
               >
                 {t("Add to Cart")}
@@ -244,15 +240,14 @@ const ProductInformationBottomSection = ({
           {isInCart(productDetailsData?.id) && (
             <PrimaryButton
               onClick={() => handleVariationAvailability("update")}
-              sx={{ width: 200 }}
+              sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
             >
               {t("Update To Cart")}
             </PrimaryButton>
           )}
-          {handleWishlist()}
         </>
       )}
-    </Stack>
+    </BottomStack>
   );
   const handleUnavailability = () => (
     <Stack spacing={2}>
@@ -263,11 +258,7 @@ const ProductInformationBottomSection = ({
           moduleType={productDetailsData?.module?.module_type}
         />
       )}
-      {productDetailsData?.schedule_order ? (
-        <>{actionsHandler()}</>
-      ) : (
-        <>{handleWishlist()}</>
-      )}
+      {productDetailsData?.schedule_order && <>{actionsHandler()}</>}
     </Stack>
   );
 

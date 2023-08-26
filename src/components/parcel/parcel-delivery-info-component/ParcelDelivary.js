@@ -42,7 +42,7 @@ const PercelDelivery = ({ configData }) => {
   const addAddressFormik = useFormik({
     initialValues: {
       senderName: profileInfo?.f_name ? profileInfo?.f_name : "",
-      senderPhone: profileInfo?.phone ? profileInfo?.phone : "",
+      senderPhone: "",
       receiverName: "",
       receiverPhone: "",
       senderRoad: "",
@@ -66,6 +66,10 @@ const PercelDelivery = ({ configData }) => {
     setSenderFormattedAddress(currentLocation);
   }, []);
 
+  useEffect(() => {
+    addAddressFormik.setFieldValue("senderPhone", profileInfo?.phone);
+  }, [profileInfo?.phone]);
+
   const senderNameHandler = (value) => {
     addAddressFormik.setFieldValue("senderName", value);
   };
@@ -76,14 +80,7 @@ const PercelDelivery = ({ configData }) => {
     addAddressFormik.setFieldValue("receiverName", value);
   };
   const receiverPhoneHandler = (value) => {
-    const phoneRegExp =
-      /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
-    if (value.matches(phoneRegExp)) {
-      addAddressFormik.setFieldValue(
-        "receiverPhone",
-        value.replace(/[^0-9]/g, "")
-      );
-    }
+    addAddressFormik.setFieldValue("receiverPhone", value);
   };
   const roadHandler = (value) => {
     addAddressFormik.setFieldValue("road", value);
@@ -141,12 +138,18 @@ const PercelDelivery = ({ configData }) => {
     setReceiverLocation(location);
     setReceiverFormattedAddress(currentLocation);
   };
+
   return (
     <CustomStackFullWidth
       paddingBottom={{ xs: "20px", sm: "20px", md: "80px" }}
+      pt="1.5rem"
     >
-      <Stack paddingBottom="20px">
-        <H1 text="Parcel Delivery Information" />
+      <Stack paddingBottom="30px">
+        <H1
+          text="Parcel Delivery Information"
+          textAlign="left"
+          fontWeight="600"
+        />
       </Stack>
       <form noValidate onSubmit={addAddressFormik.handleSubmit}>
         <Grid container spacing={4}>

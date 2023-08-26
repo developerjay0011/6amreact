@@ -21,6 +21,7 @@ const Billing = ({
   senderLocation,
   receiverLocation,
   configData,
+  extraChargeLoading,
 }) => {
   return (
     <CustomPaperBigCard>
@@ -34,8 +35,10 @@ const Billing = ({
           senderLocation={senderLocation}
           receiverLocation={receiverLocation}
           configData={configData}
+          extraChargeLoading={extraChargeLoading}
         />
         <DeliveryManTip
+          parcel="true"
           deliveryTip={deliveryTip}
           setDeliveryTip={setDeliveryTip}
         />

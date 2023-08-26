@@ -60,7 +60,7 @@ const MultiFileUploader = (props) => {
   };
   const replaceFilesByIndex = (indexNumber) => {};
   return (
-    <Stack width="100%" spacing={4}>
+    <Stack width="100%" spacing={1}>
       {files.length > 0 ? (
         <>
           <FilePreviewer
@@ -79,21 +79,17 @@ const MultiFileUploader = (props) => {
           />
         </>
       ) : (
-        <Grid container>
-          <Grid item xs={6} sm={4} md={4}>
-            <FileInputField
-              titleText={titleText}
-              labelText={labelText}
-              hintText={hintText}
-              errorStatus={error}
-              acceptedFileInput={acceptedFileInput}
-              width={width}
-              onChange={FileSelectedHandler}
-              text="Upload identity file"
-              maxFileSize={200000}
-            />
-          </Grid>
-        </Grid>
+        <FileInputField
+          titleText={titleText}
+          labelText={labelText}
+          hintText={hintText}
+          errorStatus={error}
+          acceptedFileInput={acceptedFileInput}
+          width={width}
+          onChange={FileSelectedHandler}
+          text="Upload identity file"
+          maxFileSize={200000}
+        />
       )}
       {error && (
         <CustomTypographyForMultiImagePreviewer>

@@ -83,18 +83,19 @@ const AddOrderToCart = (props) => {
       {isScheduled ? (
         isScheduled === "true" ? (
           <Grid container spacing={2}>
-            <Grid item xs={12} sm={5}>
+            <Grid item xs={6} sm={6} md={6}>
               <PrimaryButton
                 fullWidth
                 onClick={() => handleBuyNowClick()}
                 sx={{
                   backgroundColor: theme.palette.customColor.buyButton,
+                  color: "black",
                 }}
               >
                 {t("Buy Now")}
               </PrimaryButton>
             </Grid>
-            <Grid item xs={8.6} sm={5} md={5}>
+            <Grid item xs={6} sm={6} md={6}>
               {isInCart(product?.id) && (
                 <PrimaryButton onClick={() => addToCard()}>
                   {t("Update to cart")}
@@ -106,28 +107,28 @@ const AddOrderToCart = (props) => {
                 </PrimaryButton>
               )}
             </Grid>
-            <Grid item xs={2} sm={2}>
-              {!isInWishList(product?.id) && (
-                <Button variant="outlined" onClick={addToFavorite}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <FavoriteBorderOutlinedIcon />
-                    <Typography>{wishListCount}</Typography>
-                  </Stack>
-                </Button>
-              )}
-              {isInWishList(product?.id) && (
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  onClick={deleteWishlistItem}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <FavoriteIcon color="primary" />
-                    <Typography>{wishListCount}</Typography>
-                  </Stack>
-                </Button>
-              )}
-            </Grid>
+            {/*<Grid item xs={2} sm={2}>*/}
+            {/*  {!isInWishList(product?.id) && (*/}
+            {/*    <Button variant="outlined" onClick={addToFavorite}>*/}
+            {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+            {/*        <FavoriteBorderOutlinedIcon />*/}
+            {/*        <Typography>{wishListCount}</Typography>*/}
+            {/*      </Stack>*/}
+            {/*    </Button>*/}
+            {/*  )}*/}
+            {/*  {isInWishList(product?.id) && (*/}
+            {/*    <Button*/}
+            {/*      variant="outlined"*/}
+            {/*      fullWidth*/}
+            {/*      onClick={deleteWishlistItem}*/}
+            {/*    >*/}
+            {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+            {/*        <FavoriteIcon color="primary" />*/}
+            {/*        <Typography>{wishListCount}</Typography>*/}
+            {/*      </Stack>*/}
+            {/*    </Button>*/}
+            {/*  )}*/}
+            {/*</Grid>*/}
           </Grid>
         ) : (
           <Grid
@@ -136,7 +137,7 @@ const AddOrderToCart = (props) => {
             alignItems="center"
             justifyContent="center"
           >
-            <Grid item xs={8} sm={10}>
+            <Grid item xs={12} sm={12} md={12}>
               <Stack
                 spacing={0.5}
                 alignItems="center"
@@ -168,44 +169,45 @@ const AddOrderToCart = (props) => {
                 </Stack>
               </Stack>
             </Grid>
-            <Grid item xs={4} sm={2} justifySelf="center">
-              {!isInWishList(product?.id) && (
-                <Button variant="outlined" fullWidth onClick={addToFavorite}>
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <FavoriteBorderOutlinedIcon />
-                    {/*<Typography>{wishListCount}</Typography>*/}
-                  </Stack>
-                </Button>
-              )}
-              {isInWishList(product?.id) && (
-                <Button
-                  variant="outlined"
-                  fullWidth
-                  onClick={deleteWishlistItem}
-                >
-                  <Stack direction="row" spacing={1} alignItems="center">
-                    <FavoriteIcon color="primary" />
-                    {/*<Typography>{wishListCount}</Typography>*/}
-                  </Stack>
-                </Button>
-              )}
-            </Grid>
+            {/*<Grid item xs={4} sm={2} justifySelf="center">*/}
+            {/*  {!isInWishList(product?.id) && (*/}
+            {/*    <Button variant="outlined" fullWidth onClick={addToFavorite}>*/}
+            {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+            {/*        <FavoriteBorderOutlinedIcon />*/}
+            {/*        /!*<Typography>{wishListCount}</Typography>*!/*/}
+            {/*      </Stack>*/}
+            {/*    </Button>*/}
+            {/*  )}*/}
+            {/*  {isInWishList(product?.id) && (*/}
+            {/*    <Button*/}
+            {/*      variant="outlined"*/}
+            {/*      fullWidth*/}
+            {/*      onClick={deleteWishlistItem}*/}
+            {/*    >*/}
+            {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+            {/*        <FavoriteIcon color="primary" />*/}
+            {/*        /!*<Typography>{wishListCount}</Typography>*!/*/}
+            {/*      </Stack>*/}
+            {/*    </Button>*/}
+            {/*  )}*/}
+            {/*</Grid>*/}
           </Grid>
         )
       ) : (
         <Grid container spacing={2}>
-          <Grid item xs={12} sm={5}>
+          <Grid item xs={6} sm={6} md={6}>
             <PrimaryButton
               fullWidth
               onClick={() => handleBuyNowClick()}
               sx={{
+                color: "black",
                 backgroundColor: theme.palette.customColor.buyButton,
               }}
             >
               {t("Buy Now")}
             </PrimaryButton>
           </Grid>
-          <Grid item xs={8.6} sm={5} md={5}>
+          <Grid item xs={6} sm={6} md={6}>
             {isInCart(product?.id) && (
               <PrimaryButton onClick={() => addToCard()}>
                 {t("Update to cart")}
@@ -217,24 +219,24 @@ const AddOrderToCart = (props) => {
               </PrimaryButton>
             )}
           </Grid>
-          <Grid item xs={2} sm={2}>
-            {!isInWishList(product?.id) && (
-              <Button variant="outlined" fullWidth onClick={addToFavorite}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <FavoriteBorderOutlinedIcon />
-                  {/*<Typography>{wishListCount}</Typography>*/}
-                </Stack>
-              </Button>
-            )}
-            {isInWishList(product?.id) && (
-              <Button variant="outlined" fullWidth onClick={deleteWishlistItem}>
-                <Stack direction="row" spacing={1} alignItems="center">
-                  <FavoriteIcon color="primary" />
-                  {/*<Typography>{wishListCount}</Typography>*/}
-                </Stack>
-              </Button>
-            )}
-          </Grid>
+          {/*<Grid item xs={2} sm={2}>*/}
+          {/*  {!isInWishList(product?.id) && (*/}
+          {/*    <Button variant="outlined" fullWidth onClick={addToFavorite}>*/}
+          {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+          {/*        <FavoriteBorderOutlinedIcon />*/}
+          {/*        /!*<Typography>{wishListCount}</Typography>*!/*/}
+          {/*      </Stack>*/}
+          {/*    </Button>*/}
+          {/*  )}*/}
+          {/*  {isInWishList(product?.id) && (*/}
+          {/*    <Button variant="outlined" fullWidth onClick={deleteWishlistItem}>*/}
+          {/*      <Stack direction="row" spacing={1} alignItems="center">*/}
+          {/*        <FavoriteIcon color="primary" />*/}
+          {/*        /!*<Typography>{wishListCount}</Typography>*!/*/}
+          {/*      </Stack>*/}
+          {/*    </Button>*/}
+          {/*  )}*/}
+          {/*</Grid>*/}
         </Grid>
       )}
     </>

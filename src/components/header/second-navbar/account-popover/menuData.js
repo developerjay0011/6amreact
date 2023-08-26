@@ -9,50 +9,50 @@ import SettingsIcon from "@mui/icons-material/Settings";
 export const menuData = [
   {
     id: 1,
-    name: "My Orders",
-    icon: <ShoppingCartCheckoutIcon />,
-    path: "/my-orders",
-  },
-  {
-    id: 2,
-    name: "Profile",
+    name: "profile-settings",
     icon: <AccountCircleIcon />,
     path: "/profile",
   },
   {
-    id: 3,
-    name: "Coupons",
-    icon: <ConfirmationNumberIcon />,
-    path: "/coupons",
+    id: 2,
+    name: "my-orders",
+    icon: <ShoppingCartCheckoutIcon />,
+    path: "/my-orders",
   },
   {
     id: 4,
-    name: "Wallet",
+    name: "wallet",
     icon: <WalletIcon />,
     path: "/wallet",
   },
   {
+    id: 4,
+    name: "coupons",
+    icon: <ConfirmationNumberIcon />,
+    path: "/coupons",
+  },
+
+  {
     id: 5,
-    name: "Loyalty Points",
+    name: "loyalty-points",
     icon: <LoyaltyIcon />,
     path: "/loyalty-points",
   },
   {
     id: 6,
-    name: "Referral Code",
+    name: "referral-code",
     icon: <SendToMobileIcon />,
     path: "/referral-code",
   },
   {
-    id: 7,
-    name: "Address",
-    icon: <ImportContactsIcon />,
-    path: "/address",
-  },
-
-  {
     id: 8,
-    name: "Settings",
+    name: "inbox",
+    icon: <SettingsIcon />,
+    path: "/settings",
+  },
+  {
+    id: 9,
+    name: "settings",
     icon: <SettingsIcon />,
     path: "/settings",
   },

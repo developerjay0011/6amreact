@@ -24,6 +24,7 @@ export const wishListSlice = createSlice({
       let tempWishList = state.wishLists.item?.filter(
         (item) => item.id !== action.payload
       );
+      console.log({ tempWishList });
       return {
         wishLists: {
           ...state.wishLists,

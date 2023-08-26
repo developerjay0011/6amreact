@@ -5,12 +5,7 @@ import IncDecAddOn from "./IncDecAddOn";
 import { FoodTitleTypography } from "../food-card/FoodCard.style";
 
 const AddOnsManager = (props) => {
-  const {
-    t,
-    modalData,
-    changeAddOns,
-    selectedAddons,
-  } = props;
+  const { t, modalData, changeAddOns, selectedAddons } = props;
   return (
     <Box
       paddingLeft={{ xs: "10px", md: "0px" }}
@@ -22,9 +17,8 @@ const AddOnsManager = (props) => {
       <FoodTitleTypography
         textAlign="left"
         gutterBottom
-        variant="h6"
         component="h6"
-        sx={{ margin: "10px 0" }}
+        sx={{ margin: "10px 0", fontWeight: "500", fontSize: "14px" }}
       >
         {t("Add Ons (Optional)")}
       </FoodTitleTypography>

@@ -9,6 +9,7 @@ import {
 } from "../../../src/api-manage/ApiRoutes";
 import { useRouter } from "next/router";
 import useGetBasicCampaignsDetails from "../../../src/api-manage/hooks/react-query/useGetBasicCampaignsDetails";
+import SEO from "../../../components/seo";
 
 const Index = ({ configData, campaignsDetails }) => {
   const router = useRouter();
@@ -22,7 +23,11 @@ const Index = ({ configData, campaignsDetails }) => {
   return (
     <>
       <CssBaseline />
-      <MetaData title={`${data?.title} - ${configData?.business_name}`} />
+      <SEO
+        title={configData ? `${data?.title}` : "Loading..."}
+        image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
+        businessName={configData?.business_name}
+      />
       <MainLayout configData={configData}>
         <CampaignsDetails
           campaignsDetails={data}
