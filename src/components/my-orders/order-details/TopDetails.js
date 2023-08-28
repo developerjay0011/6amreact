@@ -57,6 +57,11 @@ const TopDetails = (props) => {
   const [openModalForPayment, setModalOpenForPayment] = useState();
   const [cancelReason, setCancelReason] = useState(null);
   const [isButtonVisible, setIsButtonVisible] = useState(true);
+  const [cancelDurationMss, setcancelDurationMss] = useState();
+  const [currentTimes, setcurrentTimes] = useState();
+  const [createdTimestamps, setcreatedTimestamps] = useState();
+
+
   const buttonBackgroundColor = () => {
     if (trackData?.order_status === "pending") {
       return theme.palette.info.main;
@@ -111,7 +116,13 @@ const TopDetails = (props) => {
       const currentTime = Date.now();
 
       const cancelDurationMs = configData?.cancel_order_duration_time_format === "min" ? configData?.cancel_order_slot_duration * 60 * 1000 : configData?.cancel_order_slot_duration * 1000; // 10 min or 10 sec
-
+      console.log("cancelDurationMs", cancelDurationMs)
+      console.log("createdTimestamp", createdTimestamp)
+      console.log("currentTime", currentTime)
+      console.log("(currentTime - createdTimestamp", currentTime - createdTimestamp)
+      setcancelDurationMss(cancelDurationMs)
+      setcurrentTimes(currentTime)
+      setcreatedTimestamps(createdTimestamp)
       if (currentTime - createdTimestamp > cancelDurationMs) {
         setIsButtonVisible(false);
       }
@@ -385,13 +396,12 @@ const TopDetails = (props) => {
               <OrderStatusButton
                 background={theme.palette.error.deepLight}
                     onClick={() => {
-                      console.log(trackData?.created_at)
-                      console.log(configData.cancel_order_duration_time_format)
-                      // setCancelOpenModal(true)
+                    
+                      setCancelOpenModal(true)
                     }}
                 // color={theme.palette.whiteContainer}
               >
-                {t("Cancel Order")}
+                    {t("Cancel Order (")}  {Math.ceil((cancelDurationMss - (currentTimes - createdTimestamps)) / 1000)}s{")"}
               </OrderStatusButton>
             )
           )}
