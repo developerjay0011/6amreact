@@ -84,6 +84,7 @@ const CustomPhoneInput = ({
               required: true,
               autoFocus: false,
             }}
+            disableDropdown
             specialLabel={t("Phone")}
             country={defaultCountry}
             searchStyle={{ margin: "0", width: "95%", height: "50px" }}
