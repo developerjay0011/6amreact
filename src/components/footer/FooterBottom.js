@@ -6,12 +6,10 @@ import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import { useTheme } from "@emotion/react";
 import { Box, Stack } from "@mui/system";
 import { t } from "i18next";
-import { Router, useRouter } from "next/router";
 import CustomContainer from "../container";
 import Router from "next/router";
 
 const FooterBottom = (props) => {
-  const router = useRouter();
   const handleClickToRoute = (href) => {
     Router.push(href, undefined, { shallow: true });
   };

@@ -60,94 +60,93 @@ const TopDetails = (props) => {
 	const { t } = useTranslation();
 	const theme = useTheme();
 
-  const isSmall = useMediaQuery(theme.breakpoints.down("md"));
-  const [cancelOpenModal, setCancelOpenModal] = useState(false);
-  const [openModalForPayment, setModalOpenForPayment] = useState();
-  const [cancelReason, setCancelReason] = useState(null);
-  const [isButtonVisible, setIsButtonVisible] = useState(true);
-  const buttonBackgroundColor = () => {
-    if (trackData?.order_status === "pending") {
-      return theme.palette.info.main;
-    }
-    if (trackData?.order_status === "confirmed") {
-      return theme.palette.footer.inputButtonHover;
-    }
-    if (trackData?.order_status === "processing") {
-      return theme.palette.warning.dark;
-    }
-    if (trackData?.order_status === "delivered") {
-      return theme.palette.primary.main;
-    }
-    if (trackData?.order_status === "canceled") {
-      return theme.palette.error.main;
-    }
-    if (trackData?.order_status === "refund_requested") {
-      return theme.palette.error.main;
-    }
-  };
-  const fontColor = () => {
-    if (trackData?.order_status === "pending") {
-      return theme.palette.info.main;
-    }
-    if (trackData?.order_status === "processing") {
-      return theme.palette.warning.dark;
-    }
-    if (trackData?.order_status === "delivered") {
-      return theme.palette.primary.main;
-    }
-    if (trackData?.order_status === "canceled") {
-      return theme.palette.error.main;
-    }
-  };
-  const currentLatLng = JSON.parse(
-    window.localStorage.getItem("currentLatLng")
-  );
-  const { data: zoneData } = useQuery(
-    ["zoneId", location],
-    async () => GoogleApi.getZoneId(currentLatLng),
-    {
-      retry: 1,
-    }
-  );
-  const { data: cancelReasonsData, refetch } = useGetOrderCancelReason();
-  useEffect(() => {
-    refetch().then();
-  }, []);
-  useEffect(() => {
-    if (trackData?.order_status === "pending") {
-      const createdTimestamp = new Date(trackData?.created_at).getTime();
-      const currentTime = Date.now();
+	const { orderDetailsModal } = useSelector((state) => state.offlinePayment);
+	const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+	const [cancelOpenModal, setCancelOpenModal] = useState(false);
+	const [openModalForPayment, setModalOpenForPayment] = useState();
+	const [cancelReason, setCancelReason] = useState(null);
+	const [openModalOffline, setOpenModelOffline] = useState(orderDetailsModal);
+	const dispatch = useDispatch();
 
-      const cancelDurationMs = configData?.cancel_order_duration_time_format === "min" ? configData?.cancel_order_slot_duration * 60 * 1000 : configData?.cancel_order_slot_duration * 1000; // 10 min or 10 sec
+	const buttonBackgroundColor = () => {
+		if (trackData?.order_status === "pending") {
+			return theme.palette.info.main;
+		}
+		if (trackData?.order_status === "confirmed") {
+			return theme.palette.footer.inputButtonHover;
+		}
+		if (trackData?.order_status === "processing") {
+			return theme.palette.warning.dark;
+		}
+		if (trackData?.order_status === "delivered") {
+			return theme.palette.primary.main;
+		}
+		if (trackData?.order_status === "canceled") {
+			return theme.palette.error.main;
+		}
+		if (trackData?.order_status === "refund_requested") {
+			return theme.palette.error.main;
+		}
+		if (trackData?.order_status === "refunded") {
+			return theme.palette.primary.main;
+		}
+		if (trackData?.order_status === "failed") {
+			return theme.palette.error.main;
+		}
+	};
+	const fontColor = () => {
+		if (trackData?.order_status === "pending") {
+			return theme.palette.info.main;
+		}
+		if (trackData?.order_status === "processing") {
+			return theme.palette.warning.dark;
+		}
+		if (trackData?.order_status === "delivered") {
+			return theme.palette.primary.main;
+		}
+		if (trackData?.order_status === "canceled") {
+			return theme.palette.error.main;
+		}
+	};
+	const currentLatLng = JSON.parse(
+		window.localStorage.getItem("currentLatLng")
+	);
+	const { data: zoneData } = useQuery(
+		["zoneId", location],
+		async () => GoogleApi.getZoneId(currentLatLng),
+		{
+			retry: 1,
+		}
+	);
+	const { data: cancelReasonsData, refetch } = useGetOrderCancelReason();
+	useEffect(() => {
+		refetch().then();
+	}, []);
 
-      if (currentTime - createdTimestamp > cancelDurationMs) {
-        setIsButtonVisible(false);
-      }
-    }
-  }, );
-  const { mutate: orderCancelMutation, isLoading: orderLoading } =
-    usePostOrderCancel();
-  const handleOnSuccess = () => {
-    if (!cancelReason) {
-      toast.error("Please select a cancellation reason");
-    } else {
-      const handleSuccess = (response) => {
-        refetchOrderDetails();
-        refetchTrackData();
-        setCancelOpenModal(false);
-        toast.success(response.message);
-      };
-      const formData = {
-        order_id: id,
-        reason: cancelReason,
-        _method: "put",
-      };
-      orderCancelMutation(formData, {
-        onSuccess: handleSuccess,
-        onError: onErrorResponse,
-      });
-    }
-  };
+	const { mutate: orderCancelMutation, isLoading: orderLoading } =
+		usePostOrderCancel();
+	const handleOnSuccess = () => {
+		if (!cancelReason) {
+			toast.error("Please select a cancellation reason");
+		} else {
+			const handleSuccess = (response) => {
+				refetchOrderDetails();
+				refetchTrackData();
+				setCancelOpenModal(false);
+				toast.success(response.message);
+			};
+			const formData = {
+				guest_id:getGuestId(),
+				order_id: id,
+				reason: cancelReason,
+				_method: "put",
+			};
+			orderCancelMutation(formData, {
+				onSuccess: handleSuccess,
+				onError: onErrorResponse,
+			});
+		}
+	};
 
 	const today = moment(new Date());
 	const differenceInMinutes = () => {
@@ -341,100 +340,96 @@ const TopDetails = (props) => {
 					</Stack>
 				)}
 
-      {data &&
-        !data?.[0]?.item_campaign_id &&
-        trackData &&
-        trackData?.order_status === "delivered" && (
-          <Stack direction="row" spacing={0.5}>
-            <Link href={`/rate-and-review/${id}`}>
-              <Button
-                variant="outlined"
-                background={theme.palette.error.light}
-                // color={theme.palette.whiteContainer}
-                sx={{
-                  [theme.breakpoints.down("md")]: {
-                    padding: "5px 5px",
-                    fontSize: "10px",
-                  },
-                }}
-              >
-                {" "}
-                {isSmall ? t("review") : t("Give a review")}
-                {/*{t("Give a review")}*/}
-              </Button>
-            </Link>
-            {configData?.refund_active_status && (
-              <OrderStatusButton
-                background={theme.palette.error.light}
-                onClick={() => setOpenModal(true)}
-                // color={theme.palette.whiteContainer}
-              >
-                {isSmall ? t("Refund") : t("Refund Request")}
-              </OrderStatusButton>
-            )}
-          </Stack>
-        )}
-      {trackData &&
-      trackData?.payment_method === "digital_payment" &&
-      trackData?.payment_status === "unpaid" &&
-      zoneData?.data?.zone_data?.[0]?.cash_on_delivery ? (
-        <OrderStatusButton
-          background={theme.palette.primary.main}
-          onClick={() => setModalOpenForPayment(true)}
-          // color={theme.palette.whiteContainer}
-        >
-          {isSmall ? t("Switch to COD") : t("Switch to cash on delivery")}
-        </OrderStatusButton>
-      ) : (
-        <>
-          {trackData && trackData?.order_status === "failed" ? (
-            <PaymentUpdate
-              id={id}
-              refetchOrderDetails={refetch}
-              refetchTrackData={refetchTrackOrder}
-              trackData={trackData}
-              isSmall={isSmall}
-            />
-          ) : (
-                trackData?.order_status === "pending" && isButtonVisible &&(
-              <OrderStatusButton
-                background={theme.palette.error.deepLight}
-                    onClick={() => {
-                      console.log(trackData?.created_at)
-                      console.log(configData.cancel_order_duration_time_format)
-                      // setCancelOpenModal(true)
-                    }}
-                // color={theme.palette.whiteContainer}
-              >
-                {t("Cancel Order")}
-              </OrderStatusButton>
-            )
-          )}
-        </>
-      )}
-      {/*{data ? (*/}
-      {/*  <Typography*/}
-      {/*    sx={{*/}
-      {/*      color: "primary.main",*/}
-      {/*      fontSize: "36px",*/}
-      {/*      fontWeight: "600",*/}
-      {/*    }}*/}
-      {/*  >*/}
-      {/*    {t("Order")} # {data?.[0]?.order_id?data?.[0]?.order_id:data?.id}*/}
-      {/*  </Typography>*/}
-      {/*) : (*/}
-      {/*  <Skeleton variant="text" width="200px" height="50px" />*/}
-      {/*)}*/}
-      {/*{data ? (*/}
-      {/*  <CustomTypography*/}
-      {/*    sx={{ color: (theme) => theme.palette.neutral[400] }}*/}
-      {/*  >*/}
-      {/*    {t("Order placed")} :{" "}*/}
-      {/*    <CustomFormatedDateTime date={data?.[0]?.created_at} />*/}
-      {/*  </CustomTypography>*/}
-      {/*) : (*/}
-      {/*  <Skeleton variant="text" width="240px" height="20px" />*/}
-      {/*)}*/}
+			{data &&
+				!data?.[0]?.item_campaign_id &&
+				trackData &&
+				trackData?.order_status === "delivered" && getToken() && (
+					<Stack direction="row" spacing={0.5}>
+						<Link href={`/rate-and-review/${id}`}>
+							<Button
+								variant="outlined"
+								background={theme.palette.error.light}
+								// color={theme.palette.whiteContainer}
+								sx={{
+									[theme.breakpoints.down("md")]: {
+										padding: "5px 5px",
+										fontSize: "10px",
+									},
+								}}
+							>
+								{" "}
+								{isSmall ? t("review") : t("Give a review")}
+								{/*{t("Give a review")}*/}
+							</Button>
+						</Link>
+						{configData?.refund_active_status   && getToken() && (
+							<OrderStatusButton
+								background={theme.palette.error.light}
+								onClick={() => setOpenModal(true)}
+							// color={theme.palette.whiteContainer}
+							>
+								{isSmall ? t("Refund") : t("Refund Request")}
+							</OrderStatusButton>
+						)}
+					</Stack>
+				)}
+			{trackData &&
+				trackData?.payment_method === "digital_payment" &&
+				trackData?.payment_status === "unpaid" &&
+				zoneData?.data?.zone_data?.[0]?.cash_on_delivery ? (
+				<OrderStatusButton
+					background={theme.palette.primary.main}
+					onClick={() => setModalOpenForPayment(true)}
+				// color={theme.palette.whiteContainer}
+				>
+					{isSmall ? t("Switch to COD") : t("Switch to cash on delivery")}
+				</OrderStatusButton>
+			) : (
+				<>
+					{trackData && trackData?.order_status === "failed" ? (
+						<PaymentUpdate
+							id={id}
+							refetchOrderDetails={refetch}
+							refetchTrackData={refetchTrackData}
+							trackData={trackData}
+							isSmall={isSmall}
+						/>
+					) : (
+						trackData?.order_status === "pending" && (
+							<OrderStatusButton
+								background={theme.palette.error.deepLight}
+								onClick={() => setCancelOpenModal(true)}
+							// color={theme.palette.whiteContainer}
+							>
+								{t("Cancel Order")}
+							</OrderStatusButton>
+						)
+					)}
+				</>
+			)}
+			{/*{data ? (*/}
+			{/*  <Typography*/}
+			{/*    sx={{*/}
+			{/*      color: "primary.main",*/}
+			{/*      fontSize: "36px",*/}
+			{/*      fontWeight: "600",*/}
+			{/*    }}*/}
+			{/*  >*/}
+			{/*    {t("Order")} # {data?.[0]?.order_id?data?.[0]?.order_id:data?.id}*/}
+			{/*  </Typography>*/}
+			{/*) : (*/}
+			{/*  <Skeleton variant="text" width="200px" height="50px" />*/}
+			{/*)}*/}
+			{/*{data ? (*/}
+			{/*  <CustomTypography*/}
+			{/*    sx={{ color: (theme) => theme.palette.neutral[400] }}*/}
+			{/*  >*/}
+			{/*    {t("Order placed")} :{" "}*/}
+			{/*    <CustomFormatedDateTime date={data?.[0]?.created_at} />*/}
+			{/*  </CustomTypography>*/}
+			{/*) : (*/}
+			{/*  <Skeleton variant="text" width="240px" height="20px" />*/}
+			{/*)}*/}
 
 			{/*{trackData?.data?.scheduled === 1 && (*/}
 			{/*  <CustomTypography>*/}

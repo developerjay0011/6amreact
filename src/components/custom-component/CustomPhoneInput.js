@@ -97,50 +97,51 @@ const CustomPhoneInput = ({
         onHandleChange(e);
     };
 
-  const { t } = useTranslation();
-  const defaultCountry = initCountry?.toLowerCase();
-  return (
-    <NoSsr>
-      <CustomStackFullWidth alignItems="flex-start" spacing={0.8}>
-        {lanDirection && (
-          <CustomPhoneNumberInputStyled
-            borderRadius={borderRadius}
-            autoFormat={false}
-            placeholder={t("Enter phone number")}
-            value={value}
-            enableSearchField
-            enableSearch
-            onChange={changeHandler}
-            inputProps={{
-              required: true,
-              autoFocus: false,
-            }}
-            specialLabel={t("Phone")}
-            country={defaultCountry}
-            searchStyle={{ margin: "0", width: "95%", height: "50px" }}
-            inputStyle={{
-              width: "100%",
-              height: height ? height : "56px",
-              borderRadius: borderRadius ? borderRadius : "5px",
-            }}
-            dropdownStyle={{ height: "300px", width: "267px" }}
-            languageDirection={lanDirection}
-          />
-        )}
-        {touched && errors && (
-          <CustomTypography
-            variant="caption"
-            sx={{
-              ml: "10px",
-              fontWeight: "inherit",
-              color: (theme) => theme.palette.error.main,
-            }}
-          >
-            {errors}
-          </CustomTypography>
-        )}
-      </CustomStackFullWidth>
-    </NoSsr>
-  );
+    const {t} = useTranslation();
+    const defaultCountry = initCountry?.toLowerCase();
+    return (
+        <NoSsr>
+            <CustomStackFullWidth alignItems="flex-start" spacing={0.8}>
+                {lanDirection && (
+                    <CustomPhoneNumberInputStyled
+                        borderRadius={borderRadius}
+                        autoFormat={false}
+                        placeholder={t("Enter phone number")}
+                        value={value}
+                        enableSearchField
+                        enableSearch
+                        onChange={changeHandler}
+                        inputProps={{
+                            required: true,
+                            autoFocus: false,
+                        }}
+                        specialLabel={t("Phone")}
+                        country={defaultCountry}
+                        searchStyle={{margin: "0", width: "95%", height: "50px"}}
+                        inputStyle={{
+                            width: "100%",
+                            height: height ? height : "56px",
+                            borderRadius: borderRadius ? borderRadius : "5px",
+                        }}
+                        dropdownStyle={{height: "300px", width: "267px"}}
+                        languageDirection={lanDirection}
+                        buttonClass={{'background-color': "red"}}
+                    />
+                )}
+                {touched && errors && (
+                    <CustomTypography
+                        variant="caption"
+                        sx={{
+                            ml: "10px",
+                            fontWeight: "inherit",
+                            color: (theme) => theme.palette.error.main,
+                        }}
+                    >
+                        {errors}
+                    </CustomTypography>
+                )}
+            </CustomStackFullWidth>
+        </NoSsr>
+    );
 };
 export default CustomPhoneInput;
