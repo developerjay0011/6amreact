@@ -6,60 +6,11 @@ import React from "react";
 import { getLanguage } from "../../../helper-functions/getLanguage";
 import { RTL } from "../../rtl";
 
-export const bestReviewedSliderSettings = {
-  //centerMode: true,
-  initialSlide: 0,
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesToShow: 4.8,
-  slidesToScroll: 2,
-  rtl: true,
-  responsive: [
-    {
-      breakpoint: 450,
-      settings: {
-        slidesToShow: 1.5,
-        slidesToScroll: 1,
-        infinite: false,
-      },
-    },
-    {
-      breakpoint: 550,
-      settings: {
-        slidesToShow: 1.7,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 750,
-      settings: {
-        slidesToShow: 1.7,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 750,
-      settings: {
-        slidesToShow: 2,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 1200,
-      settings: {
-        slidesToShow: 3.5,
-        slidesToScroll: 1,
-      },
-    },
-  ],
-};
-
 const ButtonContainer = styled(Box)(
   ({ theme, right, isdisabled, noBackground, isRtl, rightSpace }) => ({
     top: 0,
     height: "100%",
-    width: "73px",
+    width: "42px",
     transition: "background-image 0.3s ease-in-out, transform 0.3s ease-in-out", // Adding transitions for smooth background image and transform changes
     transform: "translateX(0)", // Initial transform,
     background:
@@ -73,12 +24,12 @@ const ButtonContainer = styled(Box)(
           } 0%, ${
             isRtl === "rtl"
               ? theme.palette.neutral[100]
-              : "rgba(255, 255, 255, 0)"
+              : "rgba(75, 86, 107, 0.05) -28.57%, rgba(255, 255, 255, 0) 122.62%"
           } 100%)`
         : `linear-gradient(${isRtl === "rtl" ? "to left" : "to right"},  ${
             isRtl === "rtl"
               ? "rgba(255, 255, 255, 0)"
-              : theme.palette.neutral[100]
+              : "rgba(75, 86, 107, 0.05) -28.57%, rgba(255, 255, 255, 0) 122.62%"
           } 0%, ${
             isRtl === "rtl"
               ? theme.palette.neutral[100]
@@ -86,12 +37,14 @@ const ButtonContainer = styled(Box)(
           }  100%)`,
 
     zIndex: 1,
-    right: right === "true" && "-45px",
+    right: right === "true" && "-8px",
     left: right !== "true" && 0,
     position: "absolute",
     alignItems: "center",
     justifyContent: "center",
     display: isdisabled ? "none" : "flex",
+    borderTopRightRadius: "12px",
+    borderBottomRightRadius: "12px",
     [theme.breakpoints.down("sm")]: {
       display: "none",
     },
@@ -208,99 +161,3 @@ export const PrevFood = ({
   );
 };
 
-export const foodBestReviewedSliderSettings = {
-  dots: false,
-  infinite: false,
-  speed: 500,
-  slidesPerRow: 1,
-  rows: 2,
-  slidesToShow: 2.9,
-  slidesToScroll: 1,
-  cssEase: "linear",
-  rtl: true,
-  responsive: [
-    {
-      breakpoint: 375,
-      settings: {
-        slidesToShow: 1,
-        slidesPerRow: 1,
-        rows: 1,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 414,
-      settings: {
-        slidesToShow: 1.1,
-        slidesPerRow: 1,
-        rows: 1,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 500,
-      settings: {
-        slidesToShow: 1.5,
-        slidesPerRow: 1,
-        rows: 1,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 540,
-      settings: {
-        slidesToShow: 1.9,
-        slidesPerRow: 1,
-        rows: 1,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 700,
-      settings: {
-        slidesToShow: 1.5,
-        slidesPerRow: 2,
-        rows: 2,
-        slidesToScroll: 2,
-      },
-    },
-    {
-      breakpoint: 750,
-      settings: {
-        slidesToShow: 1.8,
-        slidesPerRow: 2,
-        rows: 2,
-        slidesToScroll: 2,
-      },
-    },
-    {
-      breakpoint: 900,
-      settings: {
-        slidesToShow: 2,
-        slidesPerRow: 2,
-        rows: 2,
-        slidesToScroll: 1,
-      },
-    },
-    {
-      breakpoint: 1150,
-      settings: {
-        slidesToShow: 2,
-        slidesPerRow: 2,
-        rows: 2,
-        slidesToScroll: 3,
-      },
-    },
-    {
-      breakpoint: 1300,
-      settings: {
-        slidesToShow: 2,
-        slidesPerRow: 2,
-        rows: 2,
-        slidesToScroll: 1,
-      },
-    },
-  ],
-  prevArrow: <PrevFood displayNoneOnMobile />,
-  nextArrow: <NextFood displayNoneOnMobile />,
-};

@@ -1,6 +1,7 @@
 import { Modal, useMediaQuery, useTheme } from "@mui/material";
 import React from "react";
-import { CustomModalWrapper } from "./CustomModal.style";
+import { CustomModalWrapper } from "../../styled-components/CustomStyles.style";
+
 
 const CustomModal = ({
 	openModal,

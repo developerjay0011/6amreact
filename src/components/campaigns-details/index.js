@@ -18,7 +18,7 @@ const CampaignsDetails = ({
   const theme=useTheme()
   const camImage = `${configData?.base_urls?.campaign_image_url}/${campaignsDetails?.image}`;
   return (
-    <CustomStackFullWidth>
+    <CustomStackFullWidth pt="20px">
       <Stack spacing={3} justifyContent="center" alignItems="center">
         <CustomImageContainer
           src={camImage}

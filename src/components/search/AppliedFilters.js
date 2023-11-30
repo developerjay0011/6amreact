@@ -39,7 +39,7 @@ const AppliedFilters = (props) => {
 
   const checkedSelection = () => {
     const isSelectedAny = filterData
-      ?.filter((item) => item?.value !== "price")
+      ?.filter((item) => item?.value !== "price" && item?.value!=="test")
       ?.some((item) => item?.checked);
     return !!isSelectedAny;
   };
@@ -70,7 +70,7 @@ const AppliedFilters = (props) => {
             {t("Applied filters:")}
           </Typography>
           {filterData?.map((item, index) => {
-            if (item?.checked && item?.value !== "price") {
+            if (item?.checked && item?.value !== "price" && item?.value !== "test") {
               return (
                 <FilterItem
                   item={item}

@@ -1,10 +1,11 @@
 export const getFilteredData = (selectedFilters, data, currentTab) => {
   //item wise
+
   let newData = data;
   if (currentTab === 0) {
     selectedFilters?.forEach((item) => {
       if (item?.value === "discounted" && item?.checked) {
-        newData = newData?.filter((item) => item?.discount > 0);
+        newData = newData?.filter((item) => item?.discount >= 0);
       }
       if (item?.value === "popular" && item?.checked) {
         newData = newData?.sort((a, b) => b?.order_count - a?.order_count);
@@ -22,6 +23,9 @@ export const getFilteredData = (selectedFilters, data, currentTab) => {
           (newItem) =>
             newItem?.price >= item.price[0] && newItem?.price <= item.price[1]
         );
+      }
+      if(item?.value==="from_campaign" && item?.checked){
+        newData=newData?.filter((newItem)=>newItem?.is_campaign===1)
       }
     });
   }

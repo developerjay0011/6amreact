@@ -27,13 +27,14 @@ const ProductsMoreFromTheStore = ({ productDetails }) => {
   }, []);
 
   return (
-    <CustomStackFullWidth spacing={2.5}>
+    <CustomStackFullWidth>
       <H1 textAlign="start" text="More From This Store!" />
       {moreItem?.slice(0, 4)?.map((item, index) => {
         return (
           <ProductCard
             item={item}
             key={index}
+            cardWidth="350px"
             cardheight="160px"
             horizontalcard="true"
             cardFor="popular items"

@@ -99,13 +99,17 @@ const SearchSuggestionsBottom = (props) => {
       localStorage.setItem("searchedValues", JSON.stringify(newItems));
     }
   };
+  const clearAll=()=>{
+    setList([])
+    localStorage.removeItem("searchedValues");
+  }
   return (
     <>
       <CustomPaper
         elevation={8}
         onMouseEnter={() => setOnSearchdiv(true)}
         onMouseLeave={() => setOnSearchdiv(false)}
-        display={token ? "inherit" : list.length > 0 ? "inherit" : "none"}
+        display={token ? "inherit" : (list.length > 0 || itemOrStoreSuggestionData) ? "inherit" : "none"}
       >
         <CustomStackFullWidth spacing={1}>
           {isEmpty ? (
@@ -117,6 +121,7 @@ const SearchSuggestionsBottom = (props) => {
                   handleDeleteAble={handleDeleteAble}
                   t={t}
                   suggestedKeywords={suggestedKeywords}
+                  clearAll={clearAll}
                 />
               )}
             </>

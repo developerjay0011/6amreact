@@ -90,7 +90,7 @@ const ImageWrapper = styled(Box)(({ theme, margin_left, is_border }) => ({
 }));
 const KmShowing = ({ distance }) => {
   const { t } = useTranslation();
-  console.log({ distance });
+
   return (
     <Stack
       sx={{
@@ -133,18 +133,12 @@ const VisitAgainCard = (props) => {
   let visitedThisStoresProducts =
     visitedStoresProducts?.length > 0
       ? visitedStoresProducts?.filter(
-          (childItem) => childItem?.store_id === item?.id
-        )
+        (childItem) => childItem?.store_id === item?.id
+      )
       : [];
   useEffect(() => {
     wishlistItemExistHandler();
   }, [wishLists]);
-
-  const quickViewHandleClick = (e) => {
-    // e.stopPropagation();
-    // dispatch({ type: ACTION.setOpenModal, payload: true });
-  };
-  const imageUrl = `${configData?.base_urls?.store_cover_photo_url}/${item?.cover_photo}`;
   const handleClick = () => {
     router.push({
       pathname: `/store/[id]`,
@@ -154,6 +148,11 @@ const VisitAgainCard = (props) => {
       },
     });
   };
+  const quickViewHandleClick = (e) => {
+    handleClick()
+  };
+  const imageUrl = `${configData?.base_urls?.store_cover_photo_url}/${item?.cover_photo}`;
+
   const addToWishlistHandler = (e) => {
     e.stopPropagation();
     let token = undefined;

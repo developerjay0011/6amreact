@@ -10,6 +10,7 @@ import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
 import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import { useTheme } from "@emotion/react";
+import Loading from "../custom-loading/Loading";
 
 const getModuleWiseData = (theme) => {
   switch (getCurrentModuleType()) {
@@ -70,7 +71,9 @@ const QuickView = ({
   isWishlisted,
   isProductExist,
   addToCartHandler,
+    isLoading,updateLoading
 }) => {
+  const theme=useTheme()
   const cartAddToCartClick = (e) => {
     e.stopPropagation();
     addToCartHandler?.(e);
@@ -108,11 +111,15 @@ const QuickView = ({
         </>
       )}
       {showAddtocart && (
-        <PrimaryToolTip text="Add to cart">
-          <IconButtonStyled onClick={(e) => cartAddToCartClick?.(e)}>
-            <ShoppingBagIcon />
-          </IconButtonStyled>
-        </PrimaryToolTip>
+        <>
+          {isLoading?(<IconButtonStyled>
+            <Loading color={theme.palette.neutral[100]} />
+               </IconButtonStyled> ):(<PrimaryToolTip text="Add to cart">
+            <IconButtonStyled onClick={(e) => cartAddToCartClick?.(e)}>
+              <ShoppingBagIcon />
+            </IconButtonStyled>
+          </PrimaryToolTip>)}
+        </>
       )}
     </CustomStackFullWidth>
   );

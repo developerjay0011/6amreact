@@ -31,7 +31,13 @@ const MultipleCheckboxWithTitle = (props) => {
   const { t } = useTranslation();
   const [selectedItems, setSelectedItems] = useState([]);
   const [isAllSelected, setIsAllSelected] = useState(false);
+  const [selectedId, setSelectedId] = useState(null);
 
+  useEffect(() => {
+    setSelectedId(id);
+  }, [id]);
+
+  
   useEffect(() => {
     selectedCategoriesHandler?.(selectedItems);
   }, [selectedItems]);
@@ -60,6 +66,7 @@ const MultipleCheckboxWithTitle = (props) => {
       ids.push(checkedData?.id);
     }
     if (checkedData?.checked) {
+      setSelectedId(parent?.id);
       setSelectedItems((prevState) => [...prevState, ...ids]);
     } else {
       setSelectedItems((prevState) =>
@@ -67,6 +74,7 @@ const MultipleCheckboxWithTitle = (props) => {
       );
     }
   };
+
   const allCheckHandler = (itemData) => {
     if (itemData?.checked) {
       setIsAllSelected(true);
@@ -85,6 +93,7 @@ const MultipleCheckboxWithTitle = (props) => {
       setSelectedItems((prevState) => []);
     }
   };
+
   return (
     <CustomStackFullWidth>
       <Typography
@@ -101,6 +110,8 @@ const MultipleCheckboxWithTitle = (props) => {
                 item={{ name: "All", id: "all" }}
                 checkHandler={allCheckHandler}
                 isChecked={isAllSelected}
+                selectedId={selectedId}
+                setSelectedId={setSelectedId}
               />
             )}
             {data?.map((item, index) => {

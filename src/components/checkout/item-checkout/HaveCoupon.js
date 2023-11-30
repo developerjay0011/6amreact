@@ -54,16 +54,37 @@ const HaveCoupon = (props) => {
   if (typeof window !== "undefined") {
     zoneId = JSON.parse(localStorage.getItem("zoneid"));
   }
+
+  const getCouponDiscount=(discount,discountType,totalAmountOverall)=>{
+    if(discountType==="amount"){
+      return discount
+    }else{
+      return (discount / 100) * totalAmountOverall
+    }
+  }
   const handleSuccess = (response) => {
     const totalAmountOverall = totalAmount - deliveryFee - deliveryTip;
     if (
       Number.parseInt(response?.data?.min_purchase) <=
       Number.parseInt(totalAmountOverall)
     ) {
-      dispatch(setCouponInfo(response.data));
-      toast.success(t("Coupon Applied"));
-      dispatch(setCouponType(response.data.coupon_type));
-      setCouponDiscount({ ...response.data, zoneId: zoneId });
+      if(response?.data?.discount_type === "percent"){
+        dispatch(setCouponInfo(response.data));
+        toast.success(t("Coupon Applied"));
+        dispatch(setCouponType(response.data.coupon_type));
+        setCouponDiscount({ ...response.data, zoneId: zoneId });
+      }else {
+        if( response?.data?.discount && payableAmount >= response?.data?.discount){
+          dispatch(setCouponInfo(response.data));
+          toast.success(t("Coupon Applied"));
+          dispatch(setCouponType(response.data.coupon_type));
+          setCouponDiscount({ ...response.data, zoneId: zoneId });
+        }else {
+          toast.error(
+              t("Your total price must be more then coupon amount")
+          );
+        }
+      }
     } else {
       toast.error(
         `${t(coupon_minimum)} ${getAmountWithSign(
@@ -96,6 +117,7 @@ const HaveCoupon = (props) => {
     setSwitchToWallet(false);
   };
   const handleApply = async () => {
+
     await refetch();
   };
   const borderColor = theme.palette.primary.main;

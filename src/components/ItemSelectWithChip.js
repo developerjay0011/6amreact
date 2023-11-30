@@ -45,6 +45,7 @@ const ItemSelectWithChip = (props) => {
           justifyContent: "space-between",
           alignItems: "center",
           padding: "9px 2px",
+          textTransform: "capitalize",
         }}
       >
         {t(title)}
@@ -67,7 +68,11 @@ const ItemSelectWithChip = (props) => {
         >
           {data?.map((item, index) => {
             return (
-              <MenuItem key={index} onClick={() => handleClickItem(item)}>
+              <MenuItem
+                key={index}
+                onClick={() => handleClickItem(item)}
+                sx={{ textTransform: "capitalize" }}
+              >
                 {item}
               </MenuItem>
             );

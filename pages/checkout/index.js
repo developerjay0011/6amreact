@@ -8,10 +8,10 @@ import ItemCheckout from "../../src/components/checkout/item-checkout";
 import { useSelector } from "react-redux";
 import { getCartListModuleWise } from "../../src/helper-functions/getCartListModuleWise";
 import PrescriptionCheckout from "../../src/components/checkout/Prescription";
-import CustomNoSsr from "../custom-no-ssr";
 import SEO from "../../src/components/seo";
 import { getServerSideProps } from "../index";
 import CustomContainer from "../../src/components/container";
+import RedirectWhenCartEmpty from "../../src/components/checkout/RedirectWhenCartEmpty";
 
 const CheckOutPage = ({ configData, landingPageData }) => {
   const router = useRouter();
@@ -23,23 +23,23 @@ const CheckOutPage = ({ configData, landingPageData }) => {
     totalAmount,
   } = useSelector((state) => state.cart);
   const cartList = getCartListModuleWise(aliasCartList);
-  const handleRouteRedirect = () => {
-    if (typeof window !== "undefined") {
-      // router.push("/home", undefined, { shallow: true });
-    }
-  };
-
-  const handleEmpty = () => {
-    if (router.isReady) {
-      if (page === "cart" && cartList.length === 0) {
-        return <CustomNoSsr>{handleRouteRedirect()}</CustomNoSsr>;
-      } else if (page === "campaign" && campaignItemList.length === 0) {
-        return <CustomNoSsr>{handleRouteRedirect()}</CustomNoSsr>;
-      } else if (!page) {
-        // router.push("/home", undefined, { shallow: true });
-      }
-    }
-  };
+  // const handleRouteRedirect = () => {
+  //   if (typeof window !== "undefined") {
+  //      router.push("/home");
+  //   }
+  // };
+  //
+  // const handleEmpty = () => {
+  //   if (router.isReady) {
+  //     if (page === "cart" && cartList?.length === 0) {
+  //       router.push("/home");
+  //     } else if (page === "campaign" && campaignItemList?.length === 0) {
+  //       router.push("/home");
+  //     } else if (!page) {
+  //       // router.push("/home", undefined, { shallow: true });
+  //     }
+  //   }
+  // };
   return (
     <>
       <CssBaseline />
@@ -66,7 +66,7 @@ const CheckOutPage = ({ configData, landingPageData }) => {
                 totalAmount={totalAmount}
               />
             )}
-            {page === "cart" && cartList.length > 0 && (
+            {page === "cart" && (
               <ItemCheckout
                 router={router}
                 configData={configData}
@@ -86,7 +86,12 @@ const CheckOutPage = ({ configData, landingPageData }) => {
                 totalAmount={totalAmount}
               />
             )}
-            {handleEmpty()}
+            <RedirectWhenCartEmpty
+              page={page}
+              cartList={aliasCartList}
+              campaignItemList={campaignItemList}
+              buyNowItemList={buyNowItemList}
+            />
           </AuthGuard>
         </CustomContainer>
       </MainLayout>

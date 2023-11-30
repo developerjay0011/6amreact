@@ -4,10 +4,8 @@ import Wallet from "../wallet";
 import Profile from "../profile";
 
 import MyOrders from "../my-orders";
-import { Typography } from "@mui/material";
 import OrderDetails from "../my-orders/order-details";
 import LoyaltyPoints from "../loyalty-points";
-import ReferAFriend from "../referral-code/svg/ReferAFriend";
 import ReferralCode from "../referral-code";
 import Coupons from "../coupons";
 import Chatting from "../chat/Chatting";
@@ -43,7 +41,12 @@ const ProfileBody = ({
     if (page === "my-orders" && !orderId) {
       return <MyOrders configData={configData} />;
     }
-    if (page === "my-orders" && orderId) {
+    if (
+      (page === "my-orders?flag=success" ||
+        page === "my-orders" ||
+        page === "my-orders?flag=cancel") &&
+      orderId
+    ) {
       return <OrderDetails configData={configData} id={orderId} />;
     }
     if (

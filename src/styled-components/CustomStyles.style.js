@@ -440,6 +440,7 @@ export const CustomImageContainerStyled = styled(Box)(
     mdHeight,
     cursor,
     aspect_ratio,
+    padding,
   }) => ({
     //maxWidth:'20rem',
     display: "inline-flex",
@@ -448,6 +449,7 @@ export const CustomImageContainerStyled = styled(Box)(
     height: height ? height : "100%",
     minWidth: minwidth,
     maxWidth: max_width,
+    padding: padding ? padding : "",
     marginBottom: margin_bottom,
     position: "relative",
     //cursor: "pointer",
@@ -611,7 +613,7 @@ export const StoreDetailsNavButton = styled(Button)(
     borderBottomLeftRadius: borderLeftBottom && borderLeftBottom,
 
     "&:hover": {
-      backgroundColor: background && theme.palette.primary.light,
+      backgroundColor: background && theme.palette.primary.deep,
     },
   })
 );
@@ -698,16 +700,17 @@ export const ScheduleTimeStack = styled(Stack)(({ theme }) => ({
   justifyContent: "center",
   alignItems: "center",
 }));
-export const UserInfoGrid = styled(Grid)(({ theme, page }) => ({
+export const UserInfoGrid = styled(Grid)(({ theme, page ,userToken}) => ({
   position: "relative",
   zIndex: 99,
+  minHeight: "100px",
   "&::before": {
     content: '""',
     position: "absolute",
     left: 0,
     top: 0,
     right: 0,
-    bottom: "42%",
+    bottom:userToken? "42%":"0%",
     backgroundColor: alpha(theme.palette.primary.main, 0.1),
     zIndex: -1,
     [theme.breakpoints.down("md")]: {
@@ -720,7 +723,7 @@ export const UserInfoGrid = styled(Grid)(({ theme, page }) => ({
     content: '""',
     position: "absolute",
     left: 0,
-    bottom: "42%",
+    bottom:userToken? "42%":"0%",
     top: 0,
     right: 0,
     backgroundColor: alpha(theme.palette.primary.main, 0.1),
@@ -816,4 +819,7 @@ export const CustomStackForFoodModal = styled(Stack)(({ theme, padding }) => ({
   position: "absolute",
   bottom: "0",
   background: `linear-gradient(180deg, rgba(0, 0, 0, 0) 0%, rgb(18 18 18 / 94%) 100%)`,
+}));
+export const CustomSpan = styled("span")(({ theme }) => ({
+	color: theme.palette.text.secondary,
 }));

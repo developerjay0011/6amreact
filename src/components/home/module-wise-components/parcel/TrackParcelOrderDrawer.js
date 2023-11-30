@@ -30,6 +30,8 @@ import DeliveryManInfoCard from "../../../checkout/parcel/DeliveryManInfo";
 import ParcelTrackOderStepper from "../../../parcel/ParcelTrackOderStepper";
 import useGetTrackOrderData from "../../../../api-manage/hooks/react-query/order/useGetTrackOrderData";
 import CustomEmptyResult from "../../../custom-empty-result";
+import {getGuestId} from "../../../../helper-functions/getToken";
+import {getAmountWithSign} from "../../../../helper-functions/CardHelpers";
 const CustomLine = styled(Box)(({ theme }) => ({
   borderLeft: "1px dashed",
   borderColor: alpha(theme.palette.neutral[500], 0.5),
@@ -44,6 +46,8 @@ const TrackParcelOrderDrawer = (props) => {
   const [orderData, setOrderData] = useState(null);
   const { sideDrawerOpen, orderId, setSideDrawerOpen } = props;
   const [actStep, setActStep] = useState(1);
+  const guestId=getGuestId()
+  const phone=""
 
   const handleSuccess = (res) => {
     setOrderData(res);
@@ -54,7 +58,7 @@ const TrackParcelOrderDrawer = (props) => {
     data: trackOrderData,
     isLoading,
     isRefetching,
-  } = useGetTrackOrderData(orderId, handleSuccess);
+  } = useGetTrackOrderData(orderId,phone,guestId, handleSuccess);
   useEffect(() => {
     if (orderId) {
       refetch();
@@ -72,7 +76,7 @@ const TrackParcelOrderDrawer = (props) => {
     };
   }, [refetch]);
   const handleStepper = () => {
-    if (trackOrderData?.order_status === "panding") {
+    if (trackOrderData?.order_status === "pending") {
       setActStep(1);
     } else if (trackOrderData?.order_status === "confirmed") {
       setActStep(2);
@@ -237,7 +241,7 @@ const TrackParcelOrderDrawer = (props) => {
                 {t("Total")}
               </Typography>
               <Typography fontWeight="700" color={theme.palette.primary.main}>
-                {trackOrderData?.order_amount}
+                {getAmountWithSign(trackOrderData?.order_amount)}
               </Typography>
             </CustomStackFullWidth>
           </CustomStackFullWidth>

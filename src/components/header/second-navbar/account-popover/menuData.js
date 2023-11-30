@@ -6,6 +6,7 @@ import LoyaltyIcon from "@mui/icons-material/Loyalty";
 import SendToMobileIcon from "@mui/icons-material/SendToMobile";
 import ImportContactsIcon from "@mui/icons-material/ImportContacts";
 import SettingsIcon from "@mui/icons-material/Settings";
+import LocalShippingOutlinedIcon from '@mui/icons-material/LocalShippingOutlined';
 export const menuData = [
   {
     id: 1,
@@ -56,4 +57,10 @@ export const menuData = [
     icon: <SettingsIcon />,
     path: "/settings",
   },
+  {
+    id:10,
+    name:"track order",
+    icon:<LocalShippingOutlinedIcon />,
+    path:"/track-order"
+  }
 ];

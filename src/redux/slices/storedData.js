@@ -19,6 +19,9 @@ const initialState = {
   bestReviewedItems: {
     products: [],
   },
+  youWillLoveItems: {
+    products: [],
+  },
   AllSaveAddress: [],
 };
 
@@ -66,6 +69,12 @@ export const storedDataSlice = createSlice({
         products: action.payload.products,
       };
     },
+    setYouWillLoveItems: (state, action) => {
+      state.youWillLoveItems = {
+        ...action.payload,
+        products: action.payload.products,
+      };
+    },
     setAllSaveAddress: (state, action) => {
       state.AllSaveAddress = action.payload;
     },
@@ -88,6 +97,7 @@ export const {
   setRunningCampaigns,
   setNewArrivalStores,
   setBestReviewedItems,
+  setYouWillLoveItems,
   setResetStoredData,
   setAllSaveAddress,
 } = storedDataSlice.actions;

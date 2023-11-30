@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { CustomContainer } from "../../footer/Footer.style";
 import { Stack } from "@mui/system";
 import H1 from "../../typographies/H1";
 import { Grid } from "@mui/material";
@@ -15,6 +14,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { setParcelData } from "../../../redux/slices/parcelDeliveryInfo";
 import toast from "react-hot-toast";
 import { t } from "i18next";
+import GuestCheckoutModal from "../../cards/GuestCheckoutModal";
 
 const PercelDelivery = ({ configData }) => {
   const router = useRouter();
@@ -25,11 +25,12 @@ const PercelDelivery = ({ configData }) => {
   const [senderFormattedAddress, setSenderFormattedAddress] = useState("");
   const [receiverLocation, setReceiverLocation] = useState({});
   const [receiverFormattedAddress, setReceiverFormattedAddress] = useState("");
+  const [open, setOpen] = useState(false);
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   let token = undefined;
   if (typeof window !== undefined) {
     token = localStorage.getItem("token");
   }
-
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
     useGeolocated({
       positionOptions: {
@@ -101,6 +102,10 @@ const PercelDelivery = ({ configData }) => {
     addAddressFormik.setFieldValue("senderFloor", value);
   };
 
+  const handleRoute = () => {
+    router.push("/checkout?page=parcel", undefined, { shallow: true });
+  };
+
   const formSubmitHandler = (values) => {
     const tempValue = {
       ...values,
@@ -114,17 +119,21 @@ const PercelDelivery = ({ configData }) => {
     };
     if (senderLocation && receiverLocation) {
       dispatch(setParcelData(tempValue));
-      if (token) {
-        router.push(
-          {
-            pathname: "/checkout",
-            query: { page: "parcel" },
-          },
-          undefined,
-          { shallow: true }
-        );
+      if (!token && configData?.guest_checkout_status === 1) {
+        setOpen(true);
       } else {
-        toast.error("please login first");
+        if (token) {
+          router.push(
+            {
+              pathname: "/checkout",
+              query: { page: "parcel" },
+            },
+            undefined,
+            { shallow: true }
+          );
+        } else {
+          router.push("/auth/sign-in");
+        }
       }
     } else {
       toast.error(t("Sender or Receiver location is missing"));
@@ -138,7 +147,6 @@ const PercelDelivery = ({ configData }) => {
     setReceiverLocation(location);
     setReceiverFormattedAddress(currentLocation);
   };
-
   return (
     <CustomStackFullWidth
       paddingBottom={{ xs: "20px", sm: "20px", md: "80px" }}
@@ -190,6 +198,14 @@ const PercelDelivery = ({ configData }) => {
           </Grid>
         </Grid>
       </form>
+      {open && (
+        <GuestCheckoutModal
+          open={open}
+          setOpen={setOpen}
+          setSideDrawerOpen={setSideDrawerOpen}
+          handleRoute={handleRoute}
+        />
+      )}
     </CustomStackFullWidth>
   );
 };

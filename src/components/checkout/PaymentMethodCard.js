@@ -1,39 +1,47 @@
 import React from "react";
 import {
-  Card,
   FormControlLabel,
-  Grid,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import CustomImageContainer from "../CustomImageContainer";
-import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
-import { t } from "i18next";
-import CheckCircleIcon from "@mui/icons-material/CheckCircle";
+import FormControl from "@mui/material/FormControl";
 import { Stack } from "@mui/system";
-import FormLabel from "@mui/material/FormLabel";
 import Radio from "@mui/material/Radio";
 import RadioGroup from "@mui/material/RadioGroup";
-import FormControl from "@mui/material/FormControl";
+import { useDispatch } from "react-redux";
+import CustomImageContainer from "../CustomImageContainer";
+import {
+  setOfflineInfoStep,
+  setOfflineMethod,
+} from "../../redux/slices/offlinePaymentData";
 
 const PaymentMethodCard = (props) => {
   const {
     image,
-    description,
     type,
     paymentMethod,
     setPaymentMethod,
     paymentType,
-    paidBy,
     parcel,
     digitalPaymentMethodActive,
     imageUrl,
+    setIsCheckedOffline,
+    setPaymentMethodImage,
   } = props;
   const theme = useTheme();
+  const dispatch = useDispatch();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const handleChange = () => {
     setPaymentMethod(type);
+    if (!parcel) {
+      setPaymentMethodImage(
+        digitalPaymentMethodActive ? `${imageUrl}/${image}` : image.src
+      );
+    }
+    dispatch(setOfflineMethod(""));
+    setIsCheckedOffline(false);
+    dispatch(setOfflineInfoStep(0));
   };
 
   const radioLabel = () => {
@@ -42,23 +50,23 @@ const PaymentMethodCard = (props) => {
         direction="row"
         gap="16px"
         alignItems="center"
-        paddingLeft={{ xs: "5px", sm: "5px", md: "10px" }}
+        paddingLeft={{ xs: "5px", sm: "5px", md: "15px" }}
       >
         {parcel === "true" ? (
           <CustomImageContainer
             src={
               digitalPaymentMethodActive ? `${imageUrl}/${image}` : image.src
             }
-            width="32px"
-            height="32px"
+            width="20px"
+            height="20px"
             objectfit="contain"
             borderRadius="50%"
           />
         ) : (
           !isSmall && (
             <CustomImageContainer
-              width="32px"
-              height="32px"
+              width="20px"
+              height="20px"
               objectfit="contain"
               borderRadius="50%"
               src={
@@ -70,7 +78,7 @@ const PaymentMethodCard = (props) => {
 
         <Typography
           fontWeight={parcel === "true" ? "400" : "500"}
-          fontSize={{ xs: "12px", sm: "12px", md: "16px" }}
+          fontSize={{ xs: "12px", sm: "12px", md: "12px" }}
         >
           {paymentType}
         </Typography>
@@ -78,9 +86,13 @@ const PaymentMethodCard = (props) => {
     );
   };
   return (
-    <Stack>
+    <Stack paddingLeft={parcel === "true" ? "0px" : "20px"}>
       <FormControl
-        sx={{ marginRight: { xs: "0px" }, marginLeft: { xs: "5px" } }}
+        sx={{
+          marginRight: { xs: "0px" },
+          marginLeft: { xs: "5px" },
+          paddingLeft: "5px",
+        }}
       >
         <RadioGroup
           aria-labelledby="demo-radio-buttons-group-label"
@@ -91,7 +103,7 @@ const PaymentMethodCard = (props) => {
             value={type}
             control={
               <Radio
-                sx={{ padding: { xs: "2px" } }}
+                sx={{ padding: { xs: "2px", md: "10px" } }}
                 checked={paymentMethod === type}
               />
             }

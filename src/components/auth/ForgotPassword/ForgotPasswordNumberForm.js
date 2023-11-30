@@ -10,7 +10,7 @@ import toast from "react-hot-toast";
 
 import CustomPhoneInput from "../../custom-component/CustomPhoneInput";
 import {useForgotPassword} from "../../../api-manage/hooks/react-query/forgot-password/useForgotPassword";
-import {onErrorResponse} from "../../../api-manage/api-error-response/ErrorResponses";
+import {onErrorResponse, onSingleErrorResponse} from "../../../api-manage/api-error-response/ErrorResponses";
 import {forgot_password_header} from "../../../utils/staticTexts";
 import {getLanguage} from "../../../helper-functions/getLanguage";
 
@@ -36,8 +36,16 @@ const ForgotPasswordNumberForm = ({data, goNext, handleFirstForm}) => {
 
     const onSuccessHandler = (res) => {
         if (res) {
-            goNext();
-            toast.success(res.message);
+            if(res?.errors?.length>0){
+                goNext();
+                toast.error(res?.errors[0].message);
+            }else{
+                goNext();
+                toast.success(res.message);
+            }
+
+           // goNext();
+            //toast.success(res.message);
         }
     };
 

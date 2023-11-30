@@ -1,16 +1,16 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 
 import Slider from "react-slick";
-import { Box, Stack } from "@mui/system";
+import { Box } from "@mui/system";
 import { alpha, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useTranslation } from "react-i18next";
 import couponsBG from "../assets/coupons_bg.png";
 import useGetCoupons from "../../../api-manage/hooks/react-query/useGetCoupons";
 import toast from "react-hot-toast";
-import { t } from "i18next";
+import { getAmountWithSign } from "../../../helper-functions/CardHelpers";
+
 const CustomBox = styled(Box)(({ theme }) => ({
   background: alpha(theme.palette.primary.main, 0.3),
   border: `2px dashed ${theme.palette.neutral[100]}`,
@@ -51,6 +51,11 @@ const CouponBox = ({ item }) => {
         console.error("Failed to copy code:", error);
       });
   };
+  const get = t("get");
+  const discountText = t("% discount");
+  const discountText1 = t("discount");
+  const min = t("min Order of");
+
   return (
     <Box>
       <CustomStackFullWidth
@@ -64,9 +69,23 @@ const CouponBox = ({ item }) => {
           color="whiteContainer.main"
           sx={{
             fontSize: { xs: "18px", md: "27px" },
+            textTransform: "capitalize",
           }}
         >
-          {item?.title}
+          {item?.discount_type === "percent"
+            ? `${get}  ${item?.discount}${discountText}`
+            : `${get} ${getAmountWithSign(
+                item?.discount
+              )} ${discountText1}`}{" "}
+          <Typography
+            fontWeight="bold"
+            textAlign="center"
+            color="whiteContainer.main"
+            component="span"
+            sx={{
+              fontSize: { xs: "18px", md: "27px" },
+            }}
+          >{`${min} ${getAmountWithSign(item?.min_purchase)}`}</Typography>
         </Typography>
         <CustomBox onClick={() => handleCopy(item?.code)}>
           <Typography

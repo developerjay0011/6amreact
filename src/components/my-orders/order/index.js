@@ -233,11 +233,10 @@ const Order = (props) => {
             )}
 
             <CustomImageContainer
-              src={`${storeImage}/${
-                order?.module_type === "parcel"
+              src={`${storeImage}/${order?.module_type === "parcel"
                   ? order?.parcel_category?.image
                   : order?.store?.logo
-              }`}
+                }`}
               width="70px"
               height="70px"
               smWidth="43px"
@@ -270,7 +269,7 @@ const Order = (props) => {
                   {order?.id}
                 </Typography>
                 <Typography component="span" marginLeft="5px" fontSize="12px">
-                  ( {order?.details_count} Items )
+                   { order?.order_type !== "parcel" &&  `( ${order?.details_count} ${t("Items")} )` }
                 </Typography>
               </Typography>
               {order?.order_status == "delivered" ? (

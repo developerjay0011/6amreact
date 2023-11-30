@@ -13,7 +13,7 @@ export const OrderApi = {
       longitude,
       latitude,
       prescriptionImages,
-      order_note
+      order_note,guest_id,contact_person_name,contact_person_number
     } = orderData;
     let formData = new FormData();
     formData.append("store_id", store_id);
@@ -25,6 +25,9 @@ export const OrderApi = {
       formData.append("order_attachment[]", prescriptionImages);
     });
     formData.append("order_note", order_note);
+    formData.append("guest_id",guest_id)
+    formData.append("contact_person_number",contact_person_number)
+    formData.append("contact_person_name",contact_person_name)
 
     return MainApi.post("/api/v1/customer/order/prescription/place", formData);
   },

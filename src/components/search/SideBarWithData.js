@@ -1,4 +1,4 @@
-import React, { forwardRef } from "react";
+import React, {forwardRef, useEffect, useState} from "react";
 import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
@@ -30,6 +30,16 @@ const SideBarWithData = forwardRef((props, ref) => {
     selectedCategoriesHandler,
     isApiCalling,
   } = props;
+
+  const [loading, setLoading] = useState(false);
+  useEffect(() => {
+    // Use setTimeout to set the state to true after 1 second (1000 milliseconds)
+    const timeoutId = setTimeout(() => {
+      setLoading(true);
+    }, 4000);
+    // Clear the timeout if the component unmounts before it fires
+    return () => clearTimeout(timeoutId);
+  }, []);
   const getProductShimmer = () => (
     <Grid item xs={12} sm={4} md={3}>
       <CardWrapper sx={{ height: "250px" }}>
@@ -127,7 +137,7 @@ const SideBarWithData = forwardRef((props, ref) => {
     }
   };
   const emptyHandler = () => {
-    if (!isApiCalling) {
+    if (!isApiCalling && loading) {
       if (pageData?.length === 0) {
         if (currentTab === 0) {
           return <EmptySearchResults text="Items not found!" />;
@@ -156,7 +166,7 @@ const SideBarWithData = forwardRef((props, ref) => {
             <CustomBoxFullWidth>
               <Grid container spacing={2} ref={ref}>
                 {getLayoutHandler()}
-                {isApiCalling && (
+                {(isApiCalling  || !loading ||isInitialRefetching)&& (
                   <Grid
                     item
                     xs={12}
@@ -167,7 +177,7 @@ const SideBarWithData = forwardRef((props, ref) => {
                       paddingBlockStart: "30px",
                     }}
                   >
-                    <Stack sx={{ minHeight: "40vh", marginTop: "2rem" }}>
+                    <Stack sx={{ marginTop: "2rem" }}>
                       <DotSpin />
                     </Stack>
                   </Grid>

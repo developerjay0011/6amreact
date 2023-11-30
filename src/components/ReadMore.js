@@ -13,9 +13,13 @@ export const ReadMore = ({ children, limits, color }) => {
   const fontColor = theme.palette.primary.main;
   return (
     <Typography
+      component="span"
       fontSize={{ xs: "10px", sm: "14px", md: "14px" }}
       fontWeight="400"
       color={color ? color : theme.palette.neutral[600]}
+      sx={{
+        wordWrap: "break-word"
+      }}
     >
       {isReadMore ? text?.slice(0, fontLimits) : text}
       {text?.length > fontLimits && (

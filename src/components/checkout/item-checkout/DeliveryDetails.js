@@ -1,29 +1,18 @@
-import React, { useReducer, useState } from "react";
+import React from "react";
 // import { DeliveryCaption, DeliveryTitle, StyledPaper } from "./CheckOut.style";
 import { useTranslation } from "react-i18next";
 
-import {
-  CustomPaperBigCard,
-  CustomStackFullWidth,
-} from "../../../styled-components/CustomStyles.style";
-import { DeliveryCaption, DeliveryTitle } from "../CheckOut.style";
+import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
+import { DeliveryCaption } from "../CheckOut.style";
 import DeliveryAddress from "../delivery-address";
 import { Stack } from "@mui/system";
-import {
-  CustomButtonPrimary,
-  DeliveryOptionButton,
-} from "../../../styled-components/CustomButtons.style";
+import { DeliveryOptionButton } from "../../../styled-components/CustomButtons.style";
 import homeImg from "../assets/image 1256.png";
 import takeaway from "../assets/takeaway.png";
 import schedule from "../assets/schedule.png";
 import CustomImageContainer from "../../CustomImageContainer";
-import { Popover, Typography, useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import { useTheme } from "@emotion/react";
-import { handleClick, handleCloseModal } from "../../address/HelperFunctions";
-import { initialState, reducer } from "../../address/states";
-import CustomModal from "../../modal";
-import ScheduleDelivery from "./ScheduleDelivery";
-import { today, tomorrow } from "../../../utils/formatedDays";
 import RestaurantScheduleTime from "./RestaurantScheduleTime";
 
 const DeliveryDetails = (props) => {
@@ -39,7 +28,6 @@ const DeliveryDetails = (props) => {
     customDispatch,
     scheduleTime,
     setDayNumber,
-
     handleChange,
     today,
     tomorrow,
@@ -59,7 +47,6 @@ const DeliveryDetails = (props) => {
   const handleClose = () => {
     setAnchorEl(null);
   };
-
   const open = Boolean(anchorEl);
 
   const handleOrderType = (value) => {
@@ -100,6 +87,7 @@ const DeliveryDetails = (props) => {
               smHeight="20px"
             />
             <Typography
+              className="text"
               fontSize={{ xs: "12px", md: "14px" }}
               fontWeight={orderType === "delivery" ? "600" : "400"}
               color={
@@ -111,31 +99,38 @@ const DeliveryDetails = (props) => {
               {t("Home Delivery")}
             </Typography>
           </DeliveryOptionButton>
-          <DeliveryOptionButton
-            fullwidth="true"
-            orderType={orderType === "take_away"}
-            onClick={() => handleOrderType("take_away")}
-          >
-            {" "}
-            <CustomImageContainer
-              src={takeaway.src}
-              width="30px"
-              height="30px"
-              smWidth="20px"
-              smHeight="20px"
-            />
-            <Typography
-              fontSize={{ xs: "12px", md: "14px" }}
-              fontWeight={orderType === "take_away" ? "600" : "400"}
-              color={
-                orderType === "take_away"
-                  ? theme.palette.whiteContainer.main
-                  : theme.palette.neutral[700]
-              }
-            >
-              {t("I’ll Pick It Up MySelf")}
-            </Typography>
-          </DeliveryOptionButton>
+          {!forprescription && configData?.takeaway_status === 1 ? (
+            <>
+              {storeData?.take_away && (
+                <DeliveryOptionButton
+                  fullwidth="true"
+                  orderType={orderType === "take_away"}
+                  onClick={() => handleOrderType("take_away")}
+                >
+                  {" "}
+                  <CustomImageContainer
+                    src={takeaway.src}
+                    width="30px"
+                    height="30px"
+                    smWidth="20px"
+                    smHeight="20px"
+                  />
+                  <Typography
+                    className="text"
+                    fontSize={{ xs: "12px", md: "14px" }}
+                    fontWeight={orderType === "take_away" ? "600" : "400"}
+                    color={
+                      orderType === "take_away"
+                        ? theme.palette.whiteContainer.main
+                        : theme.palette.neutral[700]
+                    }
+                  >
+                    {t("I’ll Pick It Up MySelf")}
+                  </Typography>
+                </DeliveryOptionButton>
+              )}
+            </>
+          ) : null}
           {storeData?.schedule_order && (
             <DeliveryOptionButton
               fullwidth="true"
@@ -151,6 +146,7 @@ const DeliveryDetails = (props) => {
                 smHeight="20px"
               />
               <Typography
+                className="text"
                 fontSize={{ xs: "12px", md: "14px" }}
                 fontWeight={orderType === "schedule_order" ? "600" : "400"}
                 color={
@@ -176,14 +172,16 @@ const DeliveryDetails = (props) => {
           setScheduleAt={setScheduleAt}
         />
       )}
-      {orderType !== "take_away" && (
-        <DeliveryAddress
-          setAddress={setAddress}
-          address={address}
-          configData={configData}
-          storeZoneId={storeData?.zone_id}
-        />
-      )}
+      <DeliveryAddress
+        setAddress={setAddress}
+        address={address}
+        configData={configData}
+        storeZoneId={storeData?.zone_id}
+        orderType={orderType}
+      />
+      {/*{orderType !== "take_away" && (*/}
+
+      {/*)}*/}
 
       {/*<Popover*/}
       {/*  open={open}*/}

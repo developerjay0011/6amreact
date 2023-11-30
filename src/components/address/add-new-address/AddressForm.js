@@ -3,20 +3,21 @@ import { Grid, Skeleton, Stack, Typography } from "@mui/material";
 import { useFormik } from "formik";
 import CustomTextFieldWithFormik from "../../form-fields/CustomTextFieldWithFormik";
 import { useTranslation } from "react-i18next";
-// import CustomSelectWithFormik from '../../custom-select/CustomSelectWithFormik'
-// import ValidationSchemaForAddAddress from './ValidationSchemaForAddAddress'
-// import CustomPhoneInput from '../../CustomPhoneInput'
-import LoadingButton from "@mui/lab/LoadingButton";
+
 import CustomPhoneInput from "../../custom-component/CustomPhoneInput";
 import ValidationSchemaForAddAddress from "./ValidationSchemaForAddAddress";
-import CustomSelectWithFormik from "../../custom-select/CustomSelectWithFormik";
+
 import usePostAddress from "../../../api-manage/hooks/react-query/address/usePostAddress";
 import toast from "react-hot-toast";
 import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
 import { getLanguage } from "../../../helper-functions/getLanguage";
 import FormSubmitButton from "../../profile/FormSubmitButton";
-import SimpleBar from "simplebar-react";
+
 import useUpdatedAddress from "../../../api-manage/hooks/react-query/address/useUpdatedAddress";
+import { useDispatch, useSelector } from "react-redux";
+import { setGuestUserInfo } from "../../../redux/slices/guestUserInfo";
+import { setOpenAddressModal } from "../../../redux/slices/addAddress";
+import {t} from "i18next";
 
 const AddressForm = ({
   configData,
@@ -30,10 +31,9 @@ const AddressForm = ({
   isRefetcing,
   atModal,
   addressType,
-  editAddress,
+  editAddress,setAddAddress
 }) => {
   const { t } = useTranslation();
-
   const typeData = [
     {
       label: t("Home"),
@@ -48,28 +48,72 @@ const AddressForm = ({
       value: "Others",
     },
   ];
+
+  const token = localStorage.getItem("token");
+  const dispatch = useDispatch();
+  const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
   const { mutate, isLoading } = usePostAddress();
   const { mutate: updateMutate, isLoading: isUpdateLoading } =
     useUpdatedAddress();
 
   const addAddressFormik = useFormik({
     initialValues: {
+      contact_person_email: "",
       address: "",
-      address_type: addressType ? addressType : "",
-      address_label: "",
-      contact_person_name: personName ? personName : "",
-      contact_person_number: phone ? phone : "",
-      additional_information: editAddress
-        ? editAddress?.additional_information
+      address_type: token
+        ? addressType
+          ? addressType
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.address_type
+        : "",
+      address_label: token
+        ? ""
+        : guestUserInfo
+        ? guestUserInfo.address_label
+        : "",
+      contact_person_name: token
+        ? personName
+          ? personName
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.contact_person_name
+        : "",
+      contact_person_number: token
+        ? phone
+          ? phone
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.contact_person_number
+        : "",
+      additional_information: token
+        ? editAddress
+          ? editAddress?.additional_information
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.additional_information
         : "",
       latitude: lat,
       longitude: lng,
       road: "",
-      house: editAddress ? editAddress?.house : "",
-      floor: editAddress ? editAddress?.floor : "",
+      house: token
+        ? editAddress
+          ? editAddress?.house
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.house
+        : "",
+      floor: token
+        ? editAddress
+          ? editAddress?.floor
+          : ""
+        : guestUserInfo
+        ? guestUserInfo.floor
+        : "",
     },
     validationSchema: ValidationSchemaForAddAddress(),
     onSubmit: async (values, helpers) => {
+
       try {
         let newData = {
           ...values,
@@ -82,47 +126,57 @@ const AddressForm = ({
       } catch (err) {}
     },
   });
-  console.log("log", editAddress);
+
   const formSubmitOnSuccess = (values) => {
-    if (editAddress) {
-      const newValue = { ...values, id: editAddress?.id };
-      updateMutate(newValue, {
-        onSuccess: (response) => {
-          if (atModal === "true") {
-            toast.success(response?.message);
-            popoverClose();
-            refetch?.();
-          } else {
-            toast.success(response?.message);
-            refetch?.();
-          }
+    if (token) {
+      if (editAddress && editAddress?.address_type) {
+        const newValue = { ...values, id: editAddress?.id };
+        updateMutate(newValue, {
+          onSuccess: (response) => {
+            if (atModal === "true") {
+              toast.success(response?.message);
+              popoverClose();
+              refetch?.();
+            } else {
+              toast.success(response?.message);
+              refetch?.();
+              setAddAddress(false)
+            }
 
-          // if (response?.data) {
-          //   refetch();
-          //   setOpen(false);
-          // }
-        },
-        onError: onErrorResponse,
-      });
+            // if (response?.data) {
+            //   refetch();
+            //   setOpen(false);
+            // }
+          },
+          onError: onErrorResponse,
+        });
+      } else {
+        mutate(values, {
+          onSuccess: (response) => {
+            if(response){
+              if (atModal === "true") {
+                toast.success(response?.message);
+                popoverClose?.();
+                refetch?.();
+              } else {
+                toast.success(response?.message);
+                refetch?.();
+                setAddAddress(false)
+              }
+            }
+
+            // if (response?.data) {
+            //   refetch();
+            //   setOpen(false);
+            // }
+          },
+          onError: onErrorResponse,
+        });
+      }
     } else {
-      mutate(values, {
-        onSuccess: (response) => {
-          if (atModal === "true") {
-            toast.success(response?.message);
-            popoverClose?.();
-            refetch?.();
-          } else {
-            toast.success(response?.message);
-            refetch?.();
-          }
 
-          // if (response?.data) {
-          //   refetch();
-          //   setOpen(false);
-          // }
-        },
-        onError: onErrorResponse,
-      });
+      dispatch(setGuestUserInfo(values));
+      dispatch(setOpenAddressModal(false));
     }
   };
 
@@ -149,6 +203,9 @@ const AddressForm = ({
   };
   const floorHandler = (value) => {
     addAddressFormik.setFieldValue("floor", value);
+  };
+  const emailHandler = (value) => {
+    addAddressFormik.setFieldValue("email", value);
   };
   useEffect(() => {
     addAddressFormik.setFieldValue("address", deliveryAddress);
@@ -185,28 +242,7 @@ const AddressForm = ({
               />
             </Grid>
           )}
-          <Grid item xs={12} md={6}>
-            <CustomTextFieldWithFormik
-              type="text"
-              label={t("House")}
-              touched={addAddressFormik.touched.house}
-              errors={addAddressFormik.errors.house}
-              fieldProps={addAddressFormik.getFieldProps("house")}
-              onChangeHandler={houseHandler}
-              value={addAddressFormik.values.house}
-            />
-          </Grid>
-          <Grid item xs={12} md={6}>
-            <CustomTextFieldWithFormik
-              type="text"
-              label={t("Floor")}
-              touched={addAddressFormik.touched.floor}
-              errors={addAddressFormik.errors.floor}
-              fieldProps={addAddressFormik.getFieldProps("floor")}
-              onChangeHandler={floorHandler}
-              value={addAddressFormik.values.floor}
-            />
-          </Grid>
+
           <Grid item xs={12} md={6}>
             <CustomTextFieldWithFormik
               required="true"
@@ -231,27 +267,79 @@ const AddressForm = ({
               height="45px"
             />
           </Grid>
-          <Grid item xs={12} md={12}>
+          <Grid item xs={12} md={6}>
             <CustomTextFieldWithFormik
-              required="true"
-              type="text"
-              label={t("Additional Information")}
-              touched={addAddressFormik.touched.additional_information}
-              errors={addAddressFormik.errors.additional_information}
-              fieldProps={addAddressFormik.getFieldProps(
-                "additional_information"
-              )}
-              onChangeHandler={additionalHandler}
-              value={addAddressFormik.values.additional_information}
-              height="60px"
+
+                label={t("Email")}
+                touched={addAddressFormik.touched.contact_person_email}
+                errors={addAddressFormik.errors.contact_person_email}
+                fieldProps={addAddressFormik.getFieldProps("contact_person_email")}
+                onChangeHandler={emailHandler}
+                value={addAddressFormik.values.contact_person_email}
             />
           </Grid>
+
+          <Grid item xs={12} md={6}>
+            <CustomTextFieldWithFormik
+                type="text"
+                label={t("House")}
+                touched={addAddressFormik.touched.house}
+                errors={addAddressFormik.errors.house}
+                fieldProps={addAddressFormik.getFieldProps("house")}
+                onChangeHandler={houseHandler}
+                value={addAddressFormik.values.house}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CustomTextFieldWithFormik
+                type="text"
+                label={t("Floor")}
+                touched={addAddressFormik.touched.floor}
+                errors={addAddressFormik.errors.floor}
+                fieldProps={addAddressFormik.getFieldProps("floor")}
+                onChangeHandler={floorHandler}
+                value={addAddressFormik.values.floor}
+            />
+          </Grid>
+          <Grid item xs={12} md={6}>
+            <CustomTextFieldWithFormik
+                type="text"
+                label={t("Road")}
+                touched={addAddressFormik.touched.road}
+                errors={addAddressFormik.errors.road}
+                fieldProps={addAddressFormik.getFieldProps("road")}
+                onChangeHandler={roadHandler}
+                value={addAddressFormik.values.road}
+            />
+          </Grid>
+          <Grid item xs={12} md={12}>
+            <CustomTextFieldWithFormik
+
+                type="text"
+                label={t("Additional Information")}
+                touched={addAddressFormik.touched.additional_information}
+                errors={addAddressFormik.errors.additional_information}
+                fieldProps={addAddressFormik.getFieldProps(
+                    "additional_information"
+                )}
+                onChangeHandler={additionalHandler}
+                value={addAddressFormik.values.additional_information}
+                height="60px"
+            />
+          </Grid>
+
           <Grid item xs={12} md={12} align="end">
             <FormSubmitButton
               handleReset={handleReset}
-              isLoading={editAddress ? isUpdateLoading : isLoading}
+              isLoading={editAddress && editAddress?.address_type ? isUpdateLoading : isLoading}
               reset={t("Reset")}
-              submit={t("Add Address")}
+              submit={
+                token
+                  ?(editAddress && editAddress?.address_type)?t("Update Address"): t("Add Address")
+                  : guestUserInfo
+                  ? t("Update Address")
+                  : t("Add Address")
+              }
             />
           </Grid>
         </Grid>

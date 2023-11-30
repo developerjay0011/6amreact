@@ -1,7 +1,10 @@
 import moment from "moment";
 import { currentDate, nextday, today } from "./formatedDays";
 import { t } from "i18next";
-import { getCurrentModuleType } from "../helper-functions/getCurrentModuleType";
+import {
+  getCurrentModuleId,
+  getCurrentModuleType,
+} from "../helper-functions/getCurrentModuleType";
 import { store } from "../redux/store";
 import { getDiscountedAmount } from "../helper-functions/CardHelpers";
 
@@ -29,8 +32,8 @@ export const handleTotalAmountWithAddons = (
 ) => {
   if (selectedAddOns?.length > 0) {
     let selectedAddonsTotalPrice = 0;
-    selectedAddOns.forEach(
-      (item) => (selectedAddonsTotalPrice += item.price * item.quantity)
+    selectedAddOns?.forEach(
+      (item) => (selectedAddonsTotalPrice += item?.price * item?.quantity)
     );
     return mainTotalAmount + selectedAddonsTotalPrice;
   } else {
@@ -114,10 +117,10 @@ const handleValuesSum = (productVariations) => {
 };
 
 export const handleProductValueWithOutDiscount = (product) => {
-  let productPrice = product.price;
+  let productPrice = product?.price;
   if (getCurrentModuleType() === "food") {
-    if (product.food_variations.length > 0) {
-      productPrice += handleVariationValuesSum(product.food_variations);
+    if (product?.food_variations?.length > 0) {
+      productPrice += handleVariationValuesSum(product?.food_variations);
       return productPrice;
     } else {
       return productPrice;
@@ -271,21 +274,16 @@ export const getCouponDiscount = (couponDiscount, storeData, cartList) => {
 };
 
 export const getTaxableTotalPrice = (items, couponDiscount, storeData) => {
-  //console.log({ tax_included });
-  console.log("hhhh", store?.getState?.()?.configData?.configData);
-  const isTaxIncluded =
-    !!store?.getState?.()?.configData?.configData?.tax_included === 1;
-
   let tax = storeData?.tax || 0;
   let total =
     handlePurchasedAmount(items) -
     getProductDiscount(items, storeData) -
     (couponDiscount ? getCouponDiscount(couponDiscount, storeData, items) : 0);
 
-  if (isTaxIncluded) {
-    return (total * tax) / 100;
-  } else {
+  if (store?.getState?.()?.configData?.configData?.tax_included === 1) {
     return (total * tax) / (100 + tax);
+  } else {
+    return (total * tax) / 100;
   }
 };
 // export const getTaxableTotalPrice = (items, couponDiscount, storeData) => {
@@ -529,6 +527,7 @@ function recursive(start, end, close, list, schedule_order_slot_duration, day) {
     return list;
   }
 }
+
 export const getAllSchedule = (
   day,
   schedules,
@@ -674,14 +673,35 @@ export const getInfoFromZoneData = (zoneData) => {
     zoneData?.data?.zone_data?.forEach((item, index) => {
       if (item?.modules?.length > 0) {
         item?.modules?.forEach((moduleItem) => {
-          if (moduleItem?.module_type === getCurrentModuleType()) {
-            chargeInfo = moduleItem;
+          if (
+            moduleItem?.module_type === getCurrentModuleType() &&
+            moduleItem?.id === getCurrentModuleId()
+          ) {
+            chargeInfo = {
+              ...moduleItem,
+              increased_delivery_fee_status:
+                item?.increased_delivery_fee_status,
+              increased_delivery_fee: item?.increased_delivery_fee,
+            };
           }
         });
       }
     });
   }
   return chargeInfo;
+};
+
+const getDeliveryFeeByBadWeather = (
+  charge,
+  increasedDeliveryFee,
+  increasedDeliveryFeeStatus
+) => {
+  const totalCharge = charge;
+  if (increasedDeliveryFeeStatus === 1) {
+    return totalCharge + totalCharge * (increasedDeliveryFee / 100);
+  } else {
+    return totalCharge;
+  }
 };
 export const getDeliveryFees = (
   storeData,
@@ -732,7 +752,6 @@ export const getDeliveryFees = (
     } else {
       if (zoneData?.data?.zone_data?.length > 0) {
         const chargeInfo = getInfoFromZoneData(zoneData);
-
         if (
           chargeInfo?.pivot?.per_km_shipping_charge !== null &&
           chargeInfo?.pivot?.per_km_shipping_charge >= 0
@@ -740,14 +759,21 @@ export const getDeliveryFees = (
           deliveryFee =
             convertedDistance *
             (chargeInfo?.pivot?.per_km_shipping_charge || 0);
-
           if (deliveryFee <= chargeInfo?.pivot?.minimum_shipping_charge) {
-            return chargeInfo?.pivot?.minimum_shipping_charge + extraCharge;
+            return getDeliveryFeeByBadWeather(
+              chargeInfo?.pivot?.minimum_shipping_charge + extraCharge,
+              chargeInfo?.increased_delivery_fee,
+              chargeInfo?.increased_delivery_fee_status
+            );
           } else if (
             deliveryFee >= chargeInfo?.pivot?.maximum_shipping_charge &&
             chargeInfo?.pivot?.maximum_shipping_charge !== null
           ) {
-            return chargeInfo?.pivot?.maximum_shipping_charge + extraCharge;
+            return getDeliveryFeeByBadWeather(
+              chargeInfo?.pivot?.maximum_shipping_charge + extraCharge,
+              chargeInfo?.increased_delivery_fee,
+              chargeInfo?.increased_delivery_fee_status
+            );
           } else {
             if (
               (configData?.free_delivery_over !== null &&
@@ -757,7 +783,11 @@ export const getDeliveryFees = (
             ) {
               return 0;
             } else {
-              return deliveryFee + extraCharge;
+              return getDeliveryFeeByBadWeather(
+                deliveryFee + extraCharge,
+                chargeInfo?.increased_delivery_fee,
+                chargeInfo?.increased_delivery_fee_status
+              );
             }
           }
         }
@@ -923,7 +953,7 @@ export const getVariation = (variations) => {
 
 export const getTotalVariationsPrice = (variations) => {
   let value = 0;
-  if (variations.length > 0) {
+  if (variations?.length > 0) {
     variations?.forEach?.((item) => {
       if (item?.values?.length > 0) {
         item?.values?.forEach((itemVal) => {

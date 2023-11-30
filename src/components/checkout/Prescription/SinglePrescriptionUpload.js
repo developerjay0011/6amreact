@@ -7,7 +7,7 @@ import { Stack } from "@mui/system";
 import addImage from "./assets/add-image.png";
 
 const SinglePrescriptionUpload = (props) => {
-  const { t, handleImageUpload } = props;
+  const { t, handleImageUpload, borderRadius } = props;
   const [image, setImage] = useState(addImage.src);
   useEffect(() => {
     typeof image !== "string" && handleImageUpload?.(image);
@@ -37,7 +37,7 @@ const SinglePrescriptionUpload = (props) => {
       <Stack
         alignItems="center"
         justifyContent="center"
-        sx={{ position: "relative" }}
+        sx={{ position: "relative", paddingBottom: "2rem" }}
       >
         <ImageUploaderWithPreview
           type="file"
@@ -47,7 +47,7 @@ const SinglePrescriptionUpload = (props) => {
           onChange={singleFileUploadHandlerForImage}
           imageOnChange={imageOnchangeHandlerForImage}
           width="10rem"
-          borderRadius="50%"
+          borderRadius={borderRadius ?? "50%"}
           height="140px"
         />
         {typeof image !== "string" && (

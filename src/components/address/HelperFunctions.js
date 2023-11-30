@@ -33,7 +33,6 @@ export const handleChangeForSearch = (event, dispatch) => {
     type: ACTIONS.setSearchKey,
     payload: event.target.value,
   });
-
   if (event.target.value) {
     dispatch({
       type: ACTIONS.setCurrentLocation,

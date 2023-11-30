@@ -9,7 +9,8 @@ export const ChatMessageWrapper = styled(Box)(
     flexDirection: authortype === usertype ? "row-reverse" : "row",
     alignItems: "center",
     gap: "10px",
-
+    width: "100%",
+    maxWidth: "450px",
     marginLeft:
       authortype === usertype ? (language_direction === "rtl" ? 0 : "auto") : 0,
     marginBottom: "1rem",
@@ -28,7 +29,7 @@ export const CustomAvatar = styled(Avatar)(
 );
 export const BodyWrapper = styled(Box)(({ theme, authortype, usertype }) => ({
   flexGrow: 1,
-  maxWidth: 500,
+  maxWidth: `500 !important`,
   display: "flex",
   flexDirection: "column",
   alignItems: authortype === usertype ? "flex-end" : "flex-start",

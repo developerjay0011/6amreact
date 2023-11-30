@@ -1,11 +1,9 @@
 import React from "react";
-import PropTypes from "prop-types";
-import { Popover } from "@mui/material";
-import { Box } from "@mui/system";
+import { Fade, Popover } from "@mui/material";
 import Menu from "./Menu";
 
 const AccountPopover = (props) => {
-  const { anchorEl, onClose, open, ...other } = props;
+  const { cartListRefetch, anchorEl, onClose, open, ...other } = props;
   return (
     <Popover
       disableScrollLock={true}
@@ -18,10 +16,15 @@ const AccountPopover = (props) => {
       onClose={onClose}
       open={open}
       PaperProps={{ sx: { width: 300 } }}
-      transitionDuration={2}
+      transitionDuration={3}
+      TransitionComponent={Fade} // You can use 'Grow' or other transitions as well
+      // Use TransitionProps to customize the transition duration and other properties
+      TransitionProps={{
+        timeout: 300, // Transition duration in milliseconds
+      }}
       {...other}
     >
-      <Menu onClose={onClose} />
+      <Menu onClose={onClose} cartListRefetch={cartListRefetch} />
     </Popover>
   );
 };

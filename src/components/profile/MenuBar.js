@@ -37,9 +37,9 @@ const MenuBar = (props) => {
       </Typography>
       {menuData.map((item, index) => {
         if (
-          (configData?.customer_wallet_status === 0 && item.id === 4) ||
-          (configData?.loyalty_point_status === 0 && item.id === 5) ||
-          (configData?.ref_earning_status === 0 && item.id === 6)
+          (configData?.customer_wallet_status === 0 && item?.id === 4) ||
+          (configData?.loyalty_point_status === 0 && item?.id === 5) ||
+          (configData?.ref_earning_status === 0 && item?.id === 6)
         ) {
           return null;
         } else {

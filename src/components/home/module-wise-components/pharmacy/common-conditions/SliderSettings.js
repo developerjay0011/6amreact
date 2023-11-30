@@ -1,3 +1,4 @@
+import { Next, Prev } from "../../../popular-items-nearby/SliderSettings";
 import { WhiteNext, WhitePrev } from "../../../visit-again/SliderSettings";
 
 export const settings = {
@@ -5,7 +6,7 @@ export const settings = {
   infinite: false,
   speed: 500,
   slidesToShow: 4,
-  slidesToScroll: 1,
+  slidesToScroll: 4,
   slidesPerRow: 1,
   rows: 2,
   autoplay: true,
@@ -15,7 +16,7 @@ export const settings = {
       settings: {
         slidesToShow: 4,
         slidesToScroll: 3,
-        rows: 1,
+        rows: 4,
       },
     },
     {
@@ -71,4 +72,6 @@ export const settings = {
       },
     },
   ],
+  prevArrow: <Prev />,
+  nextArrow: <Next />,
 };

@@ -1,12 +1,12 @@
 import React from "react";
 import { alpha, IconButton, MenuItem, MenuList, Popover } from "@mui/material";
-import ListItemText from "@mui/material/ListItemText";
 import { menuData } from "../header/second-navbar/account-popover/menuData";
 import { useSelector } from "react-redux";
 import { t } from "i18next";
 import { Stack, styled } from "@mui/system";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import { useRouter } from "next/router";
+
 const StyledMenuItem = styled(MenuItem)(({ theme, page, menu }) => ({
   backgroundColor:
     page === menu?.name && alpha(theme.palette.footer.inputButton, 0.1),
@@ -20,7 +20,7 @@ const StyledMenuItem = styled(MenuItem)(({ theme, page, menu }) => ({
   },
 }));
 const ProfileTabPopover = (props) => {
-  const { anchorEl, onClose, open, page, ...other } = props;
+  const { deleteUserHandler, anchorEl, onClose, open, page, ...other } = props;
   const { configData } = useSelector((state) => state.configData);
   const router = useRouter();
   const handleClick = (item) => {
@@ -68,9 +68,9 @@ const ProfileTabPopover = (props) => {
       >
         {menuData?.map((menu, index) => {
           if (
-            (configData?.customer_wallet_status === 0 && item.id === 4) ||
-            (configData?.loyalty_point_status === 0 && item.id === 5) ||
-            (configData?.ref_earning_status === 0 && item.id === 6)
+            (configData?.customer_wallet_status === 0 && menu?.id === 4) ||
+            (configData?.loyalty_point_status === 0 && menu?.id === 5) ||
+            (configData?.ref_earning_status === 0 && menu?.id === 6)
           ) {
             return null;
           } else {
@@ -87,6 +87,13 @@ const ProfileTabPopover = (props) => {
             );
           }
         })}
+        <StyledMenuItem
+          page={page}
+          menu={{ name: "delete" }}
+          onClick={deleteUserHandler}
+        >
+          {t("Delete Your Account")}
+        </StyledMenuItem>
       </MenuList>
     </Popover>
   );

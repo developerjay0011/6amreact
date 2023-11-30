@@ -141,6 +141,7 @@ const MobileTopMenu = ({
                     setOpenDrawer={setOpenDrawer}
                     toggleDrawers={toggleDrawer}
                     pathName="/categories"
+                    forcategory="true"
                   />
                   <CollapsableMenu
                     value={collapsableMenu.latest}

@@ -33,7 +33,7 @@ const PercelComponents = () => {
         >
           <SearchWithTitle zoneid={zoneid} token={token} />
         </CustomStackFullWidth>
-        {/*<ParcelHero />*/}
+        {/* <ParcelHero /> */}
       </CustomStackFullWidth>
       <CustomContainer>
         <ParcelCategory />

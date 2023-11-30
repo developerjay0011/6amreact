@@ -1,17 +1,11 @@
 import React from "react";
-import PropTypes from "prop-types";
 import { Grid, Stack, Typography } from "@mui/material";
 
 import {
-  CustomFavButton,
   CustomFavICon,
   FoodSubTitleTypography,
-  FoodTitleTypographyDetails,
-  RatingStarIcon,
-  RatingWrapTypography,
 } from "../food-card/FoodCard.style";
 // import { CustomTypographyTag } from "../../styled-components/CustomTypographies.style";
-import Link from "next/link";
 import IconButton from "@mui/material/IconButton";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -21,11 +15,8 @@ import {
   CustomStackFullWidth,
 } from "../../../styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
-import { VegNonveg } from "../../checkout/item-checkout/RegularOrders";
 import { isAvailable } from "../../../utils/CustomFunctions";
 import NotAvailableCard from "./NotAvailableCard";
-import { getModuleId } from "../../../helper-functions/getModuleId";
-import FoodRating from "../../FoodRating";
 import CustomRatingBox from "../../CustomRatingBox";
 import { FoodVegNonVegFlag } from "../../cards/SpecialCard";
 
@@ -43,6 +34,7 @@ const FoodDetailsManager = (props) => {
     isWishlisted,
     theme,
     imageBaseUrl,
+    handleRouteToStore,
   } = props;
   return (
     <Grid container direction="row">
@@ -84,8 +76,7 @@ const FoodDetailsManager = (props) => {
                 fontSize="14px"
                 fontWeight="400"
                 color={theme.palette.whiteContainer.main}
-
-                //onClick={handleClick}
+                onClick={handleRouteToStore}
               >
                 {product?.store_name}
               </Typography>

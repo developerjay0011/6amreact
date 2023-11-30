@@ -17,8 +17,6 @@ const ConversationInfoTop = ({
   deliveryman_name,
   deliveryUrl,
 }) => {
-  console.log("dddd", userImage);
-
   const language_direction = localStorage.getItem("direction");
   return (
     <Stack>

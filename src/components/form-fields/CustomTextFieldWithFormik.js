@@ -20,6 +20,7 @@ const CustomTextFieldWithFormik = (props) => {
     onChangeHandler,
     rows,
     disabled,
+    placeholder,
     height,
   } = props;
   const [inputValue, setInputValue] = useState(value);
@@ -82,6 +83,7 @@ const CustomTextFieldWithFormik = (props) => {
             multiline={multiline}
             rows={rows ? rows : 6}
             label={label}
+            placeholder={ placeholder ? placeholder : "" }
             name={label}
             required={required}
             error={Boolean(touched && errors)}

@@ -18,6 +18,7 @@ const ModuleWiseLayout = ({ configData }) => {
   const dispatch = useDispatch();
   const router = useRouter();
   const { modules } = useSelector((state) => state.storedData);
+  
   useEffect(() => {
     if (router.pathname === "/home") {
       refetch();

@@ -15,6 +15,8 @@ import { useRouter } from "next/router";
 import { useSelector } from "react-redux";
 import { getCartListModuleWise } from "../../helper-functions/getCartListModuleWise";
 import WishListCardView from "../wishlist";
+import {getToken} from "../../helper-functions/getToken";
+import {toast} from "react-hot-toast";
 
 const styles = {
   maxWidth: 2000,
@@ -37,9 +39,14 @@ const BottomNav = () => {
     setSideDrawerOpen(true);
   };
   const handleWishListsDrawerOpen = () => {
-    setWishListSideDrawerOpen(true);
+      if(getToken()){
+          setWishListSideDrawerOpen(true);
+      }else{
+          router.push('/auth/sign-in');
+      }
+
   };
-  const handleChange = () => {};
+ // const handleChange = () => {};
   return (
     <CustomStackFullWidth>
       <Paper
@@ -59,19 +66,23 @@ const BottomNav = () => {
             showLabels
             value={currentRoute}
             onChange={(event, newValue) => {
-              if (newValue !== "cart" && newValue !== "wishlist")
+              if (newValue !== "cart" && newValue !== "wishlist"){
                 if (newValue !== "home") {
-                  router.push(
-                    { pathname: "/profile", query: { page: newValue } },
-                    undefined,
-                    {
-                      shallow: true,
+                    if(getToken()){
+                        router.push(
+                            { pathname: "/profile", query: { page: newValue } },
+                            undefined,
+                            {
+                                shallow: true,
+                            }
+                        );
+                    }else{
+                        router.push('/auth/sign-in');
                     }
-                  );
                 } else {
                   router.push(`/${newValue}`);
                 }
-            }}
+            }}}
           >
             <CustomBottomNavigationAction
               label={t("Home")}

@@ -25,6 +25,7 @@ import ClosedNow from "../../closed-now";
 import { HomeComponentsWrapper } from "../HomePageComponents";
 import Menus from "../best-reviewed-items/Menus";
 import { foodNewArrivalsettings, settings } from "./sliderSettings";
+import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 
 const ImageWrapper = styled(Box)(({ theme }) => ({
   position: "relative",
@@ -64,7 +65,7 @@ const SliderWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
 
 const menus = ["Popular", "Top Rated", "New"];
 const NewArrivalStores = () => {
-  const { data, refetch, isFetching } = useGetNewArrivalStores({
+  const { data, refetch, isFetching, isLoading  } = useGetNewArrivalStores({
     type: "all",
   });
   const [selectedMenuIndex, setSelectedMenuIndex] = useState(0);
@@ -88,7 +89,7 @@ const NewArrivalStores = () => {
       refetch();
     }
   }, [newArrivalStores]);
-  console.log({ newArrivalStores });
+
   useEffect(() => {
     if (data?.stores?.length > 0) {
       dispatch(setNewArrivalStores(data?.stores));
@@ -132,13 +133,21 @@ const NewArrivalStores = () => {
         },
       }}
     >
-      <Slider {...settings} ref={slider}>
-        {storeData?.map((item, index) => {
-          return (
-            <NearbyStoreCard key={index} configData={configData} item={item} />
-          );
-        })}
-      </Slider>
+        {isLoading ? 
+                <Slider {...settings}>
+                  {[...Array(6)].map((item, index) => {
+                    return <SpecialOfferCardShimmer key={index} width={290}/>;
+                  })}
+                </Slider>
+               : 
+        <Slider {...settings} ref={slider}>
+          {storeData?.map((item, index) => {
+            return (
+              <NearbyStoreCard key={index} configData={configData} item={item} />
+            );
+          })}
+        </Slider>
+      }
     </SliderWrapper>
   );
 
@@ -153,7 +162,11 @@ const NewArrivalStores = () => {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <H2 text={t("New Arrival Restaurants")} />
+                {isLoading ? (
+                  <Skeleton variant="text" width="110px" />
+                ) : (
+                  <H2 text={t("New Arrival Restaurants")} />
+                )}
               </CustomStackFullWidth>
               <SliderWrapper
                 sx={{
@@ -173,6 +186,8 @@ const NewArrivalStores = () => {
                             query: {
                               id: `${item?.id}`,
                               module_id: `${moduleId}`,
+                              module_type: getCurrentModuleType(),
+                              store_zone_id: `${item?.zone_id}`,
                             },
                           }}
                         >
@@ -218,7 +233,11 @@ const NewArrivalStores = () => {
                 alignItems="center"
                 justifyContent="space-between"
               >
-                <H2 text={t("Best Store Nearby")} />
+                {isLoading ? (
+                  <Skeleton variant="text" width="110px" />
+                ) : (
+                  <H2 text={t("Best Store Nearby")} />
+                )}
                 <Menus
                   selectedMenuIndex={selectedMenuIndex}
                   setSelectedMenuIndex={handleMenuClick}
@@ -239,11 +258,11 @@ const NewArrivalStores = () => {
     <HomeComponentsWrapper sx={{ paddingTop: "5px", gap: "1rem" }}>
       {getLayout()}
 
-      {isFetching && (
+      {/* {true && (
         <ImageWrapper>
           <Skeleton variant="circular" height="100%" width="100%" />
         </ImageWrapper>
-      )}
+      )} */}
     </HomeComponentsWrapper>
   );
 };

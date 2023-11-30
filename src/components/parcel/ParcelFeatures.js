@@ -1,18 +1,15 @@
-import React from "react";
-import {
-  CustomStackFullWidth,
-  SliderCustom,
-} from "../../styled-components/CustomStyles.style";
+import React, { useEffect } from "react";
+import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { Stack, styled } from "@mui/system";
 import CustomImageContainer from "../CustomImageContainer";
 import { Typography } from "@mui/material";
-import image from "./asset/Layer_1.png";
 import { useTheme } from "@emotion/react";
 import LineSvg from "./asset/LineSvg";
-import image2 from "./asset/OBJECTS.png";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
+import useWhyChoose from "../../api-manage/hooks/react-query/percel/UseWhyChoose";
+import WhyChooseSimmer from "../Shimmer/Parcel/WhyChooseSimmer";
 
 const settings = {
   dots: false,
@@ -132,90 +129,88 @@ const SliderCustomStyle = styled(Stack)(({ theme }) => ({
     },
   },
 }));
-const data = [
-  {
-    image: image.src,
-    title: "Product Safety",
-    subTitle:
-      "All packages are handled with utmost care to ensure product safety\n" +
-      "          during transit.",
-  },
-  {
-    image: image2.src,
-    title: "Product Safety",
-    subTitle:
-      "All packages are handled with utmost care to ensure product safety\n" +
-      "          during transit.",
-  },
-  {
-    image: image.src,
-    title: "Product Safety",
-    subTitle:
-      "All packages are handled with utmost care to ensure product safety\n" +
-      "          during transit.",
-  },
-];
 
 const ParcelFeatures = () => {
   const theme = useTheme();
-  return (
-    <CustomStackFullWidth
-      sx={{ position: "relative" }}
-      alignItems="center"
-      justifyContent="center"
-      mt={{ xs: "20px", sm: "30px", md: "50px" }}
-    >
-      <Stack position="absolute" top="50px" maxWidth="767px" width="100%">
-        <LineSvg width="100%" />
-      </Stack>
+  const { data, refetch, isLoading } = useWhyChoose();
 
-      <CustomStackFullWidth>
-        <SliderCustomStyle>
-          <Slider {...settings}>
-            {data &&
-              data?.map((item, index) => {
-                return (
-                  <Stack
-                    key={index}
-                    alignItems="center"
-                    justifyContent="center"
-                    maxWidth="275px"
-                    width="100%"
-                    display="flex !important"
-                    spacing={{ xs: 1, sm: 2, md: 3 }}
-                    // sx={{ scrollSnapAlign: "center", minWidth: "275px" }}
-                  >
-                    <CustomImageContainer
-                      src={item.image}
-                      width="140px"
-                      height="122px"
-                      objectfit="contain"
-                      smWidth="64px"
-                      smHeight="56px"
-                    />
-                    <Stack spacing={{ xs: 1, sm: 1, md: 0 }}>
-                      <Typography
-                        textAlign="center"
-                        fontSize={{ xs: "12px", sm: "16px", md: "22px" }}
-                        fontWeight="700"
-                      >
-                        {item?.title}
-                      </Typography>
-                      <Typography
-                        fontSize={{ xs: "10px", sm: "12px", md: "14px" }}
-                        color={theme.palette.neutral[400]}
-                        textAlign="center"
-                      >
-                        {item.subTitle}
-                      </Typography>
-                    </Stack>
-                  </Stack>
-                );
-              })}
-          </Slider>
-        </SliderCustomStyle>
-      </CustomStackFullWidth>
-    </CustomStackFullWidth>
+  useEffect(() => {
+    refetch();
+  }, []);
+
+  return (
+    <>
+      {data?.banners?.length > 0 && (
+        <CustomStackFullWidth
+          sx={{ position: "relative" }}
+          alignItems="center"
+          justifyContent="center"
+          mt={{ xs: "20px", sm: "30px", md: "50px" }}
+        >
+          <Stack position="absolute" top="50px" maxWidth="767px" width="100%">
+            <LineSvg width="100%" />
+          </Stack>
+
+          <CustomStackFullWidth>
+            <SliderCustomStyle>
+              <Slider {...settings}>
+                {isLoading
+                  ? [...Array(4)].map((index) => {
+                      return <WhyChooseSimmer key={index} />;
+                    })
+                  : data?.banners.map((item, index) => {
+                      return (
+                        <Stack
+                          key={index}
+                          alignItems="center"
+                          justifyContent="center"
+                          maxWidth="275px"
+                          width="100%"
+                          display="flex !important"
+                          spacing={{ xs: 1, sm: 2, md: 3 }}
+                        >
+                          <CustomImageContainer
+                            src={`${data.why_choose_url}/${item?.image}`}
+                            width="140px"
+                            height="122px"
+                            objectfit="contain"
+                            smWidth="64px"
+                            smHeight="56px"
+                          />
+                          <Stack
+                            spacing={{ xs: 1, sm: 1, md: 0 }}
+                            padding="0 10px"
+                          >
+                            <Typography
+                              textAlign="center"
+                              width="100%"
+                              maxWidth="275px"
+                              fontSize={{ xs: "12px", sm: "16px", md: "22px" }}
+                              fontWeight="700"
+                              sx={{ wordWrap: "break-word" }}
+                            >
+                              {item?.title}
+                            </Typography>
+                            <Typography
+                              width="100%"
+                              maxWidth="275px"
+                              fontSize={{ xs: "10px", sm: "12px", md: "14px" }}
+                              color={theme.palette.neutral[400]}
+                              textAlign="center"
+                              sx={{ wordWrap: "break-word" }}
+                            >
+                              {item.short_description}
+                            </Typography>
+                          </Stack>
+                        </Stack>
+                      );
+                    })}
+              </Slider>
+            </SliderCustomStyle>
+          </CustomStackFullWidth>
+        </CustomStackFullWidth>
+      )}
+    </>
   );
 };
 

@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
-import { IconButton } from "@mui/material";
-import { CSSTransition } from "react-transition-group";
+import { IconButton, Slide } from "@mui/material";
 import { useDispatch } from "react-redux";
 import { useRouter } from "next/router";
 // import { removeToken } from "../../redux/slices/configData";
@@ -74,6 +73,12 @@ const DrawerMenu = ({ setToggled }) => {
           open={openDrawer}
           onClose={toggleDrawer(false)}
           router={router}
+          TransitionComponent={Slide}
+          // Use TransitionProps to customize the transition properties
+          TransitionProps={{
+            direction: "right", // Customize the direction ('left', 'right', 'up', or 'down')
+            timeout: 300, // Transition duration in milliseconds
+          }}
         >
           <MobileTopMenu
             handleRoute={handleRoute}

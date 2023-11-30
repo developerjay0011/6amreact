@@ -1,9 +1,9 @@
-import React from "react";
 import * as Yup from "yup";
 import { useTranslation } from "react-i18next";
 
 const SignUpValidation = () => {
   const { t } = useTranslation();
+
   return Yup.object({
     f_name: Yup.string().required(t("First name is required")),
     l_name: Yup.string().required(t("Last name is required")),
@@ -14,9 +14,10 @@ const SignUpValidation = () => {
     phone: Yup.string()
       .required(t("Please give a phone number"))
       .min(10, "number must be 10 digits"),
-    password: Yup.string()
-      .required(t("No password provided."))
-      .min(6, t("Password is too short - should be 6 chars minimum.")),
+    password: Yup.string().min(
+      6,
+      t("Password is too short - should be 6 chars minimum.")
+    ),
     confirm_password: Yup.string()
       .required(t("Confirm Password"))
       .oneOf([Yup.ref("password"), null], t("Passwords must match")),

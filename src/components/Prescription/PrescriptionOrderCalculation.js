@@ -1,6 +1,6 @@
 import React, {useEffect} from "react";
 import {CalculationGrid, TotalGrid} from "../checkout/CheckOut.style";
-import {Grid, Typography, useTheme} from "@mui/material";
+import {Grid, Stack, Typography, useTheme} from "@mui/material";
 import CustomDivider from "../CustomDivider";
 import {t} from "i18next";
 import {getInfoFromZoneData, handleDistance,} from "../../utils/CustomFunctions";
@@ -111,7 +111,7 @@ const PrescriptionOrderCalculation = ({
             zoneData,
             origin,
             destination
-        ) + Number(deliveryTip);
+        ) + Number(deliveryTip)+configData?.additional_charge;
         localStorage.setItem("totalAmount", totalAmount);
         return (
             <Typography color={theme.palette.primary.main}>
@@ -127,9 +127,30 @@ const PrescriptionOrderCalculation = ({
             <Grid item md={4} xs={4} align="right">
                 {getAmountWithSign(deliveryTip)}
             </Grid>
+            {configData?.additional_charge_status === 1 ? (
+                <>
+                    <Grid item md={8} xs={8}>
+                        {configData?.additional_charge_name}
+                    </Grid>
+                    <Grid item md={4} xs={4} align="right">
+                        <Stack
+                            direction="row"
+                            alignItems="center"
+                            justifyContent="flex-end"
+                            spacing={0.5}
+                        >
+                            <Typography>{"(+)"}</Typography>
+                            <Typography>
+                                {getAmountWithSign(configData?.additional_charge)}
+                            </Typography>
+                        </Stack>
+                    </Grid>
+                </>
+            ) : null}
             <Grid item md={8} xs={8}>
                 {t("Delivery fee")}
             </Grid>
+
             <Grid item md={4} xs={4} align="right">
                 {storeData &&
                     getAmountWithSign(

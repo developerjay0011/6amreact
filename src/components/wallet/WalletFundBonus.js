@@ -14,6 +14,7 @@ import { CustomDateFormat } from "../date-and-time-formators/CustomDateFormat";
 import img from "./assets/add-fund.png";
 import { t } from "i18next";
 import { WhiteNext, WhitePrev } from "../home/visit-again/SliderSettings";
+import { SliderCustom } from "../../styled-components/CustomStyles.style";
 const WalletFundBonus = () => {
   const { data, refetch, isLoading } = useWalletBonus();
 
@@ -69,32 +70,34 @@ const WalletFundBonus = () => {
 
   return !isLoading ? (
     <Stack>
-      <Slider {...settings}>
-        {data?.map((item, i) => (
-          <Box key={i} pr={1.4}>
-            <CustomWalletStack>
-              <Box>
-                <Typography
-                  fontSize={{ xs: "14px", md: "16px" }}
-                  fontWeight="600"
-                >
-                  {item?.title}
-                </Typography>
-                <Typography variant="body2">
-                  {valid_till} {CustomDateFormat(item?.end_date)}
-                </Typography>
-                <Typography fontSize="12px">
-                  {you_have_to_add_min}{" "}
-                  {getAmountWithSign(item?.minimum_add_amount)}{" "}
-                  {fund_to_get_max_of}{" "}
-                  {getAmountWithSign(item?.maximum_bonus_amount)}
-                </Typography>
-              </Box>
-              <Image src={img.src} width="100" height="100" />
-            </CustomWalletStack>
-          </Box>
-        ))}
-      </Slider>
+      <SliderCustom>
+        <Slider {...settings}>
+          {data?.map((item, i) => (
+            <Box key={i} pr={1.4}>
+              <CustomWalletStack>
+                <Box>
+                  <Typography
+                    fontSize={{ xs: "14px", md: "16px" }}
+                    fontWeight="600"
+                  >
+                    {item?.title}
+                  </Typography>
+                  <Typography variant="body2">
+                    {valid_till} {CustomDateFormat(item?.end_date)}
+                  </Typography>
+                  <Typography fontSize="12px">
+                    {you_have_to_add_min}{" "}
+                    {getAmountWithSign(item?.minimum_add_amount)}{" "}
+                    {fund_to_get_max_of}{" "}
+                    {getAmountWithSign(item?.maximum_bonus_amount)}
+                  </Typography>
+                </Box>
+                <Image src={img.src} width="100" height="100" />
+              </CustomWalletStack>
+            </Box>
+          ))}
+        </Slider>
+      </SliderCustom>
     </Stack>
   ) : (
     ""

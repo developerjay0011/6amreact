@@ -38,6 +38,7 @@ const SearchResult = (props) => {
   const [priceRange, setPriceRange] = useState([
     { min_price: 0, max_price: 1 },
   ]);
+  const [qureyValue, setQureyValue] = useState("");
   // const offset = 1;
   const page_limit = 12;
   const router = useRouter();
@@ -62,10 +63,13 @@ const SearchResult = (props) => {
   //--------------> single categories
   const [type, setType] = useState("all");
   const id = router.query.id;
+
   const [category_id, setCategoryId] = useState(id);
   const [sortBy, setSortBy] = useState("high2Low");
   const { ref, inView } = useInView();
   const scrollDivRef = useRef(true);
+  const selectedCategoriesIds= selectedCategories?.length>0 ? selectedCategories:[id]
+
   const {
     data: allItems,
     refetch: refetchAllItems,
@@ -102,6 +106,7 @@ const SearchResult = (props) => {
     isFetching: isFetchingCategoriesProduct,
   } = useGetCategories({
     category_id,
+    selectedCategoriesIds,
     page_limit,
     offset,
     type,
@@ -118,12 +123,12 @@ const SearchResult = (props) => {
     hasNextPage: hasNextPageForCategoriesStores,
   } = useGetCategoriesForStore({
     category_id,
+    selectedCategoriesIds,
     page_limit,
     offset,
     type,
   });
   // All stores api
-
   const pageParams = {
     type: "all",
     offset,
@@ -138,13 +143,31 @@ const SearchResult = (props) => {
     isLoading: isLoadingAllStores,
     hasNextPage: hasNextPageStores,
   } = useGetStoresByFiltering(pageParams);
-  const isApiCalling =
-    isFetchingNextPageAllStores ||
-    isFetchingNextPageForCategoriesStores ||
-    isFetchingNextPageForCategoriesItems ||
-    isFetchingNextPagePageSpecialOffer ||
-    isFetchingNextPageAllItems;
 
+
+  useEffect(() => {
+    if (category_id) {
+      if (currentTab === 0) {
+        if (selectedCategories?.length > 0) {
+          refetchCategoryData();
+        }
+      }
+    }
+  }, [selectedCategories]);
+  useEffect(() => {
+    if (category_id) {
+      if (currentTab === 1) {
+        if (selectedCategories?.length > 0) {
+          storeRefetch();
+        }
+      }
+    }
+  }, [selectedCategories]);
+ useEffect(()=>{
+   if(searchValue==="special-offer"){
+     refetchSpecialOffer()
+   }
+ },[])
   const hasApiNextPage =
     hasNextPageStores ||
     hasNextPageForCategoriesStores ||
@@ -198,6 +221,7 @@ const SearchResult = (props) => {
   };
   const {
     data: searchData,
+    refetch: serachRefetch,
     isFetching: isFetchingSearchAPi,
     isRefetching: isRefetchingSearch,
     fetchNextPage: fetchNextPageSearch,
@@ -209,7 +233,18 @@ const SearchResult = (props) => {
     offset,
     page_limit,
   });
-
+  useEffect(() => {
+    if (searchValue !== "special-offer" && searchValue !== "category") {
+      setQureyValue(searchValue);
+    } else {
+      setQureyValue("");
+    }
+  }, [searchValue]);
+  useEffect(() => {
+    if (qureyValue) {
+      serachRefetch();
+    }
+  }, [qureyValue]);
   useEffect(() => {
     if (currentTab === 0) {
       if (categoryData?.pages?.length > 0) {
@@ -404,6 +439,7 @@ const SearchResult = (props) => {
       }
     }
   };
+
   const handleCurrentTab = (value) => {
     setCurrentTab(value);
     setOffset(1);
@@ -456,7 +492,13 @@ const SearchResult = (props) => {
   const getTotalDataCount = () => {
     return getPageData()?.length || 0;
   };
-
+  const isApiCalling =
+      isFetchingSearchAPi||
+      isFetchingNextPageAllStores ||
+      isFetchingNextPageForCategoriesStores ||
+      isFetchingNextPageForCategoriesItems ||
+      isFetchingNextPagePageSpecialOffer ||
+      isFetchingNextPageAllItems;
   return (
     <CustomContainer>
       <CustomStackFullWidth alignItems="center" justifyContent="center">
@@ -500,11 +542,10 @@ const SearchResult = (props) => {
             searchValue={searchValue}
             pageData={getPageData()}
             isLoading={
-              isCategoryRefetching ||
-              isRefetchingCategoriesStores ||
-              isFetchingCategoriesProduct ||
-              isFetchingCategoriesStores ||
-              isFetchingSearchAPi
+                itemIsLoading ||
+                isLoading ||
+                isLoadingAllStores ||
+                specialOfferLoading
             }
             isInitialRefetching={
               isRefetchingSearch ||

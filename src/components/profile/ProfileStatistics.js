@@ -12,8 +12,9 @@ const ProfileStatistics = ({ value, title, image, pathname, isLoading }) => {
 	const { configData } = useSelector((state) => state.configData);
 	const { t } = useTranslation();
     const handleRoute = (value) => {
-        if (value === "/profile") {
-        } else {
+        if (title === "Days Since Joining") {
+        }
+		 else {
             Router.push(
                 {
                     pathname: "/profile",
@@ -34,7 +35,7 @@ const ProfileStatistics = ({ value, title, image, pathname, isLoading }) => {
 				borderRadius: "5px",
 				border: "1px solid",
 				borderColor: (theme) => theme.palette.neutral[300],
-                cursor: pathname !== "/profile" && "pointer",
+                cursor: title !== "Days Since Joining" && "pointer",
 				transition: "all ease 0.3s",
 				"&:hover": {
 					boxShadow: "0px 10px 20px rgba(88, 110, 125, 0.1)",

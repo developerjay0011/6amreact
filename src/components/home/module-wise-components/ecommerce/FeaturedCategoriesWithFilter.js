@@ -42,7 +42,7 @@ export const settings = {
   speed: 300,
   slidesPerRow: 1,
   rows: 3,
-  slidesToShow: 2.1,
+  slidesToShow: 2,
   slidesToScroll: 1,
   autoplay: true,
   cssEase: "linear",
@@ -52,7 +52,7 @@ export const settings = {
       settings: {
         slidesToShow: 1.2,
         slidesPerRow: 1,
-        rows: 6,
+        rows: 3,
         slidesToScroll: 1,
       },
     },
@@ -61,7 +61,7 @@ export const settings = {
       settings: {
         slidesToShow: 1.5,
         slidesPerRow: 2,
-        rows: 2,
+        rows: 3,
         slidesToScroll: 2,
       },
     },
@@ -70,7 +70,7 @@ export const settings = {
       settings: {
         slidesToShow: 2,
         slidesPerRow: 2,
-        rows: 2,
+        rows: 3,
         slidesToScroll: 2,
       },
     },
@@ -79,7 +79,7 @@ export const settings = {
       settings: {
         slidesToShow: 1,
         slidesPerRow: 2,
-        rows: 2,
+        rows: 3,
         slidesToScroll: 1,
       },
     },
@@ -88,7 +88,7 @@ export const settings = {
       settings: {
         slidesToShow: 2,
         slidesPerRow: 2,
-        rows: 2,
+        rows: 3,
         slidesToScroll: 3,
       },
     },
@@ -97,7 +97,7 @@ export const settings = {
       settings: {
         slidesToShow: 2,
         slidesPerRow: 2,
-        rows: 2,
+        rows: 3,
         slidesToScroll: 1,
       },
     },
@@ -222,15 +222,15 @@ const FeaturedCategoriesWithFilter = (props) => {
                 <CustomBoxFullWidth>
                   <SliderCustom
                     nopadding="true"
-                    sx={{
-                      mt: { md: "-22px" },
-                      "& .slick-slide": {
-                        marginRight: {
-                          xs: "0px",
-                          md: "-25px",
-                        },
-                      },
-                    }}
+                    // sx={{
+                    //   mt: { md: "-22px" },
+                    //   "& .slick-slide": {
+                    //     marginRight: {
+                    //       xs: "0px",
+                    //       md: "-25px",
+                    //     },
+                    //   },
+                    // }}
                   >
                     <Slider {...settings}>
                       {data?.products?.map((item, index) => {
@@ -239,6 +239,7 @@ const FeaturedCategoriesWithFilter = (props) => {
                             key={index}
                             item={item}
                             cardheight="150px"
+                            cardWidth="100%"
                             horizontalcard="true"
                             cardFor="popular items"
                           />

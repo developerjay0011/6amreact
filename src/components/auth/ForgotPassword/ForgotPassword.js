@@ -69,7 +69,7 @@ const ForgotPassword = () => {
   };
   return (
     <Box minHeight="50vh">
-      <FlexContainerCenter>
+      <FlexContainerCenter sx={{marginTop:"1rem"}}>
         <CustomPaper elevation={5}>{pageShow()}</CustomPaper>
       </FlexContainerCenter>
     </Box>

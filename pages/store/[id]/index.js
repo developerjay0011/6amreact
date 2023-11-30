@@ -10,7 +10,6 @@ import {
   store_details_api,
 } from "../../../src/api-manage/ApiRoutes";
 import SEO from "../../../src/components/seo";
-import CustomContainer from "../../../src/components/container";
 
 const Index = ({ configData, storeDetails, landingPageData }) => {
   const dispatch = useDispatch();
@@ -19,6 +18,9 @@ const Index = ({ configData, storeDetails, landingPageData }) => {
   const metaTitle = `${
     storeDetails?.meta_title ? storeDetails?.meta_title : storeDetails?.name
   } - ${configData?.business_name}`;
+  const metaImage = `${configData?.base_urls?.store_image_url}/${
+    storeDetails?.meta_image ?? storeDetails.cover_photo
+  }`;
   const [isSSR, setIsSSR] = useState(true);
 
   const initialSet = () => {
@@ -43,7 +45,7 @@ const Index = ({ configData, storeDetails, landingPageData }) => {
   };
 
   useEffect(() => {
-    setIsSSR(false);
+    //setIsSSR(false);
     if (storeDetails) {
       manageVisitAgain();
     }
@@ -61,20 +63,22 @@ const Index = ({ configData, storeDetails, landingPageData }) => {
 
   return (
     <>
-      {!isSSR && (
-        <>
-          <CssBaseline />
-          <SEO
-            title={configData ? `${metaTitle}` : "Loading..."}
-            image={`${configData?.base_urls?.business_logo_url}/${storeDetails?.meta_image}`}
-            businessName={configData?.business_name}
-            description={storeDetails?.meta_description}
-          />
-          <MainLayout configData={configData} landingPageData={landingPageData}>
-            <StoreDetails storeDetails={storeDetails} configData={configData} />
-          </MainLayout>
-        </>
-      )}
+      <>
+        <CssBaseline />
+        <SEO
+          title={metaTitle ? metaTitle : "loading"}
+          image={metaImage}
+          businessName={configData?.business_name}
+          description={storeDetails?.meta_description}
+          configData={configData}
+        />
+        {/*<Head>*/}
+        {/*  <meta name="description" content={storeDetails?.meta_description} />*/}
+        {/*</Head>*/}
+        <MainLayout configData={configData} landingPageData={landingPageData}>
+          <StoreDetails storeDetails={storeDetails} configData={configData} />
+        </MainLayout>
+      </>
     </>
   );
 };
@@ -85,6 +89,8 @@ export const getServerSideProps = async (context) => {
   const moduleId = context.query.module_id;
   const { req } = context;
   const language = req.cookies.languageSetting;
+  const lat = context.query.lat;
+  const lng = context.query.lng;
 
   const configRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}${config_api}`,
@@ -95,6 +101,8 @@ export const getServerSideProps = async (context) => {
         "X-server": "server",
         origin: process.env.NEXT_CLIENT_HOST_URL,
         "X-localization": language,
+        lat: lat,
+        lng: lng,
       },
     }
   );

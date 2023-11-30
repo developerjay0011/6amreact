@@ -14,7 +14,7 @@ import { alpha } from "@mui/material";
 import useGetItemOrStore from "../../../api-manage/hooks/react-query/search/useGetItemOrStore";
 import { debounce } from "lodash";
 
-const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
+const ManageSearch = ({ zoneid, token, maxwidth, fullWidth,query }) => {
   const router = useRouter();
   const [openSearchSuggestions, setOpenSearchSuggestions] = useState(false);
   const [selectedValue, setSelectedValue] = useState("");
@@ -70,9 +70,7 @@ const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
   }, 500);
 
   useEffect(() => {
-    if (searchValue && searchValue !== "") {
-      getSearchSuggestions();
-    }
+    getSearchSuggestions();
   }, [searchValue]);
 
   useEffect(() => {
@@ -86,7 +84,7 @@ const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
         setOpenSearchSuggestions(true);
       }
     }
-  }, [itemOrStoreSuggestionData]);
+  }, [itemOrStoreSuggestionData?.items,itemOrStoreSuggestionData?.stores]);
   const handleOnFocus = () => {
     if (searchValue === "") {
       setIsEmpty(true);
@@ -123,6 +121,7 @@ const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
       return `Search for products or store...`;
     }
   };
+
   const getModuleWiseSearch = () => {
     if (getCurrentModuleType() === ModuleTypes.FOOD) {
       return (
@@ -137,7 +136,7 @@ const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
           <CustomSearch
             label={t("Search foods and restaurants...")}
             handleSearchResult={handleKeyPress}
-            selectedValue={selectedValue}
+            selectedValue={query}
             setIsEmpty={setIsEmpty}
             handleOnFocus={handleOnFocus}
             setSearchValue={setSearchValue}
@@ -149,7 +148,7 @@ const ManageSearch = ({ zoneid, token, maxwidth, fullWidth }) => {
         <CustomSearch
           label={t(dynamicLabel())}
           handleSearchResult={handleKeyPress}
-          selectedValue={selectedValue}
+          selectedValue={query}
           setIsEmpty={setIsEmpty}
           handleOnFocus={handleOnFocus}
           setSearchValue={setSearchValue}

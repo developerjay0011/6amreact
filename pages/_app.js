@@ -10,7 +10,7 @@ import {createTheme} from "../src/theme";
 import CssBaseline from "@mui/material/CssBaseline";
 import {RTL} from "../src/components/rtl";
 import {Toaster} from "react-hot-toast";
-
+import { getServerSideProps } from "./index";
 import {SettingsConsumer, SettingsProvider,} from "../src/contexts/settings-context";
 import "../src/language/i18n";
 import {QueryClient, QueryClientProvider} from "react-query";
@@ -28,7 +28,7 @@ Router.events.on("routeChangeError", nProgress.done);
 Router.events.on("routeChangeComplete", nProgress.done);
 const clientSideEmotionCache = createEmotionCache();
 function MyApp(props) {
-    const {Component, emotionCache = clientSideEmotionCache, pageProps} = props;
+    const {Component, emotionCache = clientSideEmotionCache, pageProps,configData} = props;
     const getLayout = Component.getLayout ?? ((page) => page);
     const {t} = useTranslation()
     const queryClient = new QueryClient({
@@ -61,10 +61,10 @@ function MyApp(props) {
                                         <RTL direction={value?.settings?.direction}>
                                             <CssBaseline/>
                                             <Toaster position="top-center"/>
-                                            <DynamicFavicon/>
-                                            <Head>
+                                            {/* <DynamicFavicon configData={configData}/> */}
+                                            {/* <Head>
                                                 <title>{t('Loading...')}</title>
-                                            </Head>
+                                            </Head> */}
                                             {getLayout(<Component {...pageProps} />)}
                                         </RTL>
                                     </ThemeProvider>
@@ -81,3 +81,4 @@ function MyApp(props) {
 }
 
 export default MyApp;
+export { getServerSideProps };

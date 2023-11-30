@@ -23,7 +23,9 @@ import {
 } from "../../redux/slices/cart";
 import CustomImageContainer from "../CustomImageContainer";
 import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleType";
-const SuccessCard = ({ configData, total }) => {
+import { useTheme } from "@emotion/react";
+const SuccessCard = ({ configData, total, order_id }) => {
+  const theme = useTheme();
   const router = useRouter();
   const { t } = useTranslation();
   const [totalAmount, setTotalAmount] = useState(0);
@@ -56,6 +58,9 @@ const SuccessCard = ({ configData, total }) => {
       return "order";
     }
   };
+  const colorId = () => {
+    return <Typography color={theme.palette.primary.main}>234248</Typography>;
+  };
   return (
     <CustomStackFullWidth
       height="100%"
@@ -81,6 +86,15 @@ const SuccessCard = ({ configData, total }) => {
             `Your order is placed Successfully. We start our delivery process and you will receive your ${handleText()} soon.`
           )}
         </Typography>
+        <Typography align="center" sx={{ mb: 1.5 }}>
+          {t(`Your order is`)}
+          <span
+            style={{ color: theme.palette.primary.main, marginLeft: "3px" }}
+          >
+            {order_id}
+          </span>
+          {t(`. You can use this ID to track your order later`)}
+        </Typography>
         {configData?.loyalty_point_status === 1 && (
           <CustomStackFullWidth
             alignItems="center"
@@ -95,37 +109,51 @@ const SuccessCard = ({ configData, total }) => {
             <CustomColouredTypography color="primary" variant="h3">
               {t("Congratulations!")}
             </CustomColouredTypography>
-            <Stack
-              width="100%"
-              alignItems="center"
-              justifyContent="center"
-              direction="row"
-              spacing={0.5}
-              flexWrap="wrap"
-            >
-              <Typography align="center" variant="body2">
-                {t("You have earned")}
-              </Typography>
-              <CustomTypography align="center" variant="body2">
-                {handlePoints()}
-                {/*{()=>  localStorage.removeItem('totalAmount')}*/}
-              </CustomTypography>
-              <Typography align="center" variant="body2">
-                {t("point.")}
-              </Typography>
-              <Typography align="center" variant="body2">
-                {t("It will add to your balance when the order is delivered.")}
-              </Typography>
-            </Stack>
+            {/*<Stack*/}
+            {/*  width="100%"*/}
+            {/*  alignItems="center"*/}
+            {/*  justifyContent="center"*/}
+            {/*  direction="row"*/}
+            {/*  spacing={0.5}*/}
+            {/*  flexWrap="wrap"*/}
+            {/*>*/}
+            {/*  <Typography align="center" variant="body2">*/}
+            {/*    {t("You have earned")}*/}
+            {/*  </Typography>*/}
+            {/*  <CustomTypography align="center" variant="body2">*/}
+            {/*    {handlePoints()}*/}
+            {/*    /!*{()=>  localStorage.removeItem('totalAmount')}*!/*/}
+            {/*  </CustomTypography>*/}
+            {/*  <Typography align="center" variant="body2">*/}
+            {/*    {t("point.")}*/}
+            {/*  </Typography>*/}
+            {/*  <Typography align="center" variant="body2">*/}
+            {/*    {t("It will add to your balance when the order is delivered.")}*/}
+            {/*  </Typography>*/}
+            {/*</Stack>*/}
           </CustomStackFullWidth>
         )}
-        <Stack pt="2rem">
+        <Stack pt="2rem" spacing={1}>
           <Button
-            onClick={() => router.push("/home", undefined, { shallow: true })}
+            onClick={() =>
+              router.push("/track-order", undefined, { shallow: true })
+            }
             variant="contained"
           >
-            {t("Back to home")}
+            {t("Track your order")}
           </Button>
+          <Typography
+            onClick={() => router.push("/home", undefined, { shallow: true })}
+            variant="contained"
+            sx={{
+              textDecoration: "underLine",
+              cursor: "pointer",
+              textAlign: "center",
+              color: (theme) => theme.palette.primary.main,
+            }}
+          >
+            {t("Continue shopping ")}
+          </Typography>
         </Stack>
       </CustomStackFullWidth>
     </CustomStackFullWidth>

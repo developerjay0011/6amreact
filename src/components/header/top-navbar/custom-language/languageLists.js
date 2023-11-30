@@ -9,16 +9,16 @@ export const languageLists = [
     countryCode: "US",
     countryFlag: usFlag.src,
   },
-  // {
-  //   languageName: "Arabic",
-  //   languageCode: "ar",
-  //   countryCode: "SA",
-  //   countryFlag: arabicFlag.src,
-  // },
-  // {
-  //   languageName: "Vietnamse",
-  //   languageCode: "vi",
-  //   countryCode: "VN",
-  //   countryFlag: vietnamflag.src,
-  // },
+  {
+    languageName: "Arabic",
+    languageCode: "ar",
+    countryCode: "SA",
+    countryFlag: arabicFlag.src,
+  },
+  {
+    languageName: "Vietnamse",
+    languageCode: "vi",
+    countryCode: "VN",
+    countryFlag: vietnamflag.src,
+  },
 ];

@@ -14,21 +14,34 @@ import { useTranslation } from "react-i18next";
 import { CustomStackFullWidth } from "../../../../styled-components/CustomStyles.style";
 import { Scrollbar } from "../../../srollbar";
 
-const CollapsableMenu = ({ value, toggleDrawers, setOpenDrawer, pathName }) => {
+const CollapsableMenu = ({ value, toggleDrawers, setOpenDrawer, pathName,forcategory }) => {
   const router = useRouter();
   const { t } = useTranslation();
 
   const [open, setOpen] = useState(false);
   const handleClick = () => setOpen(!open);
   const handleRoute = (id) => {
-    router.push(
-      {
-        pathname: `/${value?.path}/[id]`,
-        query: { id: `${id}`, module_id: `${getModuleId()}` },
-      },
-      undefined,
-      { shallow: true }
-    );
+    if(forcategory==='true'){
+      router.push({
+        pathname: "/home",
+        query: {
+          search: "category",
+          id: id,
+          module_id: `${getModuleId()}`,
+          name: btoa(name),
+        },
+      });
+    }else{
+      router.push(
+        {
+          pathname: `/${value?.path}/[id]`,
+          query: { id: `${id}`, module_id: `${getModuleId()}` },
+        },
+        undefined,
+        { shallow: true }
+      );
+    }
+   
     setOpen(false);
     setOpenDrawer(false);
   };

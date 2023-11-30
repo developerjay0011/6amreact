@@ -35,7 +35,7 @@ const MapModal = ({
                       locationLoading,
                       toparcel,
                       handleLocation,
-                      disableAutoFocus,
+                      disableAutoFocus,fromReceiver
                   }) => {
     const router = useRouter();
     const {configData} = useSelector((state) => state.configData);
@@ -99,10 +99,13 @@ const MapModal = ({
     } = useGetZoneId(location, zoneIdEnabled);
     useEffect(() => {
         if (typeof window !== "undefined") {
+
             if (zoneData) {
                 setZoneId(zoneData?.zone_id);
+                if(fromReceiver !== "1"){
+                    localStorage.setItem("zoneid", zoneData?.zone_id);
+                }
                 // dispatch(setZoneData(zoneData?.data?.zone_data));
-                localStorage.setItem("zoneid", zoneData?.zone_id);
             }
             if (!zoneData) {
                 setZoneId(undefined);
@@ -160,17 +163,26 @@ const MapModal = ({
         useWishListGet(onSuccessHandler);
 
     const handlePickLocationOnClick = () => {
+
         if (zoneId && geoCodeResults && location) {
             if (getToken()) {
                 wishlistRefetch();
             }
-            localStorage.setItem("zoneid", zoneId);
-            localStorage.setItem(
-                "location",
-                geoCodeResults?.results[0]?.formatted_address
-            );
-            localStorage.setItem("currentLatLng", JSON.stringify(location));
-            toast.success(t("New location has been set."));
+            if(fromReceiver !== "1"){
+                localStorage.setItem("zoneid", zoneId);
+            }
+
+            if(fromReceiver!== "1"){
+                localStorage.setItem(
+                    "location",
+                    geoCodeResults?.results[0]?.formatted_address
+                );
+                localStorage.setItem("currentLatLng", JSON.stringify(location));
+            }else {
+
+                toast.success(t("New location has been set."));
+            }
+
             if (toparcel === "1") {
                 handleLocation(location, geoCodeResults?.results[0]?.formatted_address);
                 handleClose();

@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   alpha,
+  Avatar,
   IconButton,
   NoSsr,
   Stack,
@@ -18,29 +19,34 @@ import LogoSide from "../../logo/LogoSide";
 import NavLinks from "./NavLinks";
 import { t } from "i18next";
 import CustomSignInButton from "./CustomSignInButton";
-
-import ManageSearch from "./ManageSearch";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useRouter } from "next/router";
 import NavBarIcon from "./NavBarIcon";
-import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 import { useDispatch, useSelector } from "react-redux";
 import AccountPopover from "./account-popover";
 import CardView from "../../added-cart-view";
 import CustomContainer from "../../container";
 import { getCartListModuleWise } from "../../../helper-functions/getCartListModuleWise";
 import ModuleWiseNav from "./ModuleWiseNav";
-import { setWishList } from "../../../redux/slices/wishList";
-import { useWishListGet } from "../../../api-manage/hooks/react-query/wish-list/useWishListGet";
 import WishListCardView from "../../wishlist";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-const Cart = () => {
+import useGetAllCartList from "../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import { setCartList } from "../../../redux/slices/cart";
+import { clearOfflinePaymentInfo } from "../../../redux/slices/offlinePaymentData";
+import { getGuestId } from "../../../helper-functions/getToken";
+import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
+import { getModule } from "../../../helper-functions/getLanguage";
+import { handleProductValueWithOutDiscount } from "../../../utils/CustomFunctions";
+
+const Cart = ({ isLoading }) => {
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
   const { cartList } = useSelector((state) => state.cart);
+  const dispatch = useDispatch();
   const handleIconClick = () => {
     setSideDrawerOpen(true);
   };
+
   return (
     <>
       <NavBarIcon
@@ -52,6 +58,7 @@ const Cart = () => {
       />
       {!!sideDrawerOpen && (
         <CardView
+          isLoading={isLoading}
           sideDrawerOpen={sideDrawerOpen}
           setSideDrawerOpen={setSideDrawerOpen}
           cartList={cartList}
@@ -85,10 +92,45 @@ const WishListSideBar = ({ totalWishList }) => {
   );
 };
 
-const SecondNavBar = ({ configData, isVisible }) => {
+export const getSelectedVariations = (variations) => {
+  let selectedItem = [];
+  if (variations?.length > 0) {
+    variations?.forEach((item, index) => {
+      item?.values?.forEach((value, optionIndex) => {
+        if (value?.isSelected) {
+          const itemObj = {
+            choiceIndex: index,
+            isSelected: value?.isSelected,
+            label: value?.label,
+            optionIndex: optionIndex,
+            optionPrice: value?.optionPrice,
+            // type:item?.
+          };
+          selectedItem.push(itemObj);
+        }
+      });
+    });
+  }
+  return selectedItem;
+};
+const getOtherModuleVariation = (itemVariations, selectedVariation) => {
+  let selectedItem = [];
+  itemVariations?.forEach((item) => {
+    selectedVariation?.forEach((sVari) => {
+      if (sVari?.type === item?.type) {
+        selectedItem.push(item);
+      }
+    });
+  });
+
+  return selectedItem;
+};
+const SecondNavBar = ({ configData }) => {
   const theme = useTheme();
+  const dispatch = useDispatch();
   const router = useRouter();
   const { selectedModule } = useSelector((state) => state.utilsData);
+  const { offlineInfoStep } = useSelector((state) => state.offlinePayment);
   const isSmall = useMediaQuery("(max-width:1180px)");
   const { profileInfo } = useSelector((state) => state.profileInfo);
   const [openPopover, setOpenPopover] = useState(false);
@@ -102,6 +144,52 @@ const SecondNavBar = ({ configData, isVisible }) => {
   let token = undefined;
   let location = undefined;
   let zoneId;
+  const guestId = getGuestId();
+
+  const {
+    data,
+    refetch: cartListRefetch,
+    isLoading,
+  } = useGetAllCartList(guestId);
+
+  useEffect(() => {
+    cartListRefetch();
+  }, [moduleType]);
+
+  const setItemIntoCart = () => {
+    return data?.map((item) => ({
+      ...item?.item,
+      cartItemId: item?.id,
+      totalPrice:
+        handleProductValueWithOutDiscount({
+          ...item?.item,
+          selectedOption:
+            getModule()?.module_type !== "food"
+              ? getOtherModuleVariation(item?.item?.variations, item?.variation)
+              : [],
+        }) * item?.quantity,
+      selectedAddons: item?.item?.addons,
+      quantity: item?.quantity,
+      food_variations: item?.item?.food_variations,
+      itemBasePrice: item?.item?.price,
+      selectedOption:
+        getModule()?.module_type !== "food"
+          ? getOtherModuleVariation(item?.item?.variations, item?.variation)
+          : getSelectedVariations(item?.item?.food_variations),
+    }));
+  };
+
+  useEffect(() => {
+    dispatch(setCartList(setItemIntoCart()));
+  }, [data]);
+
+  useEffect(() => {
+    if (offlineInfoStep !== 0) {
+      if (router.pathname !== "/checkout") {
+        dispatch(clearOfflinePaymentInfo());
+      }
+    }
+  }, []);
 
   useEffect(() => {
     SetModuleType(selectedModule?.module_type);
@@ -122,6 +210,12 @@ const SecondNavBar = ({ configData, isVisible }) => {
       query: {
         page: pathName,
       },
+    });
+  };
+
+  const handleTrackOrder = () => {
+    router.push({
+      pathname: "/track-order",
     });
   };
   const getMobileScreenComponents = () => (
@@ -166,7 +260,11 @@ const SecondNavBar = ({ configData, isVisible }) => {
           justifyContent="flex-end"
           spacing={2.5}
         >
-          <></>
+          {!token && moduleType !== "parcel" && location && (
+            <IconButton onClick={handleTrackOrder}>
+              <LocalShippingOutlinedIcon fontSize="22px" />
+            </IconButton>
+          )}
           {token && moduleType !== "parcel" && (
             <NavBarIcon
               icon={<ChatBubbleOutlineIcon sx={{ fontSize: "22px" }} />}
@@ -178,7 +276,11 @@ const SecondNavBar = ({ configData, isVisible }) => {
           {token && zoneId && moduleType !== "parcel" && (
             <WishListSideBar totalWishList={totalWishList} />
           )}
-          {moduleType !== "parcel" && location && <Cart />}
+
+          {moduleType !== "parcel" && location && (
+            <Cart isLoading={isLoading} />
+          )}
+
           {token ? (
             <IconButton
               ref={anchorRef}
@@ -188,15 +290,24 @@ const SecondNavBar = ({ configData, isVisible }) => {
                 gap: "10px",
               }}
             >
-              <AccountCircleIcon
-                color="primary"
-                sx={{
-                  fontSize: "36px",
-                  borderRadius: "50%",
-                  backgroundColor: (theme) =>
-                    alpha(theme.palette.primary.main, 0.1),
-                }}
-              />
+              {profileInfo?.image ? (
+                <Avatar
+                  alt={profileInfo?.last_name}
+                  sx={{ width: 34, height: 34 }}
+                  src={`${configData?.base_urls?.customer_image_url}/${profileInfo?.image}`}
+                />
+              ) : (
+                <AccountCircleIcon
+                  color="primary"
+                  sx={{
+                    fontSize: "30px",
+                    borderRadius: "50%",
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.primary.main, 0.1),
+                  }}
+                />
+              )}
+
               <Typography
                 color={theme.palette.neutral[1000]}
                 textTransform="capitalize"
@@ -231,6 +342,7 @@ const SecondNavBar = ({ configData, isVisible }) => {
               anchorEl={anchorRef.current}
               onClose={() => setOpenPopover(false)}
               open={openPopover}
+              cartListRefetch={cartListRefetch}
             />
           </Toolbar>
         </CustomContainer>

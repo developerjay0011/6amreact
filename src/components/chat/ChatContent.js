@@ -70,7 +70,7 @@ const ChatContent = ({
 				setChannelId={setChannelId}
 				handleReset={handleReset}
 			/>
-			{/*{handleChatWithAdmin()}*/}
+			{ userType==="admin"&&handleChatWithAdmin()}
 			<ContactLists
 				channelList={channelList}
 				handleChannelOnClick={handleChannelOnClick}

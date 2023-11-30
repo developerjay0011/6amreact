@@ -38,7 +38,7 @@ const TrackParcelFromHomePage = () => {
       if (orderId) {
         setSideDrawerOpen(true);
       } else {
-        toast.error("need a id");
+        toast.error("Need a order id");
       }
     } else {
       toast.error(not_logged_in_message);

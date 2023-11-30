@@ -10,6 +10,7 @@ import GroupButtons from "../GroupButtons";
 import { Skeleton } from "@mui/material";
 import Shimmer from "../home/stores-with-filter/Shimmer";
 import useMediaQuery from "@mui/material/useMediaQuery";
+import StoreCard from "../cards/StoreCard";
 
 const StoreList = ({ storeType, type, setType, data }) => {
   const { selectedModule } = useSelector((state) => state.utilsData);
@@ -22,7 +23,7 @@ const StoreList = ({ storeType, type, setType, data }) => {
         container
         spacing={{ xs: 2, md: 3 }}
         justifyContent="flex-start"
-        // alignItems="center"
+      // alignItems="center"
       >
         {selectedModule?.module_type === "food" && (
           <Grid item xs={12} sm={12} md={12} align="center">
@@ -40,16 +41,10 @@ const StoreList = ({ storeType, type, setType, data }) => {
               xs={matchesXs ? 12 : 6}
               sm={6}
               md={3}
-              lg={2.4}
             >
-              <StoresInfoCard
-                image={`${store_image_url}/${store?.logo}`}
-                title={store?.name}
-                avgRating={store?.avg_rating}
-                address={store?.address}
-                id={store?.id}
-                data={store}
-                moduleId={getModuleId()}
+              <StoreCard
+                item={store}
+                imageUrl={`${configData?.base_urls?.store_cover_photo_url}/${store?.cover_photo}`}
               />
             </Grid>
           );

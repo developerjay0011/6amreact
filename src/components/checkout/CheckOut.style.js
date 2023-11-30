@@ -103,7 +103,7 @@ export const CouponGrid = styled(Grid)(() => ({
   marginTop: "20px",
 }));
 export const CouponTitle = styled(Typography)(({ theme, textAlign }) => ({
-  color: theme.palette.footer.appDownloadButtonBgGray,
+  color: theme.palette.neutral[1000],
   fontWeight: "700",
   fontSize: "16px",
   textAlign: textAlign ? textAlign : "center",

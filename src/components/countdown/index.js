@@ -3,6 +3,7 @@ import Countdown from "react-countdown";
 import { styled } from "@mui/material/styles";
 import { Box, Stack } from "@mui/system";
 import { Typography } from "@mui/material";
+import moment from "moment";
 
 const Container = styled(Box)(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
@@ -17,7 +18,7 @@ const Container = styled(Box)(({ theme }) => ({
 }));
 
 // Random component
-const Completionist = () => <span>this campaign is over</span>;
+const Completionist = () => <span>This campaign is over</span>;
 
 // Renderer callback with condition
 const renderer = ({ days, hours, minutes, seconds, completed }) => {
@@ -35,31 +36,38 @@ const renderer = ({ days, hours, minutes, seconds, completed }) => {
       >
         <Stack alignItems="center" justifyContent="center" spacing={1}>
           <Container>{days}</Container>
-          <Typography color="text.secondary">DD</Typography>
+          <Typography color="neutral[100]">DD</Typography>
         </Stack>
         <Typography>:</Typography>
 
         <Stack alignItems="center" justifyContent="center" spacing={1}>
           <Container>{hours}</Container>
-          <Typography color="text.secondary">HH</Typography>
+          <Typography color="neutral[100]">HH</Typography>
         </Stack>
         <Typography>:</Typography>
         <Stack alignItems="center" justifyContent="center" spacing={1}>
           <Container>{minutes}</Container>
-          <Typography color="text.secondary">MM</Typography>
+          <Typography color="neutral[100]">MM</Typography>
         </Stack>
         <Typography>:</Typography>
         <Stack alignItems="center" justifyContent="center" spacing={1}>
           <Container>{seconds}</Container>
-          <Typography color="text.secondary">SS</Typography>
+          <Typography color="neutral[100]">SS</Typography>
         </Stack>
       </Stack>
     );
   }
 };
 
-const CustomCountdown = () => {
-  return <Countdown date={Date.now() + 1500000000} renderer={renderer} />;
+const CustomCountdown = ({ endDate }) => {
+
+  const endTimeDate = moment(endDate);
+
+  const currentDateTime = moment();
+
+  const differenceInMilliseconds = endTimeDate.diff(currentDateTime);
+
+  return <Countdown date={Date.now() + differenceInMilliseconds} renderer={renderer} />;
 };
 
 export default CustomCountdown;

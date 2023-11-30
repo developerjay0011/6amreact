@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Grid, Stack, Typography } from "@mui/material";
 import { CalculationGrid, TotalGrid } from "../CheckOut.style";
 import { useTranslation } from "react-i18next";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useTheme } from "@mui/material/styles";
 import CustomDivider from "../../CustomDivider";
 import {
@@ -61,7 +61,6 @@ const OrderCalculation = (props) => {
     );
 
     setDeliveryFee(orderType === "delivery" ? 0 : price);
-
     if (price === 0) {
       return <Typography>{t("Free")}</Typography>;
     } else {
@@ -126,7 +125,7 @@ const OrderCalculation = (props) => {
           {cartList.length > 1 ? t("Items Price") : t("Item Price")}
         </Grid>
         <Grid item md={4} xs={4} align="right">
-          <Typography align="right">
+          <Typography textTransform="capitalize" align="right">
             {getAmountWithSign(getSubTotalPrice(cartList))}
           </Typography>
         </Grid>
@@ -154,7 +153,9 @@ const OrderCalculation = (props) => {
             </Grid>
             <Grid item md={4} xs={4} align="right">
               {couponDiscount.coupon_type === "free_delivery" ? (
-                <Typography>{t("Free Delivery")}</Typography>
+                <Typography textTransform="capitalize">
+                  {t("Free Delivery")}
+                </Typography>
               ) : (
                 <Stack
                   direction="row"
@@ -207,7 +208,7 @@ const OrderCalculation = (props) => {
         {orderType === "delivery" || orderType === "schedule_order" ? (
           Number.parseInt(configData?.dm_tips_status) === 1 ? (
             <>
-              <Grid item md={8} xs={8}>
+              <Grid item md={8} xs={8} sx={{ textTransform: "capitalize" }}>
                 {t("Deliveryman tips")}
               </Grid>
               <Grid item md={4} xs={4} align="right">
@@ -227,7 +228,7 @@ const OrderCalculation = (props) => {
 
         {configData?.additional_charge_status === 1 ? (
           <>
-            <Grid item md={8} xs={8}>
+            <Grid item md={8} xs={8} sx={{ textTransform: "capitalize" }}>
               {configData?.additional_charge_name}
             </Grid>
             <Grid item md={4} xs={4} align="right">
@@ -247,7 +248,7 @@ const OrderCalculation = (props) => {
         ) : null}
         {orderType === "delivery" || orderType === "schedule_order" ? (
           <>
-            <Grid item md={8} xs={8}>
+            <Grid item md={8} xs={8} sx={{ textTransform: "capitalize" }}>
               {t("Delivery fee")}
             </Grid>
             <Grid item md={4} xs={4} align="right">
@@ -278,7 +279,7 @@ const OrderCalculation = (props) => {
         </TotalGrid>
         {usePartialPayment && payableAmount > walletBalance ? (
           <>
-            <Grid item md={8} xs={8}>
+            <Grid item md={8} xs={8} sx={{ textTransform: "capitalize" }}>
               {t("Paid by wallet")}
             </Grid>
             <Grid item md={4} xs={4} align="right">

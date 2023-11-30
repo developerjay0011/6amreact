@@ -23,7 +23,6 @@ const supportedFormatMultiImages = [
 ];
 
 const PrescriptionUpload = ({ setPrescriptionImages, prescriptionImages }) => {
-  console.log({ prescriptionImages });
   const fileImagesHandler = (files) => {
     setPrescriptionImages(files);
   };

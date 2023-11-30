@@ -25,6 +25,7 @@ const FooterMiddle = (props) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   let token;
   const businessLogo = `${configData?.base_urls?.business_logo_url}/${configData?.logo}`;
+
   return (
     <CustomStackFullWidth sx={{ py: { xs: "10px", sm: "3rem" } }}>
       <Grid container spacing={{ xs: 3, md: 4 }} justifyContent="flex-start">

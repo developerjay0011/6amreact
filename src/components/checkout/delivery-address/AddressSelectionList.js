@@ -32,7 +32,7 @@ const AddressSelectionList = (props) => {
     setSelectedAddress,
     renderOnNavbar,
   } = props;
-  console.log({ data });
+
   return (
     <>
       <CustomList>

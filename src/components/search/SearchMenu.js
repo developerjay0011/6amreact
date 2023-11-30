@@ -19,6 +19,7 @@ import { IsSmallScreen } from "../../utils/CommonValues";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
 import Funnel from "../svg-components/Funnel";
 import CustomDivider from "../CustomDivider";
+import { t } from "i18next";
 
 const ViewWrapper = styled(Box)(({ theme, active }) => ({
   display: "flex",
@@ -59,9 +60,11 @@ const SearchMenu = (props) => {
       setShowView(false);
     }
   }, [currentTab]);
+  const found = t("Found");
   const textHandler = () => {
-    return `${totalDataCount} ${tabs[currentTab]?.value} Found`;
+    return `${totalDataCount} ${tabs[currentTab]?.value} ${found}`;
   };
+
   return (
     <CustomBoxFullWidth sx={{ marginBottom: "20px" }}>
       <Grid container alignItems="center" justifyContent="center">

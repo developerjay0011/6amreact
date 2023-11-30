@@ -18,16 +18,11 @@ export const filterTypeItems = [
     value: "popular",
     checked: false,
   },
-  // {
-  //   label: "Best Seller",
-  //   value: "best_seller",
-  //   checked: false,
-  // },
   {
     label: "Price",
     value: "price",
     price: [],
-    checked: true,
+    checked: false,
   },
   {
     label: "Ratings",
@@ -35,6 +30,11 @@ export const filterTypeItems = [
     rating: 0,
     checked: false,
   },
+  {
+    label: "",
+    value: "test",
+    checked: true
+  }
 ];
 
 export const filterTypeStores = [

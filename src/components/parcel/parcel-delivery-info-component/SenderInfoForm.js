@@ -66,7 +66,7 @@ const SenderInfoForm = ({
     );
   }, [senderOptionalAddress]);
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
-  console.log("value", addAddressFormik.values.senderPhone);
+
   return (
     <CustomStackFullWidth height="100%">
       <Card sx={{ padding: "1.2rem", height: "100%" }}>

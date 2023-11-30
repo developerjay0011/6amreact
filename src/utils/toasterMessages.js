@@ -21,8 +21,10 @@ export const module_bottom = "A module must be selected to continue.";
 export const module_select_success = "A module has been selected.";
 export const prescription_image_error_text =
   "Please upload your prescription image";
-export const out_of_stock = "Out of Stack";
+export const out_of_stock = "Out of Stock";
 export const coupon_minimum =
   "To apply this coupon, total item amount should be minimum";
 export const wallet_transfer_message = "Point to wallet transfer successfully.";
 export const out_of_limits = "Out of Limits";
+export const cart_item_remove = "Cart item remove successfully";
+export const edit_offline_payment_info = "Payment info updated."

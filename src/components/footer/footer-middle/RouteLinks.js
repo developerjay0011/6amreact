@@ -6,6 +6,7 @@ import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 import { RouteLinksData } from "../demoLinks";
+import {getModule} from "../../../helper-functions/getLanguage";
 
 const RouteLinks = (props) => {
   const { token, configData } = props;
@@ -33,12 +34,15 @@ const RouteLinks = (props) => {
       router.push(href, undefined, { shallow: true });
     }
   };
-  let language_direction;
-  // = localStorage.getItem("direction");
+  // let moduleType;
+  // if(typeof window !== "undefined"){
+  //   moduleType=JSON.parse(window.localStorage.getItem("module"))
+  // }
   const handleClickToRoute = (href) => {
     router.push(href, undefined, { shallow: true });
   };
   const theme = useTheme();
+
   return (
     <CustomStackFullWidth spacing={1}>
       {RouteLinksData.map((item, index) => {
@@ -73,6 +77,20 @@ const RouteLinks = (props) => {
       >
         {t("About Us")}
       </Typography>
+     <Typography
+          onClick={() => handleClickToRoute("/track-order")}
+          sx={{
+            cursor: "pointer",
+            transition: "all ease-out .3s",
+            "&:hover": {
+              color: theme.palette.primary.main,
+              letterSpacing: "0.03em",
+            },
+          }}
+      >
+        {t("Track Order")}
+      </Typography>
+
     </CustomStackFullWidth>
   );
 };

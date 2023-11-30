@@ -15,7 +15,6 @@ const AmountWithDiscountedAmount = ({ item, noPrimaryColor }) => {
   //   store_discount: 0,
   //   quantity: 1,
   // };
-
   if (item?.id === 372) {
   }
 

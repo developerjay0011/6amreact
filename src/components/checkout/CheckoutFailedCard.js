@@ -3,7 +3,7 @@ import { Skeleton, Stack, Typography } from "@mui/material";
 import { useTranslation } from "react-i18next";
 
 import Router from "next/router";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setClearCart } from "../../redux/slices/cart";
 import { useMutation, useQuery } from "react-query";
 
@@ -18,6 +18,7 @@ import CustomModal from "../modal";
 import CancelOrder from "../my-orders/order-details/CenacelOrder";
 import { useGetOrderCancelReason } from "../../api-manage/hooks/react-query/order/useGetOrderCancelReason";
 import { GoogleApi } from "../../api-manage/hooks/react-query/googleApi";
+import { getGuestId } from "../../helper-functions/getToken";
 
 const CheckoutFailedCard = ({ id }) => {
   const [openModal, setOpenModal] = useState(false);
@@ -25,6 +26,7 @@ const CheckoutFailedCard = ({ id }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const { data: cancelReasonsData, refetch } = useGetOrderCancelReason();
+  const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
   useEffect(() => {
     refetch().then();
   }, []);
@@ -41,6 +43,7 @@ const CheckoutFailedCard = ({ id }) => {
   const formData = {
     order_id: id,
     _method: "put",
+    guest_id: getGuestId(),
   };
   const { mutate: paymentMethodUpdateMutation, isLoading: orderLoading } =
     useMutation(

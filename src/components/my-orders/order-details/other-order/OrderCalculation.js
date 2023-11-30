@@ -14,8 +14,8 @@ export const OrderSummaryCalculationCard = styled(CustomStackFullWidth)(
   })
 );
 const getItemsPrice = (items) => {
-  const productPrice = items.reduce(
-    (total, product) => product.price * product.quantity + total,
+  const productPrice = items?.reduce(
+    (total, product) => product?.price * product?.quantity + total,
     0
   );
   return productPrice;
@@ -23,9 +23,9 @@ const getItemsPrice = (items) => {
 const getAddOnsPrice = (items) => {
   let productAddonsPrice = items.reduce(
     (total, product) =>
-      (product.add_ons.length > 0
-        ? product.add_ons.reduce(
-            (cTotal, cProduct) => cProduct.price * cProduct.quantity + cTotal,
+      (product?.add_ons?.length > 0
+        ? product?.add_ons?.reduce(
+            (cTotal, cProduct) => cProduct?.price * cProduct?.quantity + cTotal,
             0
           )
         : 0) + total,
@@ -103,8 +103,9 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
         <Typography fontSize="14px">
           -
           {trackOrderData &&
+
           getAmountWithSign(trackOrderData?.store_discount_amount)
-            ? getAmountWithSign(trackOrderData?.store_discount_amount)
+            ? getAmountWithSign(trackOrderData?.store_discount_amount+trackOrderData?.flash_admin_discount_amount+trackOrderData?.flash_store_discount_amount)
             : 0}
         </Typography>
       </CustomStackFullWidth>
@@ -202,7 +203,7 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           {getAmountWithSign(trackOrderData?.order_amount)}
         </Typography>
       </CustomStackFullWidth>
-      {trackOrderData?.partially_paid_amount ? (
+      {trackOrderData?.partially_paid_amount && trackOrderData?.order_status!=="canceled"  ? (
         <CustomStackFullWidth
           direction="row"
           alignItems="center"
@@ -210,34 +211,85 @@ const OrderCalculation = ({ data, t, trackOrderData }) => {
           spacing={2}
         >
           <Typography fontSize="14px" textTransform="capitalize">
-            {t("partially paid amount")}
+            {t("Paid by wallet")}
           </Typography>
           <Typography fontSize="14px">
-            -{" "}
             {trackOrderData &&
               getAmountWithSign(trackOrderData?.partially_paid_amount)}
           </Typography>
         </CustomStackFullWidth>
       ) : null}
-      {trackOrderData?.partially_paid_amount ? (
-        <CustomStackFullWidth
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
-          spacing={2}
-        >
-          <Typography
+
+        {trackOrderData?.payment_method ===
+            'partial_payment'? (<>
+            { trackOrderData?.payments[1]?.payment_status === 'unpaid'?(
+                <CustomStackFullWidth
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={2}
+            >
+           <Typography
             fontSize="14px"
             textTransform="capitalize"
             fontWeight="bold"
-          >
-            {t("due amount")}
-          </Typography>
-          <Typography fontSize="14px" fontWeight="bold">
+            >
+               {t('Due Payment')} (
+               {trackOrderData &&
+                   t(
+                       trackOrderData
+                           ?.payments[1]
+                           ?.payment_method
+                   ).replaceAll('_', ' ')}
+               )
+        </Typography>
+        <Typography fontSize="14px" fontWeight="bold">
             {trackOrderData && getAmountWithSign(due_amount)}
-          </Typography>
-        </CustomStackFullWidth>
-      ) : null}
+        </Typography>
+        </CustomStackFullWidth>):(  <CustomStackFullWidth
+                direction="row"
+                alignItems="center"
+                justifyContent="space-between"
+                spacing={2}
+            >
+                <Typography
+                    fontSize="14px"
+                    textTransform="capitalize"
+                    fontWeight="bold"
+                >
+                    {t('Paid By')} (
+                    {trackOrderData &&
+                        t(
+                            trackOrderData
+                                ?.payments[1]
+                                ?.payment_method
+                        ).replaceAll('_', ' ')}
+                    )
+                </Typography>
+                <Typography fontSize="14px" fontWeight="bold">
+                    {trackOrderData && getAmountWithSign(due_amount)}
+                </Typography>
+            </CustomStackFullWidth>)}
+        </>):null }
+      {/*{trackOrderData?.partially_paid_amount ? (*/}
+      {/*  <CustomStackFullWidth*/}
+      {/*    direction="row"*/}
+      {/*    alignItems="center"*/}
+      {/*    justifyContent="space-between"*/}
+      {/*    spacing={2}*/}
+      {/*  >*/}
+      {/*    <Typography*/}
+      {/*      fontSize="14px"*/}
+      {/*      textTransform="capitalize"*/}
+      {/*      fontWeight="bold"*/}
+      {/*    >*/}
+      {/*      {t("due amount")}*/}
+      {/*    </Typography>*/}
+      {/*    <Typography fontSize="14px" fontWeight="bold">*/}
+      {/*      {trackOrderData && getAmountWithSign(due_amount)}*/}
+      {/*    </Typography>*/}
+      {/*  </CustomStackFullWidth>*/}
+      {/*) : null}*/}
     </OrderSummaryCalculationCard>
   );
 };

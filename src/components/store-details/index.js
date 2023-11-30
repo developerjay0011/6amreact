@@ -9,6 +9,8 @@ import Top from "./Top";
 import MiddleSection from "./middle-section";
 import PopularInTheStore from "./popular";
 import { useRouter } from "next/router";
+import useGetStoreBanners from "../../api-manage/hooks/react-query/store/useGetStoreBanners";
+import StoreCustomMessage from "./StoreCustomMessage";
 
 const StoreDetails = ({ storeDetails, configData }) => {
   const imageBaseUrl = configData?.base_urls?.store_cover_photo_url;
@@ -24,15 +26,17 @@ const StoreDetails = ({ storeDetails, configData }) => {
     moduleType: router.query.module_type,
     storeZoneId: [parseInt(router.query.store_zone_id)],
   };
-
+  const { data: bannersData, refetch,isLoading } = useGetStoreBanners(storeDetails?.id);
   useEffect(() => {
     setRerender((prev) => !prev);
+    refetch();
   }, [storeDetails?.id]);
 
   const layoutHandler = () => {
     if (isSmall) {
       return (
         <CustomStackFullWidth spacing={3}>
+          {storeDetails?.announcement===1 &&   <StoreCustomMessage storeAnnouncement={storeDetails?.announcement_message}/> }
           <Top
             bannerCover={bannerCover}
             storeDetails={storeDetails}
@@ -40,6 +44,8 @@ const StoreDetails = ({ storeDetails, configData }) => {
             logo={logo}
             isSmall={isSmall}
             storeShare={storeShare}
+            bannersData={bannersData}
+            isLoading={isLoading}
           />
           <PopularInTheStore id={storeDetails?.id} storeShare={storeShare} />
           <CustomContainer>
@@ -63,6 +69,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
       return (
         <CustomContainer>
           <CustomStackFullWidth spacing={3}>
+            {storeDetails?.announcement===1 &&   <StoreCustomMessage storeAnnouncement={storeDetails?.announcement_message}/> }
             <Top
               bannerCover={bannerCover}
               storeDetails={storeDetails}
@@ -70,6 +77,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
               logo={logo}
               isSmall={isSmall}
               storeShare={storeShare}
+              bannersData={bannersData}
             />
             <PopularInTheStore id={storeDetails?.id} storeShare={storeShare} />
             <MiddleSection
@@ -94,6 +102,7 @@ const StoreDetails = ({ storeDetails, configData }) => {
       sx={{ minHeight: "100vh" }}
       spacing={3}
     >
+
       {layoutHandler()}
       {/*<RecommendItems store_id={storeDetails?.id} />*/}
     </CustomStackFullWidth>

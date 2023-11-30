@@ -49,10 +49,17 @@ import AuthHeader from "../AuthHeader";
 import OtpForm from "../sign-up/OtpForm";
 import SignUpValidation from "./SignInValidation";
 import SocialLogins from "./social-login/SocialLogins";
+import useGetAllCartList from "../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import { setCartList } from "../../../redux/slices/cart";
+import {getGuestId} from "../../../helper-functions/getToken";
+import {handleProductValueWithOutDiscount} from "../../../utils/CustomFunctions";
+import {getModule} from "../../../helper-functions/getLanguage";
+import {getSelectedVariations} from "../../header/second-navbar/SecondNavbar";
 
 const SignIn = ({ configData }) => {
   const router = useRouter();
   const previousRouteName = router.query.from;
+  const guestId=getGuestId()
   const dispatch = useDispatch();
   const [openModuleSelection, setOpenModuleSelection] = useState(false);
   const [openOtpModal, setOpenOtpModal] = useState(false);
@@ -66,6 +73,36 @@ const SignIn = ({ configData }) => {
   if (typeof window !== "undefined") {
     userDatafor = JSON.parse(localStorage.getItem("userDatafor"));
   }
+  const getModule = () => {
+    return JSON.parse(window.localStorage.getItem("module"));
+  };
+  const cartListSuccessHandler = (res) => {
+    if (res) {
+      const tempCartLists = res?.map((item) => ({
+        ...item?.item,
+        cartItemId: item?.id,
+        totalPrice: handleProductValueWithOutDiscount(item?.item)*item?.quantity,
+        selectedAddons: item?.item?.addons,
+        quantity: item?.quantity,
+        food_variations: item?.item?.food_variations,
+        itemBasePrice: item?.item?.price,
+        selectedOption:
+            getModule()?.module_type !== "food" ? item?.variation :getSelectedVariations(item?.item?.food_variations),
+      }));
+      dispatch(setCartList(tempCartLists));
+    }
+  };
+
+  const {
+    data,
+    refetch: cartListRefetch,
+    isLoading,
+  } = useGetAllCartList(cartListSuccessHandler);
+  const userOnSuccessHandler = (res) => {
+    dispatch(setUser(res));
+    //handleClose()
+  };
+
   const loginFormik = useFormik({
     initialValues: {
       phone: userDatafor ? userDatafor.phone : "",
@@ -114,21 +151,17 @@ const SignIn = ({ configData }) => {
     dispatch(setWishList(response));
     setIsApiCalling(false);
   };
-  const { refetch: wishlistRefetch, isLoading: isLoadingWishlist } =
-    useWishListGet(onSuccessHandler);
 
-  const userOnSuccessHandler = (res) => {
-    dispatch(setUser(res));
-    //handleClose()
-  };
   const { data: userData, refetch: profileRefetch } =
     useGetProfile(userOnSuccessHandler);
-
+  const { refetch: wishlistRefetch, isLoading: isLoadingWishlist } =
+    useWishListGet(onSuccessHandler);
   const handleTokenAfterSignIn = async (response) => {
     if (response?.data) {
       localStorage.setItem("token", response?.data?.token);
       await wishlistRefetch();
       await profileRefetch();
+      await cartListRefetch();
       toast.success(t(loginSuccessFull));
     }
   };
@@ -146,7 +179,10 @@ const SignIn = ({ configData }) => {
       } else {
         if (previousRouteName) {
           router.push("/home");
-        } else {
+        }else if (previousRouteName==="/order"){
+          router.push("/home");
+        }
+        else {
           await router.back();
         }
       }
@@ -165,13 +201,15 @@ const SignIn = ({ configData }) => {
     }
     setOpenModuleSelection(false);
   };
+
   const handleError = () => {
     setIsApiCalling(false);
   };
   const { mutate } = useSignIn(handleError);
   const formSubmitHandler = (values) => {
     setIsApiCalling(true);
-    mutate(values, {
+    const newValues={...values,guest_id:guestId}
+    mutate(newValues, {
       onSuccess: async (response) => {
         //setDefaultLanguage();
         if (configData?.customer_verification) {
@@ -237,7 +275,6 @@ const SignIn = ({ configData }) => {
                 spacing={2}
               >
                 <AuthHeader configData={configData} title={t("Sign In")} />
-
                 <form noValidate onSubmit={loginFormik.handleSubmit}>
                   <CustomStackFullWidth spacing={2}>
                     {handleFormBasedOnDirection()}

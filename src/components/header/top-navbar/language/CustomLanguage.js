@@ -62,7 +62,7 @@ const CustomLanguage = ({
       );
       localStorage.setItem(
         "language-setting",
-        JSON.stringify(languageSetting || "en")
+        JSON.stringify(languageSetting || i18n.language)
       );
     }
   }, []);

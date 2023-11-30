@@ -12,16 +12,20 @@ const ImageWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
     height: "110px",
   },
 }));
-const SinglePoster = (props) => {
+const SinglePoster = ({ bannerData }) => {
   return (
-    <ImageWrapper>
-      <CustomImageContainer
-        height="100%"
-        width="100%"
-        src={banner.src}
-        objectfit="cover"
-      />
-    </ImageWrapper>
+    <>
+      {bannerData?.bottom_section_banner &&
+        <ImageWrapper>
+          <CustomImageContainer
+            height="100%"
+            width="100%"
+            src={`${bannerData?.promotional_banner_url}/${bannerData?.bottom_section_banner}`}
+            objectfit="cover"
+          />
+        </ImageWrapper>
+      }
+    </>
   );
 };
 

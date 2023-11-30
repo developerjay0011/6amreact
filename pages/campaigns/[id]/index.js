@@ -6,6 +6,7 @@ import {useRouter} from "next/router";
 import useGetBasicCampaignsDetails from "../../../src/api-manage/hooks/react-query/useGetBasicCampaignsDetails";
 import SEO from "../../../src/components/seo";
 import {getServerSideProps} from "../../index";
+import CustomContainer from "../../../src/components/container";
 
 const Index = ({configData, landingPageData}) => {
     const router = useRouter();
@@ -26,12 +27,14 @@ const Index = ({configData, landingPageData}) => {
                 businessName={configData?.business_name}
             />
             <MainLayout configData={configData} landingPageData={landingPageData}>
+                <CustomContainer>
                 <CampaignsDetails
                     campaignsDetails={data}
                     configData={configData}
                     isLoading={isLoading}
                     isRefetching={isRefetching}
                 />
+                </CustomContainer>
             </MainLayout>
         </>
     );

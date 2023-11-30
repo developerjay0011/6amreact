@@ -22,8 +22,9 @@ const AdditionalAddresses = (props) => {
     t,
     additionalInformationStates,
     additionalInformationDispatch,
-    saveAddress,
+    saveAddress,address
   } = props;
+
 
   const theme = useTheme();
   const handleSave = (e) => {
@@ -39,7 +40,7 @@ const AdditionalAddresses = (props) => {
           <Grid item xs={12}>
             <CustomTextField
               label={t("Street number")}
-              value={additionalInformationStates.streetNumber}
+              value={address? address?.road:additionalInformationStates.streetNumber}
               fullWidth
               onChange={(e) =>
                 additionalInformationDispatch({
@@ -52,7 +53,7 @@ const AdditionalAddresses = (props) => {
           <Grid item xs={6}>
             <CustomTextField
               label={t("House number")}
-              value={additionalInformationStates.houseNumber}
+              value={address? address?.house:additionalInformationStates.houseNumber}
               fullWidth
               onChange={(e) =>
                 additionalInformationDispatch({
@@ -65,7 +66,7 @@ const AdditionalAddresses = (props) => {
           <Grid item xs={6}>
             <CustomTextField
               label={t("Floor")}
-              value={additionalInformationStates.floor}
+              value={address? address?.floor:additionalInformationStates.floor}
               fullWidth
               onChange={(e) =>
                 additionalInformationDispatch({

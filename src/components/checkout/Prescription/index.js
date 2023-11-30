@@ -30,6 +30,7 @@ import CheckoutStepper from "../item-checkout/CheckoutStepper";
 import AddPaymentMethod from "../item-checkout/AddPaymentMethod";
 import useGetMostTrips from "../../../api-manage/hooks/react-query/useGetMostTrips";
 import { useTheme } from "@emotion/react";
+import {getGuestId, getToken} from "../../../helper-functions/getToken";
 
 const PrescriptionCheckout = ({ storeId }) => {
   const router = useRouter();
@@ -47,6 +48,9 @@ const PrescriptionCheckout = ({ storeId }) => {
   const [note, setNote] = useState("");
   const { configData } = useSelector((state) => state.configData);
   const { data: storeData, refetch } = useGetStoreDetails(storeId);
+  const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
+  const guestId=getGuestId()
+
   useEffect(() => {
     refetch();
   }, [storeId]);
@@ -114,14 +118,35 @@ const PrescriptionCheckout = ({ storeId }) => {
       dm_tips: deliveryTip,
       unavailable_item_note,
       delivery_instruction,
+      guest_id:guestId,
+      contact_person_name: guestUserInfo?.contact_person_name,
+      contact_person_number: guestUserInfo?.contact_person_number,
     };
   };
 
   const handlePlaceOrder = () => {
     const handleSuccessSecond = (res) => {
-      if (res?.data) {
+      if (res) {
         toast.success(res?.data?.message);
-        router.push("/order", undefined, { shallow: true });
+        if (!getToken()) {
+          router.push(
+              {
+                pathname: "/order",
+                query: { order_id: res?.data?.order_id },
+              },
+              undefined,
+              { shallow: true }
+          );
+        } else {
+          router.push(
+              {
+                pathname: "/profile",
+                query: { orderId: res?.data?.order_id, page: "my-orders", from: "checkout" },
+              },
+              undefined,
+              { shallow: true }
+          );
+        }
       }
     };
     let order = handleOrderMutationObject();

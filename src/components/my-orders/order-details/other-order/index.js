@@ -25,6 +25,8 @@ import DeliveryManInfo from "./DeliveryManInfo";
 import OrderSummery from "./OrderSummery";
 import RefundModal from "./RefundModal";
 import StoreDetails from "./StoreDetails";
+import {useSelector} from "react-redux";
+import {getGuestId} from "../../../../helper-functions/getToken";
 
 const OtherOrder = (props) => {
   const { configData, data, refetch, id, dataIsLoading } = props;
@@ -36,11 +38,15 @@ const OtherOrder = (props) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
+  const guestId = getGuestId();
+  const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
+  const phone=guestUserInfo?.contact_person_number
   const {
     refetch: refetchTrackOrder,
     data: trackOrderData,
-    isLoading,
-  } = useGetTrackOrderData(id);
+    isLoading: trackDataIsLoading,
+    isFetching: trackDataIsFetching,
+  } =  useGetTrackOrderData(id, phone,guestId);
   useEffect(() => {
     refetchTrackOrder();
   }, []);
@@ -84,10 +90,11 @@ const OtherOrder = (props) => {
         return (
           <OrderSummery
             trackOrderData={trackOrderData}
+            refetchTrackOrder={refetchTrackOrder}
             configData={configData}
             t={t}
             data={data}
-            isLoading={isLoading}
+            isLoading={trackDataIsLoading}
             dataIsLoading={dataIsLoading}
           />
         );
@@ -148,6 +155,8 @@ const OtherOrder = (props) => {
           <TopDetails
             data={data}
             trackData={trackOrderData}
+            trackDataIsLoading={trackDataIsLoading}
+            trackDataIsFetching={trackDataIsFetching}
             currentTab={currentTab}
             configData={configData}
             id={id}
@@ -178,6 +187,8 @@ const OtherOrder = (props) => {
           <TopDetails
             data={data}
             trackData={trackOrderData}
+            trackDataIsLoading={trackDataIsLoading}
+            trackDataIsFetching={trackDataIsFetching}
             currentTab={currentTab}
             configData={configData}
             id={id}

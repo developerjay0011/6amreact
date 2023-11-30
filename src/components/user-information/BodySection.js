@@ -15,7 +15,13 @@ import useGetAddressList from "../../api-manage/hooks/react-query/address/useGet
 
 const ProfileCard = styled(CustomPaperBigCard)(({ theme }) => ({}));
 
-const BodySection = ({ page, configData, orderId }) => {
+const BodySection = ({
+  page,
+  configData,
+  orderId,
+  userToken,
+  deleteUserHandler,
+}) => {
   const [editProfile, setEditProfile] = useState(false);
   const [addAddress, setAddAddress] = useState(false);
   const [editAddress, setEditAddress] = useState(null);
@@ -49,8 +55,9 @@ const BodySection = ({ page, configData, orderId }) => {
           theme.palette.background.default
         }
       >
-        {!isSmall && (
+        {!isSmall && userToken && (
           <ProfileTab
+            deleteUserHandler={deleteUserHandler}
             page={page}
             menuData={menuData}
             handlePage={handleActivePage}

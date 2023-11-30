@@ -43,7 +43,7 @@ export const CustomRadioGroup = ({
     handleOnChange?.(event.target.value);
     // setValue(event.target.value);
   };
-  console.log("selectedValue", selectedValue);
+
   return (
     <FormControl>
       <FormLabel id="demo-radio-buttons-group-label">{label}</FormLabel>
@@ -130,7 +130,7 @@ const MobileMenus = (props) => {
   const selectedValueForCategoreis = () => {
     return categories.find((item, index) => index === selectedMenuIndex)?.value;
   };
-  console.log("ggg", selectedValueForCategoreis());
+
   return (
     <div>
       <CustomButtonWrapper onClick={handleButtonClick} variant="outlined">

@@ -119,6 +119,7 @@ export const ModuleSelection = ({
 		closeModal?.(item);
 	};
 	const handleSingleModule = (data) => {
+		dispatch(setSelectedModule(data));
 		localStorage.setItem("module", JSON.stringify(data));
 		setOpenModuleSelection?.(false);
 		router.push("/home");

@@ -25,7 +25,12 @@ const CustomSearch = ({
     language_direction = localStorage.getItem("direction");
   }
   useEffect(() => {
-    setValue(selectedValue);
+    if (selectedValue){
+      setValue(selectedValue);
+    }else {
+      setValue("")
+    }
+
   }, [selectedValue]);
 
   const handleKeyPress = (e) => {

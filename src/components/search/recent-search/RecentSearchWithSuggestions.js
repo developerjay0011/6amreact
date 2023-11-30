@@ -11,7 +11,7 @@ const RecentSearchWithSuggestions = (props) => {
     list,
     handleSearchHistoryOnClick,
     handleDeleteAble,
-    t,
+    t,clearAll,
     suggestedKeywords,
   } = props;
   return (
@@ -21,6 +21,7 @@ const RecentSearchWithSuggestions = (props) => {
         handleSearchHistoryOnClick={handleSearchHistoryOnClick}
         handleDeleteAble={handleDeleteAble}
         t={t}
+        clearAll={clearAll}
       />
       {suggestedKeywords.length > 0 && (
         <SuggestionBasedOnInterest

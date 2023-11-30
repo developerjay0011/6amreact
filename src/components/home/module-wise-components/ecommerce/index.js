@@ -1,5 +1,5 @@
 import { Grid } from "@mui/material";
-import React from "react";
+import React, { useEffect } from "react";
 import CustomContainer from "../../../container";
 import pharmacyReviewedImage from "../../assets/grocery_reviewed_image.png";
 import Banners from "../../banners";
@@ -13,10 +13,21 @@ import FeaturedStores from "../pharmacy/featured-stores";
 import CampaignBanners from "./CampaignBanners";
 import FeaturedCategoriesWithFilter from "./FeaturedCategoriesWithFilter";
 import NewArrivals from "./NewArrivals";
+import { IsSmallScreen } from "../../../../utils/CommonValues";
+import VisitAgain from "../../visit-again";
+import DiscountedProductRedirectBanner from "../../DiscountedProductRedirectBanner";
+import LoveItem from "../../love-item";
+import SinglePoster from "./SinglePoster";
+import useGetOtherBanners from "../../../../api-manage/hooks/react-query/useGetOtherBanners";
+import PharmacyStaticBanners from "../pharmacy/pharmacy-banners/PharmacyStaticBanners";
 
 const Shop = (props) => {
   const { configData } = props;
   const menus = ["All", "Beauty", "Bread & Juice", "Drinks", "Milks"];
+  const { data, refetch, isLoading } = useGetOtherBanners();
+  useEffect(() => {
+    refetch();
+  }, []);
 
   return (
     <Grid container spacing={1}>
@@ -27,18 +38,19 @@ const Shop = (props) => {
       </Grid>
       <Grid item xs={12}>
         <CustomContainer>
-          <Banners />
+          {/*<Banners />*/}
+          <PharmacyStaticBanners />
         </CustomContainer>
       </Grid>
-      {/* <Grid item xs={12}>
-				{IsSmallScreen() ? (
-					<VisitAgain configData={configData} />
-				) : (
-					<CustomContainer>
-						<VisitAgain configData={configData} />
-					</CustomContainer>
-				)}
-			</Grid> */}
+      <Grid item xs={12}>
+        {IsSmallScreen() ? (
+          <VisitAgain configData={configData} />
+        ) : (
+          <CustomContainer>
+            <VisitAgain configData={configData} />
+          </CustomContainer>
+        )}
+      </Grid>
       <Grid item xs={12}>
         <CustomContainer>
           <PopularItemsNearby
@@ -67,40 +79,41 @@ const Shop = (props) => {
           <BestReviewedItems
             menus={menus}
             title="Best Reviewed Items"
-            leftImage={pharmacyReviewedImage}
+            bannerIsLoading={isLoading}
+            url={`${data?.promotional_banner_url}/${data?.best_reviewed_section_banner}`}
           />
         </CustomContainer>
       </Grid>
       <Grid item xs={12}>
         <CustomContainer>
-          <NewArrivals />
+          <NewArrivals bannerData={data} />
         </CustomContainer>
       </Grid>
       {/* <Grid item xs={12}>
-				<CustomContainer>
-					<DiscountedProductRedirectBanner />
-				</CustomContainer>
-			</Grid> */}
+        <CustomContainer>
+          <DiscountedProductRedirectBanner />
+        </CustomContainer>
+      </Grid> */}
       <Grid item xs={12}>
         <CustomContainer>
           <RunningCampaigns />
         </CustomContainer>
       </Grid>
-      {/*<Grid item xs={12}>*/}
-      {/*  <CustomContainer>*/}
-      {/*    <LoveItem />*/}
-      {/*  </CustomContainer>*/}
-      {/*</Grid>*/}
+      <Grid item xs={12}>
+        <CustomContainer>
+          <LoveItem />
+        </CustomContainer>
+      </Grid>
       <Grid item xs={12}>
         <CustomContainer>
           <FeaturedCategoriesWithFilter title="Featured Categories" />
         </CustomContainer>
       </Grid>
-      {/* <Grid item xs={12}>
-				<CustomContainer>
-					<SinglePoster />
-				</CustomContainer>
-			</Grid> */}
+      <Grid item xs={12}>
+        <CustomContainer>
+          <SinglePoster bannerData={data} />
+        </CustomContainer>
+      </Grid>
       {/*<Grid item xs={12}>*/}
       {/*  <CustomContainer>*/}
       {/*    <NewArrivalStores />*/}

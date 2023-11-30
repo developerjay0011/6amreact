@@ -1,37 +1,19 @@
-import React, { useEffect, useRef, useState } from "react";
-import {
-  CustomStackFullWidth,
-  CustomZoom,
-  SliderCustom,
-} from "../../../styled-components/CustomStyles.style";
+import React, { useEffect, useState } from "react";
+import { SliderCustom } from "../../../styled-components/CustomStyles.style";
 import CustomImageContainer from "../../CustomImageContainer";
-import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import Slider from "react-slick";
 import { ProductsThumbnailsSettings } from "./ProductsThumbnailsSettings";
-import { Box, Stack, width } from "@mui/system";
+import { Box, Stack } from "@mui/system";
 import ReactImageMagnify from "react-image-magnify";
 import {
-  alpha,
   IconButton,
   NoSsr,
   styled,
-  Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-
-import { useSelector } from "react-redux";
-import {
-  IconButtonGray,
-  LeftArrowStyle,
-  RightArrowStyle,
-} from "../../home/best-reviewed-items/brt.style";
-import ArrowBackIosNewIcon from "@mui/icons-material/ArrowBackIosNew";
-import ArrowLeftIcon from "@mui/icons-material/ArrowLeft";
-import ArrowRightIcon from "@mui/icons-material/ArrowRight";
-import { handleDiscountChip } from "../../food-details/foodDetail-modal/helper-functions/handleDiscountChip";
 import { getLanguage } from "../../../helper-functions/getLanguage";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
@@ -69,7 +51,6 @@ const ProductImageView = ({
     setPreViewImage(`${configData?.base_urls?.item_image_url}/${item}`);
     setImageIndex(index);
   };
-
   const borderColor = theme.palette.primary.main;
   return (
     <Stack justifyContent="flex-start" spacing={2} width="100%">

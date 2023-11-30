@@ -13,7 +13,7 @@ const VariationContent = ({ cartItem }) => {
     if (cartItem?.selectedOption?.length > 0) {
       return (
         <Stack>
-          {cartItem?.choice_options.map((item, index) => {
+          {cartItem?.choice_options?.map((item, index) => {
             return (
               <Stack key={index}>
                 <Typography color="customColor.textGray" fontSize="12px">

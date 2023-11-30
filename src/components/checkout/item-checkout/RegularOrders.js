@@ -43,7 +43,6 @@ const RegularOrders = (props) => {
   const { configData, cartList, t, isSmall } = props;
   const theme = useTheme();
   const productBaseUrl = configData?.base_urls?.item_image_url;
-
   return (
     <>
       {cartList.length > 0 ? (

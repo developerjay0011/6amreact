@@ -2,7 +2,7 @@ import React from "react";
 import { CardWrapper } from "../cards/ProductCard";
 import { Skeleton } from "@mui/material";
 
-const horizontalCardShimmer = ({ cardheight }) => {
+const horizontalCardSimmer = ({ cardheight }) => {
   return (
     <>
       <CardWrapper>
@@ -12,4 +12,4 @@ const horizontalCardShimmer = ({ cardheight }) => {
   );
 };
 
-export default horizontalCardShimmer;
+export default horizontalCardSimmer;

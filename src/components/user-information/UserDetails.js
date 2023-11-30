@@ -1,7 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Stack } from "@mui/system";
 import CustomImageContainer from "../CustomImageContainer";
-import testImage from "../../public/static/profile/pro.png";
 import {
   IconButton,
   Skeleton,
@@ -12,12 +11,11 @@ import {
 import { CustomDateFormat } from "../date-and-time-formators/CustomDateFormat";
 import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
-import CustomContainer from "../container";
 import { CustomTypographyEllipsis } from "../../styled-components/CustomTypographies.style";
 import GridViewRoundedIcon from "@mui/icons-material/GridViewRounded";
 import ProfileTabPopover from "../profile/ProfileTabPopover";
 
-const UserDetails = ({ data, page }) => {
+const UserDetails = ({ data, page, deleteUserHandler }) => {
   const theme = useTheme();
   const { t } = useTranslation();
   const { configData } = useSelector((state) => state.configData);
@@ -85,6 +83,7 @@ const UserDetails = ({ data, page }) => {
         onClose={() => setOpenPopover(false)}
         open={openPopover}
         page={page}
+        deleteUserHandler={deleteUserHandler}
       />
     </>
   );

@@ -7,6 +7,7 @@ import { setConfigData } from "../src/redux/slices/configData";
 import Router from "next/router";
 import SEO from "../src/components/seo";
 import useGetLandingPage from "../src/api-manage/hooks/react-query/useGetLandingPage";
+import DynamicFavicon from "../src/components/favicon/DynamicFavicon";
 
 const Root = (props) => {
   const { configData } = props;
@@ -29,9 +30,11 @@ const Root = (props) => {
   return (
     <>
       <CssBaseline />
+      {/* <DynamicFavicon configData={configData} /> */}
       <SEO
         image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
         businessName={configData?.business_name}
+        configData={configData}
       />
       {data && (
         <LandingLayout configData={configData} landingPageData={data}>
@@ -45,6 +48,7 @@ export default Root;
 export const getServerSideProps = async (context) => {
   const { req, res } = context;
   const language = req.cookies.languageSetting;
+
   const configRes = await fetch(
     `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
     {

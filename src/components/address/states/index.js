@@ -20,7 +20,6 @@ export const initialState = {
   addressType: "",
 };
 export const reducer = (state, action) => {
-  console.log("action", action.payload);
   switch (action.type) {
     case "setOpenModal":
       return {
@@ -78,6 +77,7 @@ export const reducer = (state, action) => {
         currentLocation: action.payload,
       };
     case "setLocation":
+
       return {
         ...state,
         location: action.payload,

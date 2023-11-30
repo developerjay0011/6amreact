@@ -31,10 +31,10 @@ const GoogleMapComponent = ({
     height: isModalExpand
       ? "70vh"
       : height
-      ? height
-      : isSmall
-      ? "250px"
-      : "450px",
+        ? height
+        : isSmall
+          ? "250px"
+          : "450px",
     paddingBottom: "0px",
   };
   const mapRef = useRef(GoogleMap);

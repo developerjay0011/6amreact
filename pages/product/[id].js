@@ -16,12 +16,16 @@ const Index = ({ configData, productDetailsData, landingPageData }) => {
 
   const handleProductDetails = () => {
     if (productDetailsData) {
-      if (cartList.length > 0) {
-        const isExist = cartList.find(
-          (item) => item.id === productDetailsData.id
+      if (cartList?.length > 0) {
+        const isExist = cartList?.find(
+          (item) => item?.id === productDetailsData?.id
         );
+
         if (isExist) {
-          setProductDetails([isExist]);
+          let tempData={
+            ...isExist,store_details:productDetailsData?.store_details
+          }
+          setProductDetails([tempData]);
         } else {
           setProductDetails([productDetailsData]);
         }
@@ -45,6 +49,7 @@ const Index = ({ configData, productDetailsData, landingPageData }) => {
         image={`${configData?.base_urls?.item_image_url}/${productDetailsData?.image}`}
         businessName={configData?.business_name}
         description={`${productDetailsData?.description}`}
+        configData={configData}
       />
       <MainLayout configData={configData} landingPageData={landingPageData}>
         <CustomContainer>

@@ -47,7 +47,12 @@ import {
 } from "../../../utils/toasterMessages";
 import { getCartListModuleWise } from "../../../helper-functions/getCartListModuleWise";
 import { Stack } from "@mui/system";
-import { t } from "i18next";
+import useAddCartItem from "../../../api-manage/hooks/react-query/add-cart/useAddCartItem";
+import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
+import { handleValuesFromCartItems } from "../../product-details/product-details-section/helperFunction";
+import useCartItemUpdate from "../../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
+import { getGuestId } from "../../../helper-functions/getToken";
+import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
 
 const FoodDetailModal = ({
   product,
@@ -79,6 +84,10 @@ const FoodDetailModal = ({
   // const { token } = useSelector((state) => state.configDataSettings);
   const { wishLists } = useSelector((state) => state.wishList);
   const [modalData, setModalData] = useState([]);
+  //const guestId = localStorage.getItem("guest_id");
+  const { mutate: updateMutate, updateIsLoading } = useCartItemUpdate();
+  const { mutate, isLoading } = useAddCartItem();
+  const guestId = getGuestId();
   let token = undefined;
   if (typeof window !== "undefined") {
     token = localStorage.getItem("token");
@@ -162,74 +171,160 @@ const FoodDetailModal = ({
       quantity
     ),
   });
-
-  const addOrUpdateToCartByDispatch = () => {
-    if (productUpdate) {
-      //for updating
-      const indexNumber = getIndexFromArrayByComparision(
-        cartList,
-        modalData[0]
-      );
-
-      const newObj = {
-        ...modalData[0],
-        totalPrice: getDiscountedAmount(
-          totalPrice,
-          product?.discount,
-          product?.discount_type,
-          product?.store_discount,
-          quantity
-        ),
-        quantity: quantity,
-        food_variations: getNewVariationForDispatch(),
-        selectedAddons: selectedAddons,
-        itemBasePrice: getDiscountedAmount(
-          calculateItemBasePrice(modalData[0], selectedOptions),
-          product?.discount,
-          product?.discount_type,
-          product?.store_discount,
-          quantity
-        ),
-      };
+  const handleSuccess = (res) => {
+    if (res) {
+      let product = {};
+      res?.forEach((item) => {
+        product = {
+          ...item?.item,
+          cartItemId: item?.id,
+          totalPrice: item?.price,
+          quantity: item?.quantity,
+          food_variations: item?.item?.food_variations,
+          selectedAddons: selectedAddons,
+          selectedOption: selectedOptions,
+          itemBasePrice: item?.item?.price,
+        };
+      });
+      dispatch(setCart(product));
+      handleClose();
+      //dispatch()
+    }
+  };
+  const updateCartSuccessHandler = (res) => {
+    const indexNumber = getIndexFromArrayByComparision(cartList, modalData[0]);
+    if (res) {
+      let product = {};
+      res?.forEach((item) => {
+        product = {
+          ...item?.item,
+          cartItemId: item?.id,
+          totalPrice: item?.price,
+          quantity: item?.quantity,
+          food_variations: item?.item?.food_variations,
+          selectedAddons: selectedAddons,
+          selectedOption: selectedOptions,
+          itemBasePrice: item?.item?.price,
+        };
+      });
       dispatch(
         setUpdateVariationToCart({
-          newObj: newObj,
+          newObj: product,
           indexNumber: indexNumber,
         })
       );
       toast.success(t("Item updated successfully"));
       handleModalClose?.();
-    } else {
-      //for adding;
-      dispatch(
-        setCart({
-          ...modalData[0],
-          totalPrice: getDiscountedAmount(
-            totalPrice,
-            product?.discount,
-            product?.discount_type,
-            product?.store_discount,
-            quantity
-          ),
-          quantity: quantity,
-          food_variations: getNewVariationForDispatch(),
-          selectedAddons: selectedAddons,
-          selectedOption: otherSelectedOption,
-          itemBasePrice: getDiscountedAmount(
-            calculateItemBasePrice(modalData[0], selectedOptions),
-            product?.discount,
-            product?.discount_type,
-            product?.store_discount,
-            quantity
-          ),
-          // selectedVariations: selectedVariations,
-        })
-      );
-      toast.success(t("Item added to cart"));
+      //dispatch()
     }
-    handleClose();
   };
 
+  const addOrUpdateToCartByDispatch = () => {
+    if (productUpdate) {
+      //for updating
+
+      let totalQty = 0;
+      const itemObject = {
+        cart_id: product?.cart_id,
+        guest_id: getGuestId(),
+        model: product?.available_date_starts ? "ItemCampaign" : "Item",
+        add_on_ids:
+          selectedAddons?.length > 0
+            ? selectedAddons?.map((add) => {
+                return add.id;
+              })
+            : [],
+        add_on_qtys:
+          selectedAddons?.length > 0
+            ? selectedAddons?.map((add) => {
+                totalQty += add.quantity;
+                return totalQty;
+              })
+            : [],
+        item_id: product?.id,
+        price: totalPrice,
+        quantity: quantity,
+        variation:
+          getNewVariationForDispatch()?.length > 0
+            ? getNewVariationForDispatch()?.map((variation) => {
+                return {
+                  name: variation.name,
+                  values: {
+                    label: handleValuesFromCartItems(variation.values),
+                  },
+                };
+              })
+            : [],
+      };
+
+      updateMutate(itemObject, {
+        onSuccess: updateCartSuccessHandler,
+        onError: onErrorResponse,
+      });
+    } else {
+      //for adding;
+      // dispatch(
+      //   setCart({
+      //     ...modalData[0],
+      //     totalPrice: getDiscountedAmount(
+      //       totalPrice,
+      //       product?.discount,
+      //       product?.discount_type,
+      //       product?.store_discount,
+      //       quantity
+      //     ),
+      //     quantity: quantity,
+      //     food_variations: getNewVariationForDispatch(),
+      //     selectedAddons: selectedAddons,
+      //     selectedOption: otherSelectedOption,
+      //     itemBasePrice: getDiscountedAmount(
+      //       calculateItemBasePrice(modalData[0], selectedOptions),
+      //       product?.discount,
+      //       product?.discount_type,
+      //       product?.store_discount,
+      //       quantity
+      //     ),
+      //     // selectedVariations: selectedVariations,
+      //   })
+      // );
+      let totalQty = 0;
+      const itemObject = {
+        guest_id: guestId,
+        model: modalData[0]?.available_date_starts ? "ItemCampaign" : "Item",
+        add_on_ids:
+          selectedAddons?.length > 0
+            ? selectedAddons?.map((add) => {
+                return add.id;
+              })
+            : [],
+        add_on_qtys:
+          selectedAddons?.length > 0
+            ? selectedAddons?.map((add) => {
+                totalQty += add.quantity;
+                return totalQty;
+              })
+            : [],
+        item_id: modalData[0]?.id,
+        price: totalPrice,
+        quantity: quantity,
+        variation:
+          getNewVariationForDispatch()?.length > 0
+            ? getNewVariationForDispatch()?.map((variation) => {
+                return {
+                  name: variation.name,
+                  values: {
+                    label: handleValuesFromCartItems(variation.values),
+                  },
+                };
+              })
+            : [],
+      };
+      mutate(itemObject, {
+        onSuccess: handleSuccess,
+        onError: onErrorResponse,
+      });
+    }
+  };
   const handleBuyOrOrderNow = (status) => {
     const product = getNewObj();
     if (status === "buy_now") {
@@ -664,7 +759,7 @@ const FoodDetailModal = ({
     } else {
       price = product?.price;
     }
-    if (selectedOptions.length > 0) {
+    if (selectedOptions?.length > 0) {
       selectedOptions?.forEach(
         (item) => (price += Number.parseInt(item?.optionPrice))
       );
@@ -752,6 +847,19 @@ const FoodDetailModal = ({
       setOtherSelectedOption([option]);
     }
   };
+
+  const handleRouteToStore = () => {
+    router.push({
+      pathname: `/store/[id]`,
+      query: {
+        id: modalData[0]?.store_id,
+        module_id: `${modalData[0]?.module_id}`,
+        module_type: getCurrentModuleType(),
+        store_zone_id: `${modalData[0].zone_id}`,
+      },
+    });
+  };
+
   return (
     <>
       <Modal open={open} onClose={handleModalClose} disableAutoFocus={true}>
@@ -797,6 +905,7 @@ const FoodDetailModal = ({
             addToWishlistHandler={addToWishlistHandler}
             removeFromWishlistHandler={removeFromWishlistHandler}
             isWishlisted={isWishlisted}
+            handleRouteToStore={handleRouteToStore}
           />
           <SimpleBar style={{ maxHeight: "30vh " }}>
             <Grid
@@ -893,6 +1002,8 @@ const FoodDetailModal = ({
                       addToCard={addToCard}
                       orderNow={orderNow}
                       router={router}
+                      isLoading={isLoading}
+                      updateIsLoading={updateIsLoading}
                     />
                   )}
                 {/*this check is for normal food if the food is not available but the schedule order is on*/}
@@ -903,6 +1014,7 @@ const FoodDetailModal = ({
                   ) &&
                   !modalData[0]?.available_date_starts && (
                     <AddOrderToCart
+                      isLoading={isLoading}
                       isInCart={isInCart}
                       product={product}
                       t={t}
@@ -912,6 +1024,7 @@ const FoodDetailModal = ({
                       isScheduled={
                         modalData[0].schedule_order ? "true" : "false"
                       }
+                      updateIsLoading={updateIsLoading}
                     />
                   )}
                 {/*this check is for campaign food if the food is available*/}
@@ -929,6 +1042,8 @@ const FoodDetailModal = ({
                       product={product}
                       orderNow={orderNow}
                       isCampaign
+                      isLoading={isLoading}
+                      updateIsLoading={updateIsLoading}
                     />
                   )}
               </Grid>

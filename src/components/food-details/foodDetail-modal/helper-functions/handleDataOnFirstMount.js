@@ -39,7 +39,12 @@ export const handleInitialTotalPriceVarPriceQuantitySet = (
       }
     });
   }
-  if (selectedOption.length > 0) {
-    setSelectedOptions(selectedOption);
+  if (productUpdate) {
+    setSelectedOptions(product?.selectedOption)
+  } else {
+    if (selectedOption.length > 0) {
+      setSelectedOptions(selectedOption);
+    }
   }
+
 };

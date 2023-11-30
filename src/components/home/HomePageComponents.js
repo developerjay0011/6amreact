@@ -18,6 +18,9 @@ import Shop from "./module-wise-components/ecommerce";
 import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import FoodModule from "./module-wise-components/food";
 import Parcel from "./module-wise-components/parcel/Index";
+import useGetGuest from "../../api-manage/hooks/react-query/guest/useGetGuest";
+import useGetAllCartList from "../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import { setCartList } from "../../redux/slices/cart";
 
 export const HomeComponentsWrapper = styled(Stack)(({ theme }) => ({
   width: "100%",
@@ -31,6 +34,7 @@ const HomePageComponents = ({ configData }) => {
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const router = useRouter();
+  const { search } = router.query
   const dispatch = useDispatch();
   let zoneid = undefined;
   if (typeof window !== "undefined") {
@@ -44,7 +48,9 @@ const HomePageComponents = ({ configData }) => {
     setWishListsData(response);
     dispatch(setWishList(response));
   };
+
   const { refetch } = useWishListGet(onSuccessHandler);
+
   useEffect(() => {
     if (token) {
       refetch();
@@ -53,6 +59,9 @@ const HomePageComponents = ({ configData }) => {
   useEffect(() => {
     window.scrollTo({ top, behavior: "smooth" });
   }, []);
+  const getModule = () => {
+    return JSON.parse(window.localStorage.getItem("module"));
+  };
 
   const getModuleWiseComponents = () => {
     switch (getCurrentModuleType()) {
@@ -68,6 +77,7 @@ const HomePageComponents = ({ configData }) => {
         return <Parcel configData={configData} />;
     }
   };
+
   return (
     <PushNotificationLayout>
       <CustomStackFullWidth>
@@ -82,7 +92,7 @@ const HomePageComponents = ({ configData }) => {
               height: "100%",
             }}
           >
-            <SearchWithTitle zoneid={zoneid} token={token} />
+            <SearchWithTitle zoneid={zoneid} token={token} query={router.query.search} />
           </CustomStackFullWidth>
         </CustomStackFullWidth>
         {/*SEARCH ARE HAPPENING hERE*/}

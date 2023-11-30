@@ -21,10 +21,20 @@ import { useWishListDelete } from "../../../api-manage/hooks/react-query/wish-li
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import moment from "moment";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
+import Loading from "../../custom-loading/Loading";
 
 const AddOrderToCart = (props) => {
-  const { isInCart, product, t, addToCard, orderNow, router, isScheduled } =
-    props;
+  const {
+    isInCart,
+    product,
+    t,
+    addToCard,
+    orderNow,
+    router,
+    isScheduled,
+    isLoading,
+    updateIsLoading
+  } = props;
   const [wishListCount, setWishListCount] = useState(
     product?.wishlist_count || 0
   );
@@ -97,12 +107,12 @@ const AddOrderToCart = (props) => {
             </Grid>
             <Grid item xs={6} sm={6} md={6}>
               {isInCart(product?.id) && (
-                <PrimaryButton onClick={() => addToCard()}>
-                  {t("Update to cart")}
+                <PrimaryButton onClick={() => addToCard()} >
+                  {updateIsLoading ?<Stack height="25px" alignItems="center" justifyContent="center"> <Loading /></Stack> : t("Update to cart")}
                 </PrimaryButton>
               )}
               {!isInCart(product?.id) && (
-                <PrimaryButton onClick={() => addToCard()}>
+                <PrimaryButton onClick={() => addToCard()} loading={isLoading}>
                   {t("Add to Cart")}
                 </PrimaryButton>
               )}
@@ -159,7 +169,7 @@ const AddOrderToCart = (props) => {
                   flexWrap="wrap"
                   gap="5px"
                 >
-                  <Typography>{t("Available Will Be")}</Typography>
+                  <Typography>{t("Available will be")}</Typography>
                   <Typography>{`${moment(product.available_time_starts, [
                     "HH:mm",
                   ]).format("hh:mm a")} - ${moment(
@@ -209,13 +219,13 @@ const AddOrderToCart = (props) => {
           </Grid>
           <Grid item xs={6} sm={6} md={6}>
             {isInCart(product?.id) && (
-              <PrimaryButton onClick={() => addToCard()}>
-                {t("Update to cart")}
+              <PrimaryButton onClick={() => addToCard()} sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}>
+                {updateIsLoading ?<Stack height="25px" alignItems="center" justifyContent="center"> <Loading /></Stack> : t("Update to cart")}
               </PrimaryButton>
             )}
             {!isInCart(product?.id) && (
-              <PrimaryButton onClick={() => addToCard()}>
-                {t("Add to cart")}
+              <PrimaryButton onClick={() => addToCard()} loading={isLoading} sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}>
+                {isLoading ?<Stack height="25px" alignItems="center" justifyContent="center"> <Loading /></Stack> : t("Add to Cart")}
               </PrimaryButton>
             )}
           </Grid>

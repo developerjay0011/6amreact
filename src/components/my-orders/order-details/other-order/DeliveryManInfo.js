@@ -7,6 +7,7 @@ import { t } from "i18next";
 import { useRouter } from "next/router";
 import { Stack } from "@mui/system";
 import { StoreChatButton } from "./StoreDetails";
+import {getToken} from "../../../../helper-functions/getToken";
 
 const DeliveryManInfo = ({ configData, deliveryManData }) => {
   const router = useRouter();
@@ -46,14 +47,14 @@ const DeliveryManInfo = ({ configData, deliveryManData }) => {
               image={deliveryManData?.image}
               fromDelivery="true"
             />
-            <StoreChatButton
-              variant="contained"
-              startIcon={!isSmall && <MessageSvg />}
-              onClick={handleClick}
-              sx={{ height: "42px" }}
+            {getToken() &&  <StoreChatButton
+                variant="contained"
+                startIcon={!isSmall && <MessageSvg />}
+                onClick={handleClick}
+                sx={{ height: "42px" }}
             >
               {isSmall ? <MessageSvg /> : t("See Chat History")}
-            </StoreChatButton>
+            </StoreChatButton>}
           </Stack>
         </Grid>
       </Grid>

@@ -59,6 +59,7 @@ const PricePreviewWithStock = (props) => {
     );
   };
   const handlePriceRange = (priceOne, priceTwo) => {
+
     return (
       <Typography
         marginTop="5px !important"
@@ -72,39 +73,74 @@ const PricePreviewWithStock = (props) => {
       >
         {state?.modalData?.[0]?.discount === 0 ? (
           <>
-            {`${getAmountWithSign(
-              getDiscountedAmount(
-                priceOne,
-                state.modalData[0]?.discount,
-                state.modalData[0]?.discount_type,
-                state.modalData[0]?.store_discount
-              )
-            )} - ${getAmountWithSign(
-              getDiscountedAmount(
-                priceTwo,
-                state.modalData[0]?.discount,
-                state.modalData[0]?.discount_type,
-                state.modalData[0]?.store_discount
-              )
-            )} `}
+            {priceOne > priceTwo ?(<>
+              {`${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceOne,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )} - ${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceTwo,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )} `}
+            </>):(<>
+              {`  ${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceTwo,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )}-${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceOne,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )} `}
+            </>)}
           </>
         ) : (
           <>
-            {`${getAmountWithSign(
-              getDiscountedAmount(
-                priceOne,
-                state.modalData[0]?.discount,
-                state.modalData[0]?.discount_type,
-                state.modalData[0]?.store_discount
-              )
+            {priceOne < priceTwo ? (<>{`${getAmountWithSign(
+                getDiscountedAmount(
+                    priceOne,
+                    state.modalData[0]?.discount,
+                    state.modalData[0]?.discount_type,
+                    state.modalData[0]?.store_discount
+                )
             )} - ${getAmountWithSign(
-              getDiscountedAmount(
-                priceTwo,
-                state.modalData[0]?.discount,
-                state.modalData[0]?.discount_type,
-                state.modalData[0]?.store_discount
-              )
-            )} `}
+                getDiscountedAmount(
+                    priceTwo,
+                    state.modalData[0]?.discount,
+                    state.modalData[0]?.discount_type,
+                    state.modalData[0]?.store_discount
+                )
+            )} `}</>):(<>
+              {` ${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceTwo,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )} -${getAmountWithSign(
+                  getDiscountedAmount(
+                      priceOne,
+                      state.modalData[0]?.discount,
+                      state.modalData[0]?.discount_type,
+                      state.modalData[0]?.store_discount
+                  )
+              )}`}
+            </>)}
+
             <Typography
               variant="body1"
               marginLeft="8px"
@@ -112,9 +148,13 @@ const PricePreviewWithStock = (props) => {
               color={theme.palette.customColor.textGray}
               sx={{ fontSize: { xs: "13px", sm: "16px" } }}
             >
-              <del>{`${getAmountWithSign(priceOne)} - ${getAmountWithSign(
-                priceTwo
-              )}`}</del>
+              <del>
+                {priceOne <priceTwo ?(<> {`${getAmountWithSign(priceOne)} - ${getAmountWithSign(
+                    priceTwo
+                )}`}</>):(<> {` ${getAmountWithSign(
+                    priceTwo
+                )}-${getAmountWithSign(priceOne)} `}</>)}
+               </del>
             </Typography>
           </>
         )}

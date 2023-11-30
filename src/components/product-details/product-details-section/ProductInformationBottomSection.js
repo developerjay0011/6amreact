@@ -25,6 +25,9 @@ import { removeWishListItem } from "../../../redux/slices/wishList";
 import { isAvailable } from "../../../utils/CustomFunctions";
 import NotAvailableCard from "./NotAvailableCard";
 import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
+import Loading from "../../custom-loading/Loading";
+import {onErrorResponse} from "../../../api-manage/api-error-response/ErrorResponses";
+import {getItemObject} from "./ProductInformation";
 export const BottomStack = styled(Stack)(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
     boxShadow: "0px -4px 4px 0px rgba(0, 0, 0, 0.05)",
@@ -44,9 +47,11 @@ const ProductInformationBottomSection = ({
   setWishListCount,
   cartItemQuantity,
   handleModalClose,
+  isLoading,
+  t,addToCartMutate,updateIsLoading
 
-  t,
 }) => {
+
   const theme = useTheme();
   const { cartList } = useSelector((state) => state.cart);
   const { wishLists } = useSelector((state) => state.wishList);
@@ -60,7 +65,7 @@ const ProductInformationBottomSection = ({
     );
 
   const isInCart = (id) => {
-    if (cartList.length > 0) {
+    if (cartList?.length > 0) {
       const isInCart = cartList?.find(
         (item) =>
           item?.id === id &&
@@ -77,6 +82,8 @@ const ProductInformationBottomSection = ({
     }
   };
   const router = useRouter();
+
+
   const handleRedirect = () => {
     if (productDetailsData?.isCampaignItem) {
       dispatchRedux(setCampaignItemList(productDetailsData));
@@ -91,15 +98,15 @@ const ProductInformationBottomSection = ({
       //   dispatchRedux(setCart(productDetailsData));
       // }
       router.push(
-        {
-          pathname: "/checkout",
-          query: {
-            page: "buy_now",
-            // id: productDetailsData?.id,
+          {
+            pathname: "/checkout",
+            query: {
+              page: "buy_now",
+              // id: productDetailsData?.id,
+            },
           },
-        },
-        undefined,
-        { shallow: true }
+          undefined,
+          { shallow: true }
       );
     }
   };
@@ -125,7 +132,7 @@ const ProductInformationBottomSection = ({
       }
     } else {
       handleRedirect();
-      handleModalClose();
+
     }
   };
   const isInWishList = (id) => {
@@ -150,15 +157,15 @@ const ProductInformationBottomSection = ({
   };
   useEffect(() => {}, [wishListCount]);
 
-  const handleVariationAvailability = (checkFor) => {
+  const handleVariationAvailability = (checkFor,cartItem) => {
     if (productDetailsData?.selectedOption?.length > 0) {
       if (productDetailsData?.selectedOption?.[0]?.stock === 0) {
         variationErrorToast();
       } else {
-        checkFor === "add" ? addToCard() : handleUpdateToCart();
+        checkFor === "add" ? addToCard() : handleUpdateToCart(cartItem);
       }
     } else {
-      checkFor === "add" ? addToCard() : handleUpdateToCart();
+      checkFor === "add" ? addToCard() : handleUpdateToCart(cartItem);
     }
   };
 
@@ -234,15 +241,16 @@ const ProductInformationBottomSection = ({
                 sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
                 disabled={productDetailsData?.stock === 0}
               >
-                {t("Add to Cart")}
+                {isLoading ? <Loading /> : t("Add to Cart")}
               </PrimaryButton>
             )}
           {isInCart(productDetailsData?.id) && (
             <PrimaryButton
-              onClick={() => handleVariationAvailability("update")}
+              onClick={() => handleVariationAvailability("update",isInCart(productDetailsData?.id))}
               sx={{ width: 200, fontSize: { xs: "12px", md: "14px" } }}
             >
-              {t("Update To Cart")}
+              {updateIsLoading ? <Loading/> : t("Update To Cart")}
+
             </PrimaryButton>
           )}
         </>

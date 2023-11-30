@@ -99,6 +99,7 @@ const NearbyStoreCard = (props) => {
   const { configData, item } = props;
   const { wishLists } = useSelector((state) => state.wishList);
   const [isWishlisted, setIsWishlisted] = useState(false);
+  const currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
   const moduleId = JSON.parse(window.localStorage.getItem("module"))?.id;
   const classes = textWithEllipsis();
   const { t } = useTranslation();
@@ -122,6 +123,8 @@ const NearbyStoreCard = (props) => {
       query: {
         id: `${item?.slug ? item?.slug : item?.id}`,
         module_id: `${moduleId}`,
+        // lat: currentLocation?.lat,
+        // lng: currentLocation?.lng,
         distance: item.distance,
       },
     });

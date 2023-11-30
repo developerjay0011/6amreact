@@ -158,6 +158,7 @@ const ChatMessage = (props) => {
 									? theme.palette.neutral[100]
 									: theme.palette.text.primary
 							}
+							sx={{ wordBreak: "break-word"}}
 							align={authorType === userType ? "right" : "left"}
 						>
 							{body ? body : ""}

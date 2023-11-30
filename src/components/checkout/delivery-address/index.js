@@ -29,10 +29,11 @@ import { useDispatch, useSelector } from "react-redux";
 import AddNewAddressButton from "../../address/add-new-address/AddNewAddressButton";
 import { setOpenAddressModal } from "../../../redux/slices/addAddress";
 import CheckOutSelectedAddress from "../item-checkout/CheckOutSelectedAddress";
+import CheckoutSelectedAddressGuest from "../item-checkout/CheckoutSelectedAddressGuest";
 
 const getZoneWiseAddresses = (addresses, restaurantId) => {
   const newArray = [];
-  addresses.forEach(
+  addresses?.forEach(
     (item) => item.zone_ids.includes(restaurantId) && newArray.push(item)
   );
   return newArray;
@@ -45,6 +46,7 @@ const DeliveryAddress = ({
   renderOnNavbar,
   configData,
   storeZoneId,
+  orderType,
 }) => {
   const theme = useTheme();
   const { t } = useTranslation();
@@ -55,6 +57,8 @@ const DeliveryAddress = ({
   const { profileInfo } = useSelector((state) => state.profileInfo);
   const [openSaveAddress, setOpenSaveAddress] = useState(false);
   const [editAddress, setEditAddress] = useState(null);
+  const token = localStorage.getItem("token");
+
 
   const saveAddressModalClose = () => {
     setOpenSaveAddress(false);
@@ -67,7 +71,7 @@ const DeliveryAddress = ({
     if (storeZoneId) {
       const newObj = {
         ...addressData,
-        addresses: getZoneWiseAddresses(addressData.addresses, storeZoneId),
+        addresses: getZoneWiseAddresses(addressData?.addresses, storeZoneId),
       };
 
       setData(newObj);
@@ -95,15 +99,16 @@ const DeliveryAddress = ({
     let formData = {
       address: address?.address,
       address_type: address?.address_type,
-      contact_person_name: personName,
+      contact_person_name: `${profileInfo?.f_name} ${profileInfo.l_name}`,
       contact_person_number: profileInfo?.phone,
       latitude: address?.lat,
       longitude: address?.lng,
       additional_information: "",
-      house: state.houseNumber,
-      floor: state.floor,
-    };
+      house: state?.houseNumber,
+      floor: state?.floor,
+      road: state?.streetNumber,
 
+    };
     mutate(formData, {
       onSuccess: (response) => {
         toast.success(response?.message);
@@ -124,10 +129,10 @@ const DeliveryAddress = ({
         pt={{ xs: "18px", md: "0px" }}
         pb={{ xs: "8px", md: "0px" }}
       >
-        {renderOnNavbar !== "true" && (
+        {renderOnNavbar !== "true" && orderType!=="take_away" && (
           <DeliveryCaption>{t("Delivery Addresses")}</DeliveryCaption>
         )}
-        {renderOnNavbar !== "true" && (
+        {token && renderOnNavbar !== "true" && orderType!=="take_away" && (
           <AddNewAddressButton
             align="right"
             handleAddressModal={handleAddressModal}
@@ -161,34 +166,52 @@ const DeliveryAddress = ({
           />
         </>
       ) : (
-        <Stack>
-          <CheckOutSelectedAddress
-            address={address}
-            refetch={refetch}
-            configData={configData}
-            editAddress={editAddress}
-            setEditAddress={setEditAddress}
-          />
-          <IconButton
-            sx={{ width: "150px" }}
-            onClick={() => setOpenSaveAddress(true)}
-          >
-            <Typography
-              fontSize="14px"
-              fontWeight="400"
-              color={theme.palette.primary.main}
-            >
-              {t("View Saved Address")}
-            </Typography>
-          </IconButton>
-        </Stack>
+        <>
+          {token && orderType !== "take_away" ? (
+            <Stack>
+              <CheckOutSelectedAddress
+                address={address}
+                refetch={refetch}
+                configData={configData}
+                editAddress={editAddress}
+                setEditAddress={setEditAddress}
+              />
+              <IconButton
+                sx={{ width: "150px" }}
+                onClick={() => setOpenSaveAddress(true)}
+              >
+                <Typography
+                  fontSize="14px"
+                  fontWeight="400"
+                  color={theme.palette.primary.main}
+                >
+                  {t("View Saved Address")}
+                </Typography>
+              </IconButton>
+            </Stack>
+          ) : (
+            <>{!token &&
+              <Stack>
+                <CheckoutSelectedAddressGuest
+                  address={address}
+                  configData={configData}
+                  editAddress={editAddress}
+                  setEditAddress={setEditAddress}
+                  orderType={orderType}
+                />
+              </Stack>
+            }
+            </>
+          )}
+        </>
       )}
-      {renderOnNavbar !== "true" && (
+      {renderOnNavbar !== "true" && token && orderType!=="take_away" && (
         <AdditionalAddresses
           t={t}
           additionalInformationDispatch={dispatch}
           additionalInformationStates={state}
           saveAddress={saveAddress}
+          address={address}
         />
       )}
 

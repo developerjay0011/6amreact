@@ -5,10 +5,14 @@ import {
   onErrorResponse,
   onSingleErrorResponse,
 } from "../../../api-error-response/ErrorResponses";
+import { getToken } from "../../../../helper-functions/getToken";
 
 const getData = async () => {
-  const { data } = await MainApi.get(user_info_api);
-  return data;
+  const userToken = getToken();
+  if (userToken) {
+    const { data } = await MainApi.get(user_info_api);
+    return data;
+  }
 };
 
 export default function useGetUserInfo(handleSuccess) {

@@ -28,6 +28,7 @@ import CustomModal from "../../modal";
 import AcceptTermsAndConditions from "../AcceptTermsAndConditions";
 import OtpForm from "./OtpForm";
 import SignUpValidation from "./SignUpValidation";
+import {getGuestId} from "../../../helper-functions/getToken";
 // import CustomModal from "../../modal";
 // import OtpForm from "./OtpForm";
 // import { useVerifyPhone } from "../../../api-manage/hooks/auth/useVerifyPhone";
@@ -40,6 +41,7 @@ const SignUp = () => {
 	const [otpData, setOtpData] = useState({ phone: "" });
 	const [mainToken, setMainToken] = useState(null);
 	const [openOtpModal, setOpenOtpModal] = useState(false);
+	const guestId=getGuestId()
 	const signUpFormik = useFormik({
 		initialValues: {
 			f_name: "",
@@ -118,7 +120,8 @@ const SignUp = () => {
 	};
 	const { mutate, isLoading, error } = useSignUp();
 	const formSubmitHandler = (values) => {
-		mutate(values, {
+		const nweValues={...values,guest_id:guestId}
+		mutate(nweValues, {
 			onSuccess: async (response) => {
 				setDefaultLanguage();
 				if (configData?.customer_verification) {

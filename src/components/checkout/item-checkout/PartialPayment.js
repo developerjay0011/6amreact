@@ -17,6 +17,7 @@ const PartialPayment = ({
   removePartialPayment,
   switchToWallet,
   remainingBalance,
+  payableAmount,
 }) => {
   const theme = useTheme();
   return (
@@ -83,14 +84,18 @@ const PartialPayment = ({
                 {t("Applied !")}
               </Typography>
             </Stack>
-            {remainingBalance && !usePartialPayment && (
-              <Typography fontSize="12px">
-                {t("Remaining Wallet Balance")}:
-                <Typography component="span" fontSize="12px">
-                  {getAmountWithSign(remainingBalance)}
-                </Typography>
-              </Typography>
-            )}
+            {walletBalance > payableAmount ? (
+              <>
+                {remainingBalance && !usePartialPayment && (
+                  <Typography fontSize="12px">
+                    {t("Remaining Wallet Balance")}:
+                    <Typography component="span" fontSize="12px">
+                      {getAmountWithSign(remainingBalance)}
+                    </Typography>
+                  </Typography>
+                )}
+              </>
+            ) : null}
           </Stack>
         )}
         {!usePartialPayment && !switchToWallet ? (

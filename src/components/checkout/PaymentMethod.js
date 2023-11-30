@@ -1,19 +1,5 @@
 import React from "react";
-import {
-  CustomPaperBigCard,
-  CustomStackFullWidth,
-} from "../../styled-components/CustomStyles.style";
-import { Card, Typography } from "@mui/material";
-import { Stack } from "@mui/system";
-import { t } from "i18next";
-import PaymentMethodCard from "./PaymentMethodCard";
-import digitalPayment from "./assets/payment.png";
-import cashOnDelivery from "./assets/cod.png";
-import wallet from "./assets/paymentWallet.png";
-import { PrimaryButton } from "../Map/map.style";
-import LoadingButton from "@mui/lab/LoadingButton";
-import { DeliveryCaption } from "./CheckOut.style";
-import AllDigitalPaymentMethod from "./item-checkout/AllDigitalPaymentMethod";
+import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import ParcelPaymentMethod from "./item-checkout/ParcelPaymentMethod";
 import OtherModulePayment from "./item-checkout/OtherModulePayment";
 
@@ -29,13 +15,13 @@ const PaymentMethod = ({
   orderType,
   parcel,
   setOpenModel,
-
+  offlinePaymentOptions,
   usePartialPayment,
+  setPaymentMethodImage,
+  setSwitchToWallet,
 }) => {
   return (
-    <CustomStackFullWidth spacing={2} p="25px">
-      <DeliveryCaption parcel={parcel}>{t("Payment Method")}</DeliveryCaption>
-
+    <CustomStackFullWidth spacing={2} p={parcel === "true" ? "0px" : "25px"}>
       {parcel === "true" ? (
         <ParcelPaymentMethod
           setPaymentMethod={setPaymentMethod}
@@ -47,6 +33,8 @@ const PaymentMethod = ({
           paidBy={paidBy}
           orderPlace={orderPlace}
           isLoading={isLoading}
+          offlinePaymentOptions={offlinePaymentOptions}
+          setPaymentMethodImage={setPaymentMethodImage}
         />
       ) : (
         <OtherModulePayment
@@ -58,6 +46,9 @@ const PaymentMethod = ({
           setOpenModel={setOpenModel}
           usePartialPayment={usePartialPayment}
           forprescription={forprescription}
+          offlinePaymentOptions={offlinePaymentOptions}
+          setPaymentMethodImage={setPaymentMethodImage}
+          setSwitchToWallet={setSwitchToWallet}
         />
       )}
     </CustomStackFullWidth>

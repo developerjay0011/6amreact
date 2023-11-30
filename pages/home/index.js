@@ -6,7 +6,7 @@ import ModuleWiseLayout from "../../src/components/module-wise-layout";
 import Router from "next/router";
 import { setConfigData } from "../../src/redux/slices/configData";
 import ZoneGuard from "../../src/components/route-guard/ZoneGuard";
-import { getServerSideProps } from "../index";
+// import { getServerSideProps } from "../index";
 import SEO from "../../src/components/seo";
 
 const Home = ({ configData, landingPageData }) => {
@@ -31,12 +31,15 @@ const Home = ({ configData, landingPageData }) => {
   return (
     <>
       <CssBaseline />
-      <SEO
-        title={configData ? `Home` : "Loading..."}
+    
+      
+      <MainLayout configData={configData} landingPageData={landingPageData}>
+      {configData && <SEO
+        title="Home"
         image={`${configData?.base_urls?.business_logo_url}/${configData?.fav_icon}`}
         businessName={configData?.business_name}
-      />
-      <MainLayout configData={configData} landingPageData={landingPageData}>
+        configData={configData}
+      />}
         <ModuleWiseLayout configData={configData} />
       </MainLayout>
     </>
@@ -44,5 +47,50 @@ const Home = ({ configData, landingPageData }) => {
 };
 
 export default Home;
+
+
 Home.getLayout = (page) => <ZoneGuard>{page}</ZoneGuard>;
-export { getServerSideProps };
+
+export const getServerSideProps = async (context) => {
+  const { req, res } = context;
+  const language = req.cookies.languageSetting;
+
+  const configRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/config`,
+    {
+      method: "GET",
+      headers: {
+        "X-software-id": 33571750,
+        "X-server": "server",
+        "X-localization": language,
+        origin: process.env.NEXT_CLIENT_HOST_URL,
+      },
+    }
+  );
+  const config = await configRes.json();
+  const landingPageRes = await fetch(
+    `${process.env.NEXT_PUBLIC_BASE_URL}/api/v1/react-landing-page`,
+    {
+      method: "GET",
+      headers: {
+        "X-software-id": 33571750,
+        "X-server": "server",
+        "X-localization": language,
+        origin: process.env.NEXT_CLIENT_HOST_URL,
+      },
+    }
+  );
+  const landingPageData = await landingPageRes.json();
+  // Set cache control headers for 1 hour (3600 seconds)
+  res.setHeader(
+    "Cache-Control",
+    "public, s-maxage=3600, stale-while-revalidate"
+  );
+
+  return {
+    props: {
+      configData: config,
+      landingPageData: landingPageData,
+    },
+  };
+};

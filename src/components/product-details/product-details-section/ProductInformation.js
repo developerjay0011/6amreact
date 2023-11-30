@@ -7,12 +7,15 @@ import IncrementDecrementManager from "./IncrementDecrementManager";
 import ProductInformationBottomSection from "./ProductInformationBottomSection";
 
 import { ACTION, initialState, reducer } from "./states";
-import { setCart, setUpdateItemToCart } from "../../../redux/slices/cart";
+import { setCart, setCartList, setUpdateItemToCart } from "../../../redux/slices/cart";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import CustomModal from "../../modal";
 import CartClearModal from "./CartClearModal";
-import { handleInitialTotalPriceVarPriceQuantitySet } from "./helperFunction";
+import {
+  handleInitialTotalPriceVarPriceQuantitySet,
+  handleValuesFromCartItems,
+} from "./helperFunction";
 import {
   not_logged_in_message,
   out_of_limits,
@@ -34,7 +37,22 @@ import OrganicTag from "../../organic-tag";
 import InStockTag from "../InStockTag";
 import CategoryInformation from "../CategoryInformation";
 import { ReadMore } from "../../ReadMore";
-
+import useAddCartItem from "../../../api-manage/hooks/react-query/add-cart/useAddCartItem";
+import { getGuestId } from "../../../helper-functions/getToken";
+import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
+import useCartItemUpdate from "../../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
+export const getItemObject = (productData) => {
+  return {
+    guest_id: getGuestId(),
+    model: productData?.available_date_starts ? "ItemCampaign" : "Item",
+    add_on_ids: [],
+    add_on_qtys: [],
+    item_id: productData?.id,
+    price: productData?.totalPrice,
+    quantity: productData?.quantity,
+    variation: productData?.selectedOption,
+  };
+};
 const ProductInformation = ({
   productDetailsData,
   productUpdate,
@@ -47,6 +65,7 @@ const ProductInformation = ({
   const [wishListCount, setWishListCount] = useState(
     productDetailsData?.whislists_count
   );
+  const currentLocation = JSON.parse(localStorage.getItem("currentLatLng"));
   const [clearCartModal, setClearCartModal] = React.useState(false);
   const { cartList: aliasCartList } = useSelector((state) => state.cart);
   //this aliasCartList has been added so that we can use cartList as per module wise.
@@ -54,16 +73,20 @@ const ProductInformation = ({
   const dispatchRedux = useDispatch();
   const [state, dispatch] = useReducer(reducer, initialState);
   const { t } = useTranslation();
+  const { mutate, isLoading } = useAddCartItem();
+  const { mutate: updateMutate, isLoading: updateIsLoading } = useCartItemUpdate();
   const handleClearCartModalOpen = () => setClearCartModal(true);
+
   const handleClose = (value) => {
     if (value === "add-item") {
-      dispatchRedux(
-        setCart({
-          ...state.modalData[0],
-        })
-      );
+      const itemObject = getItemObject(state?.modalData[0]);
+      mutate(itemObject, {
+        onSuccess: handleSuccess,
+        onError: onErrorResponse,
+      });
+    } else {
+      setClearCartModal(false);
     }
-    setClearCartModal(false);
   };
 
   useEffect(() => {
@@ -119,7 +142,7 @@ const ProductInformation = ({
   const decrementQuantity = () => {
     dispatch({ type: ACTION.decrementQuantity });
   };
-  console.log("fff", state.modalData[0]);
+
   const incrementQuantity = () => {
     if (state.modalData[0]?.stock > state.modalData[0]?.quantity) {
       if (productDetailsData?.maximum_cart_quantity) {
@@ -138,15 +161,34 @@ const ProductInformation = ({
       toast.error(t(out_of_stock));
     }
   };
-
+  const handleSuccess = (res) => {
+    if (res) {
+      let product = {};
+      res?.forEach((item) => {
+        product = {
+          ...item?.item,
+          cartItemId: item?.id,
+          quantity: item?.quantity,
+          totalPrice: item?.price,
+          selectedOption: item?.variation,
+        };
+      });
+      dispatchRedux(
+        setCart({
+          ...product,
+        })
+      );
+      toast.success(t("Item added to cart"));
+      handleModalClose?.();
+      setClearCartModal(false);
+    }
+  };
   const handleAddToCartOnDispatch = () => {
-    dispatchRedux(
-      setCart({
-        ...state.modalData[0],
-      })
-    );
-    toast.success(t("Item added to cart"));
-    handleModalClose?.();
+    const itemObject = getItemObject(state?.modalData[0]);
+    mutate(itemObject, {
+      onSuccess: handleSuccess,
+      onError: onErrorResponse,
+    });
   };
 
   const addToCard = () => {
@@ -167,7 +209,38 @@ const ProductInformation = ({
     }
   };
 
-  const handleUpdateToCart = () => {
+  const updateCartSuccessHandler = (res) => {
+    if (res) {
+
+      const pp = res?.map((item) => {
+        const newItem = {
+          ...item?.item,
+          cartItemId: item?.id,
+          quantity: item?.quantity,
+          totalPrice: item?.price,
+          selectedOption: item?.variation,
+        };
+
+        return newItem;
+      });
+      //
+      // let product = {};
+      // res?.forEach((item) => {
+      //   product = {
+      //     ...item?.item,
+      //     cartItemId: item?.id,
+      //     quantity: item?.quantity,
+      //     totalPrice: item?.price,
+      //     selectedOption: item?.variation,
+      //   };
+      // });
+      dispatchRedux(setCartList(pp));
+      toast.success(t(product_update_to_cart_message));
+      handleModalClose?.();
+    }
+  }
+
+  const handleUpdateToCart = (cartItem) => {
     if (
       JSON.stringify(productDetailsData) === JSON.stringify(state.modalData[0])
     ) {
@@ -175,9 +248,26 @@ const ProductInformation = ({
         icon: "⚠️",
       });
     } else {
-      dispatchRedux(setUpdateItemToCart(state.modalData[0]));
-      toast.success(t(product_update_to_cart_message));
-      handleModalClose?.();
+      const itemIsInCart = cartList.find(
+        (item) =>
+          item?.id === productDetailsData?.id &&
+          JSON.stringify(item?.selectedOption?.[0]) === JSON.stringify(state.modalData[0]?.selectedOption?.[0])
+      );
+      const cartItemObject = {
+        cart_id: itemIsInCart?.cartItemId,
+        guest_id: getGuestId(),
+        model: state.modalData[0]?.available_date_starts ? "ItemCampaign" : "Item",
+        add_on_ids: [],
+        add_on_qtys: [],
+        item_id: state.modalData[0]?.id,
+        price: state.modalData[0]?.totalPrice,
+        quantity: state.modalData[0]?.quantity,
+        variation: state.modalData[0]?.selectedOption,
+      }
+      updateMutate(cartItemObject, {
+        onSuccess: updateCartSuccessHandler,
+        onError: onErrorResponse,
+      });
       if (productUpdate) {
         handleModalClose?.();
       }
@@ -223,6 +313,8 @@ const ProductInformation = ({
               query: {
                 id: `${state.modalData[0]?.store_id}`,
                 module_id: `${getModuleId()}`,
+                lat: currentLocation?.lat,
+                lng: currentLocation?.lng,
               },
             }}
           >
@@ -346,6 +438,9 @@ const ProductInformation = ({
             cartItemQuantity={state?.modalData[0]?.quantity}
             t={t}
             handleModalClose={handleModalClose}
+            isLoading={isLoading}
+            addToCartMutate={mutate}
+            updateIsLoading={updateIsLoading}
           />
           {!isSmall && (
             <CustomStackFullWidth sx={{ mt: ".5rem" }}>

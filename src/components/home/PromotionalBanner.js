@@ -34,7 +34,7 @@ export const CustomButton = styled(Button)(({ theme }) => ({
 	marginTop: "10px",
 }));
 
-const PromotionalBanner = (props) => {
+const PromotionalBanner = ({ bannerData }) => {
 	const { t } = useTranslation();
 	const data = {
 		img: promotionalBanner,
@@ -43,15 +43,18 @@ const PromotionalBanner = (props) => {
 		subHeader: "We provide best quality & fresh grocery items",
 	};
 	return (
-		<BannerWrapper>
-			<CustomImageContainer
-				src={data?.img?.src}
-				height="100%"
-				width="100%"
-				borderRadius={IsSmallScreen() ? "0px" : ".7rem"}
-				objectFit="cover"
-			/>
-		</BannerWrapper>
+		<>{bannerData?.bottom_section_banner &&
+			<BannerWrapper>
+				<CustomImageContainer
+					src={`${bannerData?.promotional_banner_url}/${bannerData?.bottom_section_banner}`}
+					height="100%"
+					width="100%"
+					// borderRadius={IsSmallScreen() ? "0px" : ".7rem"}
+					objectFit="cover"
+				/>
+			</BannerWrapper>
+		}
+		</>
 	);
 };
 

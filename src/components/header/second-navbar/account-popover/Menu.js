@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, {useEffect, useState} from "react";
 import { Box } from "@mui/system";
 import {
   Divider,
@@ -19,22 +19,28 @@ import toast from "react-hot-toast";
 import { logoutSuccessFull } from "../../../../utils/toasterMessages";
 import { menuData } from "./menuData";
 import { useRouter } from "next/router";
+import {getGuestId} from "../../../../helper-functions/getToken";
+import useGetAllCartList from "../../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import {setCartList} from "../../../../redux/slices/cart";
 
-const Menu = ({ onClose }) => {
+const Menu = ({ onClose,cartListRefetch }) => {
   const { t } = useTranslation();
   const [openModal, setOpenModal] = useState(false);
   const [isLogoutLoading, setIsLogoutLoading] = useState(false);
   const { configData } = useSelector((state) => state.configData);
   const dispatch = useDispatch();
   const router = useRouter();
+
   const handleLogout = async () => {
     setIsLogoutLoading(true);
     try {
       setTimeout(() => {
+        cartListRefetch()
         dispatch(setLogoutUser(null));
         localStorage.removeItem("token");
         onClose?.();
         toast.success(t(logoutSuccessFull));
+
         router.push("/home");
         setOpenModal(false);
 
@@ -56,12 +62,19 @@ const Menu = ({ onClose }) => {
     }
   };
   const handleClick = (item) => {
-    router.push({
-      pathname: "/profile",
-      query: {
-        page: item?.name,
-      },
-    });
+    if(item?.id===10){
+      router.push({
+        pathname: "/track-order",
+      });
+    }else{
+      router.push({
+        pathname: "/profile",
+        query: {
+          page: item?.name,
+        },
+      });
+    }
+
   };
   return (
     <Box>

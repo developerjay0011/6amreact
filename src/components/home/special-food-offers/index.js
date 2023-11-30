@@ -17,39 +17,9 @@ import Link from "next/link";
 import { getModuleId } from "../../../helper-functions/getModuleId";
 import ProductCard from "../../cards/ProductCard";
 import { NextFood, PrevFood } from "../best-reviewed-items/SliderSettings";
-import { getLanguage } from "../../../helper-functions/getLanguage";
+import { getLanguage } from "../../../helper-functions/getLanguage"
 import { RTL } from "../../rtl";
-
-const SpecialOfferCardShimmer = () => {
-  return (
-    <Stack
-      p="10px"
-      alignItems="center"
-      justifyContent="center"
-      sx={{
-        borderRadius: "6px",
-        backgroundColor: (theme) => theme.palette.background.default,
-        width: "210px",
-      }}
-      spacing={1}
-    >
-      <Card sx={{ height: "180px", width: "100%" }}>
-        <Skeleton variant="ractangle" height="100%" width="100%" />
-      </Card>
-      <CustomStackFullWidth alignItems="flex-start" justifyContent="flex-start">
-        <Skeleton variant="text" width="100px" />
-      </CustomStackFullWidth>
-      <CustomStackFullWidth
-        direction="row"
-        alignItems="center"
-        justifyContent="space-between"
-      >
-        <Skeleton variant="text" width="80px" />
-        <Skeleton variant="text" width="40px" />
-      </CustomStackFullWidth>
-    </Stack>
-  );
-};
+import SpecialOfferCardShimmer from "../../Shimmer/SpecialOfferCardSimmer";
 
 const SpecialFoodOffers = ({ title }) => {
   const { t } = useTranslation();
@@ -65,7 +35,7 @@ const SpecialFoodOffers = ({ title }) => {
   }, []);
   const settings = {
     dots: false,
-    infinite: true,
+    infinite: data?.products?.length > 5 ? true : false,
     slidesToShow: isLoading ? 1 : 5,
     slidesToScroll: 1,
     cssEase: "ease-in-out",
@@ -81,6 +51,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 4,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 4 ? true : false,
         },
       },
       {
@@ -88,6 +59,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 3.5,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 3 ? true : false,
         },
       },
       {
@@ -95,6 +67,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 3.2,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 3 ? true : false,
         },
       },
       {
@@ -102,6 +75,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 3,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 3 ? true : false,
         },
       },
       {
@@ -109,6 +83,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 2,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 2 ? true : false,
         },
       },
       {
@@ -116,6 +91,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 1.6,
           slidesToScroll: 1,
+          infinite: data?.products?.length > 1 ? true : false,
         },
       },
       {
@@ -123,6 +99,7 @@ const SpecialFoodOffers = ({ title }) => {
         settings: {
           slidesToShow: 1.5,
           slidesToScroll: 1.5,
+          infinite: data?.products?.length > 1 ? true : false,
         },
       },
     ],
@@ -191,7 +168,7 @@ const SpecialFoodOffers = ({ title }) => {
             <>
               {isLoading ? (
                 <Slider {...settings}>
-                  {[...Array(2)].map((item, index) => {
+                  {[...Array(5)].map((item, index) => {
                     return <SpecialOfferCardShimmer key={index} />;
                   })}
                 </Slider>

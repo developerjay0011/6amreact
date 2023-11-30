@@ -1,10 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable jsx-a11y/alt-text */
 /* eslint-disable react/jsx-no-undef */
-import { useTheme } from "@emotion/react";
+import {useTheme} from "@emotion/react";
 import {
   MenuItem,
   Select,
+  styled,
   Table,
   TableBody,
   TableCell,
@@ -12,17 +13,16 @@ import {
   TableHead,
   TableRow,
   Typography,
-  styled,
 } from "@mui/material";
-import { Box, Stack } from "@mui/system";
+import {Box, Stack} from "@mui/system";
 import moment from "moment";
 import Image from "next/image";
-import React, { useEffect, useState } from "react";
-import { useTranslation } from "react-i18next";
-import { useInView } from "react-intersection-observer";
+import React, {useEffect, useState} from "react";
+import {useTranslation} from "react-i18next";
+import {useInView} from "react-intersection-observer";
 import SimpleBar from "simplebar-react";
-import { data_limit } from "../../api-manage/ApiRoutes";
-import { getAmountWithSign } from "../../helper-functions/CardHelpers";
+import {data_limit} from "../../api-manage/ApiRoutes";
+import {getAmountWithSign} from "../../helper-functions/CardHelpers";
 import CustomDivider from "../CustomDivider";
 import DotSpin from "../DotSpin";
 import CustomEmptyResult from "../custom-empty-result";
@@ -30,6 +30,7 @@ import nodataimage from "../loyalty-points/assets/Search.svg";
 import TransactionShimmer from "./Shimmer";
 import greenCoin from "./img/green-coin.png";
 import yellowCoin from "./img/yellow-coin.png";
+
 export const transaction_options = [
   {
     label: "All Transaction",
@@ -140,8 +141,9 @@ const TransactionHistory = (props) => {
                     <Typography
                       variant="body1"
                       color={theme.palette.text.primary}
+                      textTransform="capitalize"
                     >
-                      {page == "loyalty" ? t("Points") : t("Amount")}
+                      {page == "loyalty" ? t("points") : t("Amount")}
                     </Typography>
                   </CustomTableCell>
                   <CustomTableCell>
@@ -214,7 +216,8 @@ const TransactionHistory = (props) => {
                               ? item?.debit
                               : item?.credit
                             : getAmountWithSign(
-                                item?.transaction_type === "point_to_wallet"
+                                item?.transaction_type === "point_to_wallet" ||
+                                  item?.transaction_type === "partial_payment"
                                   ? item?.debit
                                   : item?.credit + item?.admin_bonus
                               )}

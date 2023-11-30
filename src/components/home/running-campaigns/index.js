@@ -53,6 +53,7 @@ const RunningCampaigns = () => {
   const handleClose = () => {
     setOpenModal(false);
   };
+
   const getModuleWiseView = () => {
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
@@ -75,7 +76,16 @@ const RunningCampaigns = () => {
         );
       case ModuleTypes.ECOMMERCE:
         return (
-          <Pharmacy
+          <Grocery
+            runningCampaigns={runningCampaigns}
+            handleClick={handleClick}
+            configData={configData}
+            isFetching={isFetching}
+          />
+        );
+      case ModuleTypes.FOOD:
+        return (
+          <Grocery
             runningCampaigns={runningCampaigns}
             handleClick={handleClick}
             configData={configData}
@@ -90,10 +100,9 @@ const RunningCampaigns = () => {
         <SliderShimmer />
       ) : (
         <>
-          {/*need to remove the exclamatory mark*/}
           {runningCampaigns?.length > 0 ? (
             <HomeComponentsWrapper alignItems="flex-start" mt="30px">
-              {/*<H2 text="Just For You" />*/}
+              {runningCampaigns?.length > 0 && <H2 text="Just For You" />}
               <Box sx={{ width: "100%", mt: ".3rem" }}>
                 {getModuleWiseView()}
               </Box>

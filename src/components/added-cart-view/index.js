@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Drawer, Paper, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import { useSelector } from "react-redux";
@@ -20,10 +20,15 @@ import CartTotalPrice from "./CartTotalPrice";
 import { useTheme } from "@emotion/react";
 import { getAmountWithSign } from "../../helper-functions/CardHelpers";
 import { cartItemsTotalAmount } from "../../utils/CustomFunctions";
+import useGetAllCartList from "../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
+import { setCartList } from "../../redux/slices/cart";
+import DotSpin from "../DotSpin";
+import {Stack} from "@mui/system";
 
 const CardView = (props) => {
   const theme = useTheme();
-  const { sideDrawerOpen, setSideDrawerOpen, cartList } = props;
+  const { sideDrawerOpen, setSideDrawerOpen, cartList, refetch, isLoading } =
+    props;
   const { configData } = useSelector((state) => state.configData);
   const imageBaseUrl = configData?.base_urls?.item_image_url;
   const router = useRouter();
@@ -36,6 +41,7 @@ const CardView = (props) => {
       <CartContents
         cartList={getCartListModuleWise(cartList)}
         imageBaseUrl={imageBaseUrl}
+        refetch={refetch}
       />
     );
   };
@@ -65,14 +71,21 @@ const CardView = (props) => {
           title="Shopping Cart"
           closeHandler={closeHandler}
         />
-        {getCartListModuleWise(cartList)?.length === 0 ? (
-          <EmptyCart
-            cartList={getCartListModuleWise(cartList)}
-            setSideDrawerOpen={setSideDrawerOpen}
-          />
+        {isLoading ? (
+
+            <Stack height="214px" width="100%" justifyContent="center">
+              <DotSpin />
+            </Stack>
+        ) : getCartListModuleWise(cartList)?.length === 0 ? (
+
+            <EmptyCart
+                cartList={getCartListModuleWise(cartList)}
+                setSideDrawerOpen={setSideDrawerOpen}
+            />
         ) : (
-          getModuleWiseCartContent()
+            getModuleWiseCartContent()
         )}
+
         {getCartListModuleWise(cartList).length > 0 &&
           configData?.free_delivery_over && (
             <>
@@ -80,13 +93,17 @@ const CardView = (props) => {
                 configData={configData}
                 cartList={cartList}
               />
-              <CartTotalPrice cartList={getCartListModuleWise(cartList)} />
-              <CartActions
-                setSideDrawerOpen={setSideDrawerOpen}
-                cartList={getCartListModuleWise(cartList)}
-              />
             </>
           )}
+        {getCartListModuleWise(cartList).length > 0 && (
+          <>
+            <CartTotalPrice cartList={getCartListModuleWise(cartList)} />
+            <CartActions
+              setSideDrawerOpen={setSideDrawerOpen}
+              cartList={getCartListModuleWise(cartList)}
+            />
+          </>
+        )}
       </CustomStackFullWidth>
     </CustomSideDrawer>
   );

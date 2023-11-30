@@ -10,7 +10,7 @@ import TrackParcelFromHomePage from "../parcel/TrackParcelFromHomePage";
 
 const SearchWithTitle = (props) => {
   const moduleType = getCurrentModuleType();
-  const { zoneid, token, router } = props;
+  const { zoneid, token,query } = props;
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const { t } = useTranslation();
@@ -18,7 +18,7 @@ const SearchWithTitle = (props) => {
     switch (getCurrentModuleType()) {
       case ModuleTypes.GROCERY:
         return {
-          title: "Fresh food that deserve to eat",
+          title: "Fresh Item that deserve to eat",
           subTitle: "Get your groceries items delivered in less than an hour",
         };
       case ModuleTypes.PHARMACY:
@@ -84,6 +84,7 @@ const SearchWithTitle = (props) => {
           token={token}
           maxwidth="false"
           fullWidth
+          query={query}
         />
       ) : (
         <TrackParcelFromHomePage />

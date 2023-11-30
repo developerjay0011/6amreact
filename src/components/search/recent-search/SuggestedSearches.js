@@ -4,10 +4,7 @@ import {
   CustomStackFullWidth,
 } from "../../../styled-components/CustomStyles.style";
 import { Grid, Skeleton, Typography } from "@mui/material";
-import { Box, Stack } from "@mui/system";
-import CustomImageContainer from "../../CustomImageContainer";
-import badam from "./assets/badam.png";
-import store from "./assets/store.png";
+import { Stack } from "@mui/system";
 import SearchIcon from "@mui/icons-material/Search";
 import { Scrollbar } from "../../srollbar";
 
@@ -30,7 +27,7 @@ const SuggestedSearches = ({ t, data, handleKeyPress, isRefetching }) => {
                   {data?.items?.length > 0 && (
                     <Grid item xs={12}>
                       <CustomStackFullWidth spacing={2}>
-                        <Typography variant="h6">{t("Groceries")}</Typography>
+                        <Typography variant="h6">{t("Items")}</Typography>
                         {data?.items.map((item, index) => {
                           return (
                             <Stack

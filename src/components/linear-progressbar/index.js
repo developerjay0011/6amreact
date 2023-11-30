@@ -4,12 +4,12 @@ import LinearProgress, {
   linearProgressClasses,
 } from "@mui/material/LinearProgress";
 import { styled } from "@mui/material/styles";
-const BorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
-  height: 10,
+const BorderLinearProgress = styled(LinearProgress)(({ theme, height }) => ({
+  height: height ? height : 8,
   borderRadius: 5,
 }));
-const CustomLinearProgressbar = (props) => {
-  return <BorderLinearProgress variant="determinate" value={20} />;
+const CustomLinearProgressbar = ({value,height}) => {
+  return <BorderLinearProgress variant="determinate" value={value} height={height}/>;
 };
 
 CustomLinearProgressbar.propTypes = {};

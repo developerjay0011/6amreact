@@ -9,6 +9,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import { useTheme } from "@emotion/react";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import { getAmountWithSign } from "../../../helper-functions/CardHelpers";
+import { t } from "i18next";
 
 const CouponStackWithBorder = styled(CustomStackFullWidth)(({ theme }) => ({
   border: `1px solid ${theme.palette.primary.main}`,
@@ -39,14 +40,13 @@ const HadCouponBox = ({ removeCoupon, couponInfo }) => {
             color={theme.palette.neutral[400]}
             marginLeft="4px"
           >
-            Applied
+            {t("Applied")}
           </Typography>
         </Typography>
         <Typography fontSize="10px" color={theme.palette.neutral[400]}>
-          -{getAmountWithSign(couponInfo?.discount)}{" "}
           {couponInfo?.discount_type === "amount"
-            ? `(${getAmountWithSign(couponInfo?.discount)} off)`
-            : `(${couponInfo?.discount})%off`}
+            ? `${getAmountWithSign(couponInfo?.discount)} off`
+            : `${couponInfo?.discount}%off`}
         </Typography>
       </Stack>
       <IconButton onClick={removeCoupon}>

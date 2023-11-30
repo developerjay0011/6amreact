@@ -7,6 +7,7 @@ import { InformationGrid } from "../../myorders.style";
 import MessageSvg from "./MessageSvg";
 import StoreAndDeliveryManCommon from "./StoreAndDeliveryManCommon";
 import StoreFeature from "./StoreFeature";
+import {getToken} from "../../../../helper-functions/getToken";
 export const StoreChatButton = styled(Button)(({ theme }) => ({
   height: "42px",
   [theme.breakpoints.down("md")]: {
@@ -54,14 +55,15 @@ const StoreDetails = (props) => {
               imageUrl={configData?.base_urls?.store_cover_photo_url}
               image={storeData?.cover_photo}
             />
-            <StoreChatButton
-              variant="contained"
-              startIcon={!isSmall && <MessageSvg />}
-              onClick={handleClick}
-              sx={{ height: "42px" }}
+            {getToken() &&  <StoreChatButton
+                variant="contained"
+                startIcon={!isSmall && <MessageSvg />}
+                onClick={handleClick}
+                sx={{ height: "42px" }}
             >
               {isSmall ? <MessageSvg /> : t("See Chat History")}
-            </StoreChatButton>
+            </StoreChatButton>}
+
           </Stack>
 
           <Grid item md={12} xs={12}>

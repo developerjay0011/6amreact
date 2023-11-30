@@ -25,7 +25,6 @@ export const restoreSettings = () => {
       };
     }
   } catch (err) {
-    console.error(err);
     // If stored data is not a stringified JSON this will fail,
     // that's why we catch the error
   }

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { Typography, useMediaQuery, useTheme } from "@mui/material";
 import { useTranslation } from "react-i18next";
@@ -12,11 +12,13 @@ import { getAmountWithSign } from "../../helper-functions/CardHelpers";
 import { cartItemTotalDiscount } from "../../utils/CustomFunctions";
 
 const CartContents = (props) => {
-  const { cartList, imageBaseUrl } = props;
+  const { cartList, imageBaseUrl, refetch } = props;
+
   const { t } = useTranslation();
   const theme = useTheme();
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const discountContent = t("You have Saved");
+
   return (
     <CustomStackFullWidth
       justifyContent="flex-start"
@@ -51,6 +53,7 @@ const CartContents = (props) => {
                 key={item?.id}
                 cartItem={item}
                 imageBaseUrl={imageBaseUrl}
+                refetch={refetch}
               />
             );
           })}

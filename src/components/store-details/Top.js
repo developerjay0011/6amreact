@@ -1,12 +1,15 @@
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import FavoriteBorderIcon from "@mui/icons-material/FavoriteBorder";
 import {
-  Grid,
+  Grid, Skeleton,
   styled,
   Typography,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import Slider from "react-slick";
+import "slick-carousel/slick/slick-theme.css";
+import "slick-carousel/slick/slick.css";
 import { Box, Stack } from "@mui/system";
 import React, { useReducer } from "react";
 import toast from "react-hot-toast";
@@ -24,6 +27,7 @@ import {
 import {
   CustomBoxFullWidth,
   CustomStackFullWidth,
+  SliderCustom,
 } from "../../styled-components/CustomStyles.style";
 import { not_logged_in_message } from "../../utils/toasterMessages";
 import ClosedNowScheduleWise from "../closed-now/ClosedNowScheduleWise";
@@ -33,10 +37,12 @@ import LocationViewOnMap from "../Map/location-view/LocationViewOnMap";
 import { RoundedIconButton } from "../product-details/product-details-section/ProductsThumbnailsSettings";
 import H1 from "../typographies/H1";
 import Link from "next/link";
+import { useRouter } from "next/router";
 
 const ContentWrapper = styled(CustomBoxFullWidth)(({ theme }) => ({
   position: "relative",
   height: "250px",
+  width: "50%",
 }));
 
 const ImageWrapper = styled(Box)(({ theme, smallScreen }) => ({
@@ -65,7 +71,7 @@ const PrimaryWrapper = styled(Box)(({ theme, borderradius }) => ({
   cursor: "pointer",
 }));
 const ContentBox = styled(Box)(({ theme, borderradius }) => ({
-  width: "45%",
+  width: "100%",
   height: "100%",
   position: "absolute",
   top: 0,
@@ -89,7 +95,14 @@ const reducer = (state, action) => {
   }
 };
 const Top = (props) => {
-  const { bannerCover, storeDetails, configData, logo, storeShare } = props;
+  const {
+    bannerCover,
+    storeDetails,
+    configData,
+    logo,
+    storeShare,
+    bannersData,isLoading
+  } = props;
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const theme = useTheme();
@@ -97,10 +110,29 @@ const Top = (props) => {
   const isSmall = useMediaQuery(theme.breakpoints.down("md"));
   const { t } = useTranslation();
   const matches = useMediaQuery("(max-width:1460px)");
+  const router = useRouter();
   const ACTION = {
     setViewMap: "setViewMap",
   };
-
+  const settings = {
+    dots: false,
+    infinite: true,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    autoplay: true,
+    speed: 800,
+    autoplaySpeed: 4000,
+    cssEase: "linear",
+    responsive: [
+      {
+        breakpoint: 600,
+        settings: {
+          slidesToShow: 1,
+          slidesToScroll: 1,
+        },
+      },
+    ],
+  };
   const openMapHandler = () => {
     dispatch({ type: ACTION.setViewMap, payload: true });
   };
@@ -187,6 +219,13 @@ const Top = (props) => {
       }
     }
   };
+  const handleBannerClick = (link) => {
+    if(link){
+      router.push(link);
+    }
+
+  };
+
   const content = () => {
     if (isSmall) {
       return (
@@ -197,12 +236,36 @@ const Top = (props) => {
               height: "122px",
             }}
           >
-            <CustomImageContainer
-              src={bannerCover}
-              width="100%"
-              height="100%"
-              objectFit="cover"
-            />
+            {bannersData?.length ? (
+              <Slider {...settings}>
+                {bannersData?.map((banner) => {
+                  return (
+                    <Stack
+                      key={banner?.id}
+                      onClick={() => handleBannerClick(banner?.default_link)}
+                      sx={{ cursor: "pointer" }}
+                    >
+                      <CustomImageContainer
+                        src={`${configData?.base_urls?.banner_image_url}/${banner?.image}`}
+                        width="100%"
+                        height="122px"
+                        objectFit="cover"
+                        borderRadius="10px"
+
+                      />
+                    </Stack>
+                  );
+                })}
+              </Slider>
+            ) : (
+              <CustomImageContainer
+                src={bannerCover}
+                width="100%"
+                height="100%"
+                objectFit="cover"
+                borderRadius="10px"
+              />
+            )}{" "}
           </CustomBoxFullWidth>
           <CustomStackFullWidth>
             <CustomBoxFullWidth
@@ -404,185 +467,224 @@ const Top = (props) => {
       );
     } else {
       return (
-        <ContentWrapper>
-          <CustomImageContainer
-            src={bannerCover}
-            width="100%"
-            height="100%"
-            objectFit="cover"
-            borderRadius="10px"
-          />
-          <ContentBox>
-            <CustomBoxFullWidth
-              sx={{
-                borderTopRightRadius: "10px",
-                borderTopLeftRadius: "10px",
-                backgroundColor: getModuleWiseBG()?.bgColor,
-              }}
-            >
+        <CustomStackFullWidth direction="row">
+          <ContentWrapper>
+            <CustomImageContainer
+              src={bannerCover}
+              width="100%"
+              height="100%"
+              objectFit="cover"
+              borderRadius="10px"
+            />
+            <ContentBox>
               <CustomBoxFullWidth
                 sx={{
-                  borderTopRightRadius: "10px",
                   borderTopLeftRadius: "10px",
-                  background: " rgba(255, 255, 255, 0.1)",
-                  boxShadow: "0px 2px 30px 2px rgba(0, 0, 0, 0.08)",
-                  padding: "10px 25px",
+                  backgroundColor: getModuleWiseBG()?.bgColor,
                 }}
               >
-                <Grid container spacing={3}>
-                  <Grid item xs={3} sx={{ mt: "22px", mb: "30px" }}>
-                    <ImageWrapper>
-                      <CustomImageContainer
-                        src={logo}
-                        width="100%"
-                        height="100%"
-                        objectFit="cover"
-                        borderRadius="10px"
-                      />
-                      <ClosedNowScheduleWise
-                        active={storeDetails?.active}
-                        schedules={storeDetails?.schedules}
-                        borderRadius="50%"
-                      />
-                    </ImageWrapper>
-                  </Grid>
-                  <Grid item xs={7}>
-                    <CustomStackFullWidth spacing={1}>
-                      <H1 text={storeDetails?.name} textAlign="flex-start" />
-                      <Link
-                        href={`/review/${
-                          storeDetails?.id
-                            ? storeDetails?.id
-                            : storeDetails?.slug
-                        }`}
-                      >
-                        <Stack direction="row" alignItems="center" spacing={1}>
+                <CustomBoxFullWidth
+                  sx={{
+                    borderTopRightRadius: "10px",
+                    borderTopLeftRadius: "10px",
+                    background: " rgba(255, 255, 255, 0.1)",
+                    boxShadow: "0px 2px 30px 2px rgba(0, 0, 0, 0.08)",
+                    padding: "10px 25px",
+                  }}
+                >
+                  <Grid container spacing={3}>
+                    <Grid item xs={3} sx={{ mt: "22px", mb: "30px" }}>
+                      <ImageWrapper>
+                        <CustomImageContainer
+                          src={logo}
+                          width="100%"
+                          height="100%"
+                          objectFit="cover"
+                          borderRadius="10px"
+                        />
+                        <ClosedNowScheduleWise
+                          active={storeDetails?.active}
+                          schedules={storeDetails?.schedules}
+                          borderRadius="50%"
+                        />
+                      </ImageWrapper>
+                    </Grid>
+                    <Grid item xs={7}>
+                      <CustomStackFullWidth spacing={1}>
+                        <H1 text={storeDetails?.name} textAlign="flex-start" />
+                        <Link
+                          href={`/review/${
+                            storeDetails?.id
+                              ? storeDetails?.id
+                              : storeDetails?.slug
+                          }`}
+                        >
                           <Stack
                             direction="row"
                             alignItems="center"
-                            justifyContent="center"
-                            spacing={0.4}
+                            spacing={1}
                           >
-                            <StyledRating
-                              sx={{ color: "whiteContainer.main" }}
-                              name="read-only"
-                              value={storeDetails?.avg_rating}
-                              readOnly
-                              size="small"
-                            />
-                            <Typography>{`(${storeDetails?.rating_count})`}</Typography>
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              justifyContent="center"
+                              spacing={0.4}
+                            >
+                              <StyledRating
+                                sx={{ color: "whiteContainer.main" }}
+                                name="read-only"
+                                value={storeDetails?.avg_rating}
+                                readOnly
+                                size="small"
+                              />
+                              <Typography>{`(${storeDetails?.rating_count})`}</Typography>
+                            </Stack>
+                            <Typography
+                              sx={{
+                                color: (theme) => theme.palette.neutral[600],
+                              }}
+                            >
+                              |
+                            </Typography>
+                            <Typography
+                              fontSize="14px"
+                              textDecoration="underline"
+                              fontWeight="700"
+                              lineHeight="16.15px"
+                            >
+                              {storeDetails?.rating_count} Reviews
+                            </Typography>
                           </Stack>
-                          <Typography
-                            sx={{
-                              color: (theme) => theme.palette.neutral[600],
-                            }}
-                          >
-                            |
-                          </Typography>
-                          <Typography
-                            fontSize="14px"
-                            textDecoration="underline"
-                            fontWeight="700"
-                            lineHeight="16.15px"
-                          >
-                            {storeDetails?.rating_count} Reviews
-                          </Typography>
-                        </Stack>
-                      </Link>
-                      <Typography
-                        fontSize="14px"
-                        textDecoration="underline"
-                        fontWeight="400"
-                        lineHeight="16.15px"
-                      >
-                        {storeDetails?.address}
-                      </Typography>
-                    </CustomStackFullWidth>
+                        </Link>
+                        <Typography
+                          fontSize="14px"
+                          textDecoration="underline"
+                          fontWeight="400"
+                          lineHeight="16.15px"
+                        >
+                          {storeDetails?.address}
+                        </Typography>
+                      </CustomStackFullWidth>
+                    </Grid>
+                    <Grid item xs={2} align="right">
+                      {!isInWishList(storeDetails?.id) && (
+                        <RoundedIconButton onClick={addToFavorite}>
+                          <FavoriteBorderIcon color="primary" />
+                        </RoundedIconButton>
+                      )}
+                      {isInWishList(storeDetails?.id) && (
+                        <RoundedIconButton
+                          onClick={() => deleteWishlistStore(storeDetails?.id)}
+                        >
+                          <FavoriteIcon color="primary" />
+                        </RoundedIconButton>
+                      )}
+                    </Grid>
                   </Grid>
-                  <Grid item xs={2} align="right">
-                    {!isInWishList(storeDetails?.id) && (
-                      <RoundedIconButton onClick={addToFavorite}>
-                        <FavoriteBorderIcon color="primary" />
-                      </RoundedIconButton>
-                    )}
-                    {isInWishList(storeDetails?.id) && (
-                      <RoundedIconButton
-                        onClick={() => deleteWishlistStore(storeDetails?.id)}
-                      >
-                        <FavoriteIcon color="primary" />
-                      </RoundedIconButton>
-                    )}
-                  </Grid>
-                </Grid>
+                </CustomBoxFullWidth>
               </CustomBoxFullWidth>
-            </CustomBoxFullWidth>
-            <CustomBoxFullWidth
-              sx={{
-                // backdropFilter: "blur(10px)",
-                backgroundColor: getModuleWiseBG()?.bgColor,
-                opacity: "0.9",
-                padding: "13.5px 25px",
-                borderBottomRightRadius: "10px",
-                borderBottomLeftRadius: "10px",
-              }}
-            >
-              <Stack
-                direction="row"
-                alignItems="center"
-                spacing={{ xs: 2, sm: 3, md: 5 }}
+              <CustomBoxFullWidth
+                sx={{
+                  // backdropFilter: "blur(10px)",
+                  backgroundColor: getModuleWiseBG()?.bgColor,
+                  opacity: "0.9",
+                  padding: "13.5px 25px",
+
+                  borderBottomLeftRadius: "10px",
+                }}
               >
-                <Stack alignItems="flex-start">
-                  <Typography
-                    textAlign="center"
-                    variant="h5"
-                    sx={{
-                      fontSize: {
-                        xs: "14px",
-                        sm: "22px",
-                        md: "22px",
-                      },
-                    }}
-                  >
-                    {storeDetails?.positive_rating}%
-                  </Typography>
-                  <Stack direction="row" alignItems="center" spacing={0.3}>
-                    <Typography>{t("Positive Review")}</Typography>
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  spacing={{ xs: 2, sm: 3, md: 5 }}
+                >
+                  <Stack alignItems="flex-start">
+                    <Typography
+                      textAlign="center"
+                      variant="h5"
+                      sx={{
+                        fontSize: {
+                          xs: "14px",
+                          sm: "22px",
+                          md: "22px",
+                        },
+                      }}
+                    >
+                      {storeDetails?.positive_rating}%
+                    </Typography>
+                    <Stack direction="row" alignItems="center" spacing={0.3}>
+                      <Typography>{t("Positive Review")}</Typography>
+                    </Stack>
+                  </Stack>
+                  <Stack alignItems="flex-start">
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontSize: {
+                          xs: "16px",
+                          sm: "22px",
+                          md: "22px",
+                        },
+                      }}
+                    >
+                      {getAmountWithSign(storeDetails?.minimum_order)}
+                    </Typography>
+                    <Typography>{t("Minimum Order Value")}</Typography>
+                  </Stack>
+                  <Stack alignItems="flex-start">
+                    <Typography
+                      variant="h5"
+                      sx={{
+                        fontSize: {
+                          xs: "16px",
+                          sm: "22px",
+                          md: "22px",
+                        },
+                      }}
+                    >
+                      {storeDetails?.delivery_time}
+                    </Typography>
+                    <Typography>{t("Delivery Time")}</Typography>
                   </Stack>
                 </Stack>
-                <Stack alignItems="flex-start">
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      fontSize: {
-                        xs: "16px",
-                        sm: "22px",
-                        md: "22px",
-                      },
-                    }}
-                  >
-                    {getAmountWithSign(storeDetails?.minimum_order)}
-                  </Typography>
-                  <Typography>{t("Minimum Order Value")}</Typography>
-                </Stack>
-                <Stack alignItems="flex-start">
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      fontSize: {
-                        xs: "16px",
-                        sm: "22px",
-                        md: "22px",
-                      },
-                    }}
-                  >
-                    {storeDetails?.delivery_time}
-                  </Typography>
-                  <Typography>{t("Delivery Time")}</Typography>
-                </Stack>
-              </Stack>
-            </CustomBoxFullWidth>
-          </ContentBox>
-        </ContentWrapper>
+              </CustomBoxFullWidth>
+            </ContentBox>
+          </ContentWrapper>
+          <Stack width="50%">
+            {!isLoading ?(
+                <>{bannersData?.length ? (
+                <Slider {...settings}>
+                  {bannersData?.map((banner) => {
+                    return (
+                        <Stack
+                            key={banner?.id}
+                            onClick={() => handleBannerClick(banner?.default_link)}
+                            sx={{ cursor: "pointer", width: "100%",borderRadius:"10px" }}
+                        >
+                          <CustomImageContainer
+                              src={`${configData?.base_urls?.banner_image_url}/${banner?.image}`}
+                              width="100%"
+                              height="251px"
+                              objectFit="cover"
+                          />
+                        </Stack>
+                    );
+                  })}
+                </Slider>
+            ) : (
+                <CustomImageContainer
+                    src={bannerCover}
+                    width="100%"
+                    height="250px"
+                    objectFit="cover"
+                />
+            )}</>):(
+              <Skeleton width="100%" height="100%" variant="rectangular"/>
+            )}
+
+
+          </Stack>
+        </CustomStackFullWidth>
       );
     }
   };

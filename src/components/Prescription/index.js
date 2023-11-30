@@ -1,15 +1,28 @@
-import React from "react";
+import React, { useState } from "react";
 import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import { Typography, useTheme } from "@mui/material";
 import { Stack } from "@mui/system";
 import ArticleIcon from "@mui/icons-material/Article";
 import { t } from "i18next";
 import { useRouter } from "next/router";
+import GuestCheckoutModal from "../cards/GuestCheckoutModal";
+import { getToken } from "../../helper-functions/getToken";
 
 const Prescription = ({ storeId }) => {
   const theme = useTheme();
+  const [open, setOpen] = useState(false);
+  const token = getToken();
+  const [sideDrawerOpen, setSideDrawerOpen] = useState(false)
   const router = useRouter();
   const handleClick = () => {
+    if (token) {
+      handleRoute();
+    } else {
+      setOpen(true)
+    }
+
+  };
+  const handleRoute = () => {
     router.push(
       {
         pathname: "/checkout",
@@ -18,7 +31,8 @@ const Prescription = ({ storeId }) => {
       undefined,
       { shallow: true }
     );
-  };
+    setOpen(false)
+  }
   const iconColor = theme.palette.neutral[100];
   return (
     <Stack
@@ -50,6 +64,7 @@ const Prescription = ({ storeId }) => {
       >
         <ArticleIcon style={{ color: iconColor }} />
       </Stack>
+      {open && <GuestCheckoutModal open={open} setOpen={setOpen} setSideDrawerOpen={setSideDrawerOpen} handleRoute={handleRoute} />}
     </Stack>
   );
 };

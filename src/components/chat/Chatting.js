@@ -59,7 +59,6 @@ const Chatting = ({ configData }) => {
   const [deliveryInfo, setDeliveryInfo] = useState({});
   //const { configData } = useSelector((state) => state.configDataSettings);
   const [scrollBottom, setScrollBottom] = useState(true);
-  console.log("all", conversationId);
 
   useEffect(() => {
     setDeliveryInfo({
@@ -82,7 +81,7 @@ const Chatting = ({ configData }) => {
     isFetched,
     isLoading: channelLoading,
   } = useGetChannelList(handleChatListOnSuccess);
-  console.log();
+
   const handleConFetchOnSuccess = (res) => {
     setConversationData(res.pages[0]);
   };
@@ -96,7 +95,7 @@ const Chatting = ({ configData }) => {
     isRefetching: conversationDataRefetching,
     hasPreviousPage,
   } = useGetConversation({ channelId, apiFor, page_limit, offset });
-  console.log({ channelList });
+
   // from notification
 
   useEffect(() => {
@@ -130,7 +129,7 @@ const Chatting = ({ configData }) => {
             return item?.sender?.deliveryman_id == id;
           }
         });
-      console.log("ffff", tempReceiver[0]);
+
       setReceiver(tempReceiver[0]);
       setReceiverImage(tempReceiver[0]?.receiver?.image);
       setChannelId(id);
@@ -176,7 +175,7 @@ const Chatting = ({ configData }) => {
     setDeliveryInfo(null);
     mdDown && setIsSidebarOpen(false);
   };
-  console.log({ deliveryInfo });
+
   useEffect(() => {
     refetchChannelList().then();
   }, []);
@@ -245,7 +244,7 @@ const Chatting = ({ configData }) => {
     } else configData?.base_urls?.business_logo_url;
   };
   const userImage = deliveryInfo?.image ? deliveryInfo?.image : receiverImage;
-  console.log({ receiverImage });
+
   return (
     <PushNotificationLayout refetch={refetch} pathName="chat">
       <CustomBoxFullWidth mt={{ xs: "1rem", md: "2rem" }}>

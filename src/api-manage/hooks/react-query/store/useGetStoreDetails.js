@@ -4,8 +4,10 @@ import { useQuery } from "react-query";
 import { onSingleErrorResponse } from "../../../api-error-response/ErrorResponses";
 
 const getData = async (store_id) => {
-  const { data } = await MainApi.get(`${store_details_api}/${store_id}`);
-  return data;
+  if (store_id) {
+    const { data } = await MainApi.get(`${store_details_api}/${store_id}`);
+    return data;
+  }
 };
 
 export default function useGetStoreDetails(store_id) {

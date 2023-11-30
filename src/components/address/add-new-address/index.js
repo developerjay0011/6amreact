@@ -37,6 +37,7 @@ import plusIcon from "../assets/plus.png";
 import { CustomButtonPrimary } from "../../../styled-components/CustomButtons.style";
 import { useDispatch, useSelector } from "react-redux";
 import { setOpenAddressModal } from "../../../redux/slices/addAddress";
+import { setGuestUserInfo } from "../../../redux/slices/guestUserInfo";
 
 const AddNewAddress = (props) => {
   const {
@@ -54,9 +55,16 @@ const AddNewAddress = (props) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const { profileInfo } = useSelector((state) => state.profileInfo);
+  const { guestUserInfo } = useSelector((state) => state.guestUserInfo);
+  const [editAddressLocation, setEditAddressLocation] = useState({
+    lat: editAddress?.latitude,
+    lng: editAddress?.longitude,
+  })
+  const token = localStorage.getItem('token')
   const reduxDispatch = useDispatch();
-  const [addressType, setAddressType] = useState("");
+  const [addressType, setAddressType] = useState(guestUserInfo ? guestUserInfo?.address_type : "");
   const personName = `${profileInfo?.f_name} ${profileInfo?.l_name}`;
+
   //useEffect calls for getting data
   //****getting current location/***/
   const { coords, isGeolocationAvailable, isGeolocationEnabled, getPosition } =
@@ -67,11 +75,15 @@ const AddNewAddress = (props) => {
       userDecisionTimeout: 5000,
       isGeolocationEnabled: true,
     });
+  //
+  // const editLocation = {
+  //   lat: editAddress?.latitude,
+  //   lng: editAddress?.longitude,
+  // };
 
-  const editLocation = {
-    lat: editAddress?.latitude,
-    lng: editAddress?.longitude,
-  };
+  useEffect(() => {
+    setEditAddressLocation(state?.location)
+  }, [state?.location]);
 
   useEffect(() => {
     dispatch({
@@ -163,7 +175,7 @@ const AddNewAddress = (props) => {
           <Paper
             sx={{
               position: "relative",
-              width: { xs: "300px", sm: "450px", md: "550px", lg: "750px" },
+              width: { xs: "300px", sm: "450px", md: "550px", lg: "730px" },
               p: "1.4rem",
             }}
           >
@@ -187,12 +199,12 @@ const AddNewAddress = (props) => {
               setLocation={(values) => {
                 dispatch({
                   type: ACTIONS.setLocation,
-                  payload: editAddress ? editLocation : values,
+                  payload: values,
                 });
               }}
               // setCurrentLocation={setCurrentLocation}
               // locationLoading={locationLoading}
-              location={editAddress ? editLocation : state.location}
+              location={editAddress ? editAddressLocation : state.location ? state.location : { lat: configData?.default_location?.lat, lng: configData?.default_location?.lng }}
               setPlaceDetailsEnabled={(value) =>
                 dispatch({
                   type: ACTIONS.setPlaceDetailsEnabled,
@@ -208,7 +220,7 @@ const AddNewAddress = (props) => {
               <Stack direction="row" spacing={2.5} pt="10px">
                 <AddressTypeStack
                   value="home"
-                  addressType={
+                  addressType={guestUserInfo ? addressType :
                     editAddress?.address_type
                       ? editAddress?.address_type
                       : addressType
@@ -264,9 +276,7 @@ const AddNewAddress = (props) => {
                 }
                 configData={configData}
                 deliveryAddress={
-                  editAddress
-                    ? editAddress?.address
-                    : geoCodeResults?.results[0]?.formatted_address
+                  geoCodeResults?.results[0]?.formatted_address
                 }
                 personName={
                   editAddress ? editAddress?.contact_person_name : personName

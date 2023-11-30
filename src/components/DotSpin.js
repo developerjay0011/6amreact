@@ -1,5 +1,6 @@
 import { Stack, styled } from "@mui/system";
 import { useTheme } from "@mui/material";
+import {getModule} from "../helper-functions/getLanguage";
 
 export const CustomSpinner = styled(Stack)(({ theme, color }) => ({
   position: "relative",
@@ -43,9 +44,7 @@ export const CustomSpinner = styled(Stack)(({ theme, color }) => ({
 }));
 const DotSpin = () => {
   const theme = useTheme();
-  const getModule = () => {
-    return JSON.parse(window.localStorage.getItem("module"));
-  };
+
   return (
     <Stack width="100%" justifyContent="Center" alignItems="center">
       <CustomSpinner

@@ -7,7 +7,7 @@ const VisibleVariations = (props) => {
   const [variationsWithChild, setVariationsWithChild] = useState([]);
   const handleVariationsWithChild = (variations) => {
     const variationsArray = [];
-    if (variations.length > 0) {
+    if (variations?.length > 0) {
       variations.forEach((variation) => {
         if (variation?.values?.length > 0) {
           const selected = variation?.values?.filter(
@@ -15,7 +15,7 @@ const VisibleVariations = (props) => {
           );
           if (selected.length > 0) {
             const sArray = {
-              variationName: variation.name,
+              variationName: variation?.name,
               variationValues: selected,
             };
             variationsArray.push(sArray);

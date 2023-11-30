@@ -46,7 +46,7 @@ const Filter = (props) => {
     }
     let newData = filterData.map((item, index) =>
       index === filterData.length - 2
-        ? { ...item, price: value, checked: true }
+        ? { ...item, price: value, checked:false }
         : item
     );
     setMinMax(value);
@@ -134,25 +134,29 @@ const Filter = (props) => {
                 <Grid item xs={6}>
                   {filterData?.length > 0 &&
                     secondHalf?.map((item, index) => {
-                      return (
-                        <FormControlLabel
-                          sx={{
-                            "& .MuiFormControlLabel-label": {
-                              fontSize: "13px",
-                              fontWeight: item?.checked && "420",
-                            },
-                          }}
-                          key={index}
-                          control={
-                            <Checkbox
-                              checked={item?.checked}
-                              onChange={(e) => handleCheckbox(item, e)}
-                              name={item?.label}
+                      if(item?.value==="test"){
+                        return  null
+                      }else {
+                        return (
+                            <FormControlLabel
+                                sx={{
+                                  "& .MuiFormControlLabel-label": {
+                                    fontSize: "13px",
+                                    fontWeight: item?.checked && "420",
+                                  },
+                                }}
+                                key={index}
+                                control={
+                                  <Checkbox
+                                      checked={item?.checked}
+                                      onChange={(e) => handleCheckbox(item, e)}
+                                      name={item?.label}
+                                  />
+                                }
+                                label={item?.label}
                             />
-                          }
-                          label={item?.label}
-                        />
-                      );
+                        );
+                      }
                     })}
                 </Grid>
                 {currentTab === 0 ? (

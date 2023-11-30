@@ -57,7 +57,8 @@ const SpecialCard = (props) => {
     handleDecrement,
     count,
     showAddtocart,
-    handleClick,
+    handleClick,updateLoading,
+      isLoading
   } = props;
 
   const { configData } = useSelector((state) => state.configData);
@@ -130,6 +131,9 @@ const SpecialCard = (props) => {
             isProductExist={isProductExist}
             addToCartHandler={addToCart}
             showAddtocart={!isProductExist}
+            isLoading={isLoading}
+            updateLoading={updateLoading}
+
           />
           <Box
             sx={{
@@ -148,6 +152,8 @@ const SpecialCard = (props) => {
               handleDecrement={handleDecrement}
               setIsHover={() => setIsHover(true)}
               count={count}
+              isLoading={isLoading}
+              updateLoading={updateLoading}
             />
           </Box>
         </CustomOverLay>

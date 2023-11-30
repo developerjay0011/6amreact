@@ -24,6 +24,7 @@ import {
 import { CustomButtonPrimary } from "../../styled-components/CustomButtons.style";
 import {
   CustomBoxFullWidth,
+  CustomSpan,
   CustomStackFullWidth,
 } from "../../styled-components/CustomStyles.style";
 import { textWithEllipsis } from "../../styled-components/TextWithEllipsis";
@@ -44,8 +45,9 @@ import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleTyp
 import { getModuleId } from "../../helper-functions/getModuleId";
 import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import { addWishList, removeWishListItem } from "../../redux/slices/wishList";
-import { isAvailable } from "../../utils/CustomFunctions";
+import { getConvertDiscount, getTotalVariationsPrice, isAvailable } from "../../utils/CustomFunctions";
 import {
+  cart_item_remove,
   not_logged_in_message,
   out_of_limits,
   out_of_stock,
@@ -67,6 +69,16 @@ import SpecialCard, { FoodVegNonVegFlag } from "./SpecialCard";
 import MoreFromTheStoreCard from "./MoreFromTheStoreCard";
 import { t } from "i18next";
 import { getLanguage } from "../../helper-functions/getLanguage";
+import CustomLinearProgressbar from "../linear-progressbar";
+import useAddCartItem from "../../api-manage/hooks/react-query/add-cart/useAddCartItem";
+import {
+  getItemDataForAddToCart, getPriceAfterQuantityChange,
+  handleValuesFromCartItems,
+} from "../product-details/product-details-section/helperFunction";
+import { onErrorResponse } from "../../api-manage/api-error-response/ErrorResponses";
+import { getGuestId } from "../../helper-functions/getToken";
+import useCartItemUpdate from "../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
+import useDeleteCartItem from "../../api-manage/hooks/react-query/add-cart/useDeleteCartItem";
 
 export const CardWrapper = styled(Card)(
   ({
@@ -77,26 +89,27 @@ export const CardWrapper = styled(Card)(
     nomargin,
     cardType,
     cardFor,
+    cardWidth,
   }) => ({
     cursor: "pointer",
     maxWidth:
       cardFor === "list-view"
         ? "100%"
         : horizontalcard === "true"
-        ? "400px"
-        : "320px",
+          ? "440px"
+          : "320px",
     width:
       cardType === "vertical-type" || cardType === "list-view"
         ? "100%"
-        : horizontalcard === "true" && "390px",
+        : horizontalcard === "true" && "440px",
     margin:
       wishlistcard === "true"
         ? "0rem"
         : nomargin === "true"
-        ? "0rem"
-        : cardType === "vertical-type"
-        ? "0rem"
-        : ".7rem",
+          ? "0rem"
+          : cardType === "vertical-type"
+            ? "0rem"
+            : ".7rem",
     borderRadius: "8px",
     height: cardheight ? cardheight : "220px",
     border:
@@ -123,14 +136,16 @@ export const CardWrapper = styled(Card)(
         horizontalcard === "true"
           ? cardFor === "list-view"
             ? "100%"
-            : "300px"
+            : cardWidth
+              ? cardWidth
+              : "300px"
           : "100%",
       margin:
         wishlistcard === "true"
           ? "0rem"
           : nomargin === "true"
-          ? "0rem"
-          : ".4rem",
+            ? "0rem"
+            : ".4rem",
     },
     [theme.breakpoints.up("sm")]: {
       height: cardheight ? cardheight : "330px",
@@ -141,31 +156,33 @@ export const CardWrapper = styled(Card)(
     },
   })
 );
-const CustomCardMedia = styled(CardMedia)(({ theme, horizontalcard }) => ({
-  position: "relative",
-  //overflow: "hidden",
-  padding: "1rem",
-  margin: "2px",
-  //borderRadius: horizontalcard === "true" ? "0x 10px" : "10px 10px 0 0",
-  height: horizontalcard === "true" ? "100%" : "212px",
-  width: horizontalcard === "true" && "215px",
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  overflow: "hidden",
-  borderRadius: "5px",
-  ".MuiBox-root": {
+const CustomCardMedia = styled(CardMedia)(
+  ({ theme, horizontalcard, loveItem }) => ({
+    position: "relative",
+    //overflow: "hidden",
+    padding: loveItem === "true" ? "2px" : "1rem",
+    margin: "2px",
+    //borderRadius: horizontalcard === "true" ? "0x 10px" : "10px 10px 0 0",
+    height: horizontalcard === "true" ? "100%" : "212px",
+    width: horizontalcard === "true" && "215px",
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
     overflow: "hidden",
     borderRadius: "5px",
-  },
-  backgroundColor:
-    horizontalcard === "true" ? theme.palette.neutral[100] : "none",
+    ".MuiBox-root": {
+      overflow: "hidden",
+      borderRadius: "5px",
+    },
+    backgroundColor:
+      horizontalcard === "true" ? theme.palette.neutral[100] : "none",
 
-  [theme.breakpoints.down("sm")]: {
-    width: horizontalcard === "true" ? "160px" : "100%",
-    height: horizontalcard === "true" ? "135px" : "175px",
-  },
-}));
+    [theme.breakpoints.down("sm")]: {
+      width: horizontalcard === "true" ? "160px" : "100%",
+      height: horizontalcard === "true" ? "135px" : "175px",
+    },
+  })
+);
 export const CustomCardButton = styled(CustomButtonPrimary)(
   ({ theme, disabled }) => ({
     background: disabled
@@ -176,6 +193,7 @@ export const CustomCardButton = styled(CustomButtonPrimary)(
 
 const ProductCard = (props) => {
   const {
+    loveItem,
     item,
     cardheight,
     horizontalcard,
@@ -187,6 +205,9 @@ const ProductCard = (props) => {
     cardType,
     specialCard,
     fromStore,
+    cardWidth,
+    sold,
+    stock,
   } = props;
 
   const [state, dispatch] = useReducer(reducer, initialState);
@@ -211,6 +232,10 @@ const ProductCard = (props) => {
   const { mutate } = useWishListDelete();
   const [isProductExist, setIsProductExist] = useState(false);
   const [count, setCount] = useState(0);
+  const { mutate: addToMutate, isLoading } = useAddCartItem();
+  const { mutate: updateMutate, isLoading: updateLoading } =
+    useCartItemUpdate();
+  const { mutate: cartItemRemoveMutate } = useDeleteCartItem();
   useEffect(() => {
     const isInCart = getItemFromCartlist();
     if (isInCart) {
@@ -236,18 +261,27 @@ const ProductCard = (props) => {
     }
   };
 
-  useEffect(() => {}, [state.clearCartModal]);
+  useEffect(() => { }, [state.clearCartModal]);
   const handleClearCartModalOpen = () =>
     dispatch({ type: ACTION.setClearCartModal, payload: true });
   const handleCloseForClearCart = (value) => {
     if (value === "add-item") {
-      reduxDispatch(
-        setCart({
-          ...state.modalData[0],
-          selectedOption: [],
-        })
-      );
-      dispatch({ type: ACTION.setClearCartModal, payload: false });
+      const itemObject = {
+        guest_id: getGuestId(),
+        model: state.modalData[0]?.available_date_starts
+          ? "ItemCampaign"
+          : "Item",
+        add_on_ids: [],
+        add_on_qtys: [],
+        item_id: state.modalData[0]?.id,
+        price: state?.modalData[0]?.price,
+        quantity: state?.modalData[0]?.quantity,
+        variation: [],
+      };
+      addToMutate(itemObject, {
+        onSuccess: handleSuccess,
+        onError: onErrorResponse,
+      });
     } else {
       dispatch({ type: ACTION.setClearCartModal, payload: false });
     }
@@ -302,6 +336,23 @@ const ProductCard = (props) => {
     }
   }, [item]);
   const isInCart = cartList?.find((things) => things.id === item?.id);
+  const handleSuccess = (res) => {
+    if (res) {
+      let product = {};
+      res?.forEach((item) => {
+        product = {
+          ...item?.item,
+          cartItemId: item?.id,
+          quantity: item?.quantity,
+          totalPrice: item?.price,
+          selectedOption: [],
+        };
+      });
+      reduxDispatch(setCart(product));
+      toast.success(t("Item added to cart"));
+      dispatch({ type: ACTION.setClearCartModal, payload: false });
+    }
+  };
 
   const addToCartHandler = () => {
     if (cartList.length > 0) {
@@ -318,14 +369,22 @@ const ProductCard = (props) => {
       // )
       if (isStoreExist) {
         if (!isInCart) {
-          reduxDispatch(
-            setCart({
-              ...state.modalData[0],
-              totalPrice: state?.modalData[0]?.price,
-              selectedOption: [],
-            })
-          );
-          toast.success(t("Item added to cart"));
+          const itemObject = {
+            guest_id: getGuestId(),
+            model: state.modalData[0]?.available_date_starts
+              ? "ItemCampaign"
+              : "Item",
+            add_on_ids: [],
+            add_on_qtys: [],
+            item_id: state.modalData[0]?.id,
+            price: state?.modalData[0]?.price,
+            quantity: state?.modalData[0]?.quantity,
+            variation: [],
+          };
+          addToMutate(itemObject, {
+            onSuccess: handleSuccess,
+            onError: onErrorResponse,
+          });
         }
       } else {
         if (cartList.length !== 0) {
@@ -334,14 +393,22 @@ const ProductCard = (props) => {
       }
     } else {
       if (!isInCart) {
-        reduxDispatch(
-          setCart({
-            ...state.modalData[0],
-            totalPrice: state?.modalData[0]?.price,
-            selectedOption: [],
-          })
-        );
-        toast.success(t("Item added to cart"));
+        const itemObject = {
+          guest_id: getGuestId(),
+          model: state.modalData[0]?.available_date_starts
+            ? "ItemCampaign"
+            : "Item",
+          add_on_ids: [],
+          add_on_qtys: [],
+          item_id: state.modalData[0]?.id,
+          price: state?.modalData[0]?.price,
+          quantity: state?.modalData[0]?.quantity,
+          variation: [],
+        };
+        addToMutate(itemObject, {
+          onSuccess: handleSuccess,
+          onError: onErrorResponse,
+        });
       }
     }
   };
@@ -356,9 +423,7 @@ const ProductCard = (props) => {
               id: `${item?.slug ? item?.slug : item?.id}`,
               module_id: `${getModuleId()}`,
             },
-          },
-          undefined,
-          { shallow: true }
+          }
         );
       } else {
         e.stopPropagation();
@@ -406,36 +471,115 @@ const ProductCard = (props) => {
       }
     }
   };
+  const cartUpdateHandleSuccess = (res) => {
+    if (res) {
+      res?.forEach((item) => {
+        if (isInCart?.cartItemId === item?.id) {
+          const product = {
+            ...item?.item,
+            cartItemId: item?.id,
+            totalPrice: item?.price,
+            quantity: item?.quantity,
+            food_variations: item?.item?.food_variations,
+            selectedAddons: item?.item?.addons,
+            itemBasePrice: item?.item?.price,
+            selectedOption: item?.variation,
+          };
 
+          reduxDispatch(setIncrementToCartItem(product)); // Dispatch the single product
+        }
+      });
+    }
+  };
+  const cartUpdateHandleSuccessDecrement = (res) => {
+    if (res) {
+      res?.forEach((item) => {
+        const product = {
+          ...item?.item,
+          cartItemId: item?.id,
+          totalPrice: item?.price,
+          quantity: item?.quantity,
+          food_variations: item?.item?.food_variations,
+          selectedAddons: item?.item?.addons,
+          itemBasePrice: item?.item?.price,
+          selectedOption: item?.variation,
+        };
+        reduxDispatch(setDecrementToCartItem(product));
+      });
+    }
+  };
   const handleIncrement = () => {
     const isExisted = getItemFromCartlist();
-
+    const updateQuantity = isInCart?.quantity + 1;
+    const itemObject = getItemDataForAddToCart(isInCart, updateQuantity, getPriceAfterQuantityChange(isInCart, updateQuantity), getGuestId());
     if (isExisted) {
-      if (isExisted?.quantity + 1 <= item?.stock) {
+      if (getCurrentModuleType() === "food") {
         if (item?.maximum_cart_quantity) {
           if (item?.maximum_cart_quantity <= isExisted?.quantity) {
             toast.error(t(out_of_limits));
           } else {
+            updateMutate(itemObject, {
+              onSuccess: cartUpdateHandleSuccess,
+              onError: onErrorResponse,
+            });
+          }
+        } else {
+          updateMutate(itemObject, {
+            onSuccess: cartUpdateHandleSuccess,
+            onError: onErrorResponse,
+          });
+        }
+      } else {
+        if (isExisted?.quantity + 1 <= item?.stock) {
+          if (item?.maximum_cart_quantity) {
+            if (item?.maximum_cart_quantity <= isExisted?.quantity) {
+              toast.error(t(out_of_limits));
+            } else {
+              updateMutate(itemObject, {
+                onSuccess: cartUpdateHandleSuccess,
+                onError: onErrorResponse,
+              });
+            }
+          } else {
+            updateMutate(itemObject, {
+              onSuccess: cartUpdateHandleSuccess,
+              onError: onErrorResponse,
+            });
             reduxDispatch(setIncrementToCartItem(isInCart));
           }
         } else {
-          reduxDispatch(setIncrementToCartItem(isInCart));
+          toast.error(t(out_of_stock));
         }
-      } else {
-        toast.error(t(out_of_stock));
       }
     }
   };
   const handleClose = () => {
     dispatch({ type: ACTION.setOpenModal, payload: false });
   };
+
+  const handleSuccessRemoveItem = () => {
+    reduxDispatch(setRemoveItemFromCart(isInCart));
+    toast.success(t("Removed from cart."));
+  };
   const handleDecrement = () => {
+    const updateQuantity = isInCart?.quantity - 1;
+
     const isExisted = getItemFromCartlist();
     if (isExisted?.quantity === 1) {
-      reduxDispatch(setRemoveItemFromCart(isInCart));
-      toast.success(t("Removed from cart."));
+      const cartIdAndGuestId = {
+        cart_id: isInCart?.cartItemId,
+        guestId: getGuestId(),
+      };
+      cartItemRemoveMutate(cartIdAndGuestId, {
+        onSuccess: handleSuccessRemoveItem,
+        onError: onErrorResponse,
+      });
     } else {
-      reduxDispatch(setDecrementToCartItem(isInCart));
+      const itemObject = getItemDataForAddToCart(isInCart, updateQuantity, getPriceAfterQuantityChange(isInCart, updateQuantity), getGuestId());
+      updateMutate(itemObject, {
+        onSuccess: cartUpdateHandleSuccessDecrement,
+        onError: onErrorResponse,
+      });
     }
   };
   const lanDirection = getLanguage() ? getLanguage() : "ltr";
@@ -511,6 +655,8 @@ const ProductCard = (props) => {
             handleIncrement={handleIncrement}
             handleDecrement={handleDecrement}
             count={count}
+            isLoading={isLoading}
+            updateLoading={updateLoading}
           />
         </CustomStackFullWidth>
       </CustomStackFullWidth>
@@ -571,6 +717,8 @@ const ProductCard = (props) => {
             handleIncrement={handleIncrement}
             handleDecrement={handleDecrement}
             count={count}
+            isLoading={isLoading}
+            updateLoading={updateLoading}
           />
         </CustomStackFullWidth>
       </CustomStackFullWidth>
@@ -595,41 +743,41 @@ const ProductCard = (props) => {
             <FavoriteIcon sx={{ fontSize: "15px" }} />
           </Box>
         )}
-        <CustomStackFullWidth>
-          <CustomStackFullWidth
-            direction="row"
-            alignItems="center"
-            justifyContent="flex-start"
-            spacing={0.8}
-          >
-            <Typography
-              variant={horizontalcard === "true" ? "subtitle2" : "h6"}
-              marginBottom="4px"
-              sx={{
-                color: (theme) => theme.palette.text.custom,
-                fontSize: { xs: "13px", sm: "inherit" },
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-                display: "-webkit-box",
-                WebkitLineClamp: "2",
-                WebkitBoxOrient: "vertical",
-                lineHeight: "1.2", // Adjust this value to control line height
-                mt: "5px",
-              }}
-              className="name"
-            >
-              {item?.name}
-            </Typography>
-            <FoodVegNonVegFlag veg={item?.veg === 0 ? "false" : "true"} />
-          </CustomStackFullWidth>
+        {/* <CustomStackFullWidth> */}
+        <CustomStackFullWidth
+          direction="row"
+          alignItems="center"
+          justifyContent="flex-start"
+          spacing={0.8}
+        >
           <Typography
-            // mt="10px"
-            color="text.secondary"
-            variant={isSmall ? "body2" : "body1"}
+            variant={horizontalcard === "true" ? "subtitle2" : "h6"}
+            marginBottom="4px"
+            sx={{
+              color: (theme) => theme.palette.text.custom,
+              fontSize: { xs: "13px", sm: "inherit" },
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+              display: "-webkit-box",
+              WebkitLineClamp: "2",
+              WebkitBoxOrient: "vertical",
+              lineHeight: "1.2", // Adjust this value to control line height
+              mt: "5px",
+            }}
+            className="name"
           >
-            {item?.store_name}
+            {item?.name}
           </Typography>
+          <FoodVegNonVegFlag veg={item?.veg === 0 ? "false" : "true"} />
         </CustomStackFullWidth>
+        <Typography
+          // mt="10px"
+          color="text.secondary"
+          variant={isSmall ? "body2" : "body1"}
+        >
+          {item?.store_name}
+        </Typography>
+        {/* </CustomStackFullWidth> */}
         <CustomStackFullWidth
           direction="row"
           alignItems="flex-start"
@@ -652,6 +800,8 @@ const ProductCard = (props) => {
               handleIncrement={handleIncrement}
               handleDecrement={handleDecrement}
               count={count}
+              isLoading={isLoading}
+              updateLoading={updateLoading}
             />
           </Box>
         </CustomStackFullWidth>
@@ -660,6 +810,88 @@ const ProductCard = (props) => {
   };
 
   const verticalCardUi = () => {
+    return (
+      <CustomStackFullWidth
+        justifyContent="center"
+        alignItems="center"
+        spacing={1.5}
+        p="1rem"
+      >
+        <Body2 text={item?.store_name} />
+        <H3 text={item?.name} />
+        <CustomStackFullWidth
+          justifyContent="center"
+          alignItems="center"
+          spacing={0.5}
+        >
+          {cardType === "vertical-type" ? (
+            <Typography>{item?.unit_type}</Typography>
+          ) : (
+            <CustomMultipleRatings rating={4.5} withCount />
+          )}
+
+          <AmountWithDiscountedAmount item={item} />
+        </CustomStackFullWidth>
+      </CustomStackFullWidth>
+    );
+  };
+  const verticalCardFlashUi = () => {
+    return (
+      <CustomStackFullWidth
+        justifyContent="center"
+        alignItems="center"
+        spacing={1.5}
+        p="1rem"
+      >
+        <Body2 text={item?.store_name} />
+        <H3 text={item?.name} />
+        <CustomStackFullWidth
+          justifyContent="center"
+          alignItems="center"
+          spacing={0.5}
+        >
+          {cardType === "vertical-type" ? (
+            <Typography>{item?.unit_type}</Typography>
+          ) : (
+            <CustomMultipleRatings rating={4.5} withCount />
+          )}
+
+          {stock === 0 ? (
+            <Typography
+              variant="h5"
+              display="flex"
+              alignItems="center"
+              flexWrap="wrap"
+              gap="5px"
+              sx={{
+                fontSize: { xs: "13px", sm: "18px" },
+                color: alpha(theme.palette.error.deepLight, 0.7),
+              }}
+            >{t("Out of Stock")}</Typography>
+          ) : (
+
+            <AmountWithDiscountedAmount item={item} />
+          )}
+          <CustomStackFullWidth mt="100px" spacing={1}>
+            <CustomLinearProgressbar value={(sold / stock) * 100} height={3} />
+            <CustomStackFullWidth
+              direction="row"
+              alignItems="center"
+              justifyContent="space-between"
+            >
+              <Typography fontWeight="bold" lineHeight="28px" variant="body2">
+                <CustomSpan>{t("Sold")}</CustomSpan> : {sold} {t("items")}
+              </Typography>
+              <Typography fontWeight="bold" lineHeight="28px" variant="body2">
+                <CustomSpan>{t("Available")}</CustomSpan> : {stock} {t("items")}
+              </Typography>
+            </CustomStackFullWidth>
+          </CustomStackFullWidth>
+        </CustomStackFullWidth>
+      </CustomStackFullWidth>
+    );
+  };
+  const verticalCardFlashSliderUi = () => {
     return (
       <CustomStackFullWidth
         justifyContent="center"
@@ -743,15 +975,33 @@ const ProductCard = (props) => {
           isWishlisted={isWishlisted}
         />
       ) : (
-        <ModuleModal
-          open={state.openModal}
-          handleModalClose={handleClose}
-          configData={configData}
-          productDetailsData={item}
-          addToWishlistHandler={addToWishlistHandler}
-          removeFromWishlistHandler={removeFromWishlistHandler}
-          isWishlisted={isWishlisted}
-        />
+        <>{cardFor === "flashSale" ? (
+          <>{stock !== 0 &&
+            <ModuleModal
+              open={state.openModal}
+              handleModalClose={handleClose}
+              configData={configData}
+              productDetailsData={item}
+              addToWishlistHandler={addToWishlistHandler}
+              removeFromWishlistHandler={removeFromWishlistHandler}
+              isWishlisted={isWishlisted}
+            />
+          }</>
+        ) : (
+          <ModuleModal
+            open={state.openModal}
+            handleModalClose={handleClose}
+            configData={configData}
+            productDetailsData={item}
+            addToWishlistHandler={addToWishlistHandler}
+            removeFromWishlistHandler={removeFromWishlistHandler}
+            isWishlisted={isWishlisted}
+          />
+        )
+
+        }
+        </>
+
       )}
       {wishlistcard === "true" && (
         <HeartWrapper onClick={() => setOpenModal(true)} top="5px" right="5px">
@@ -772,6 +1022,8 @@ const ProductCard = (props) => {
           handleDecrement={handleDecrement}
           count={count}
           handleClick={handleClick}
+          isLoading={isLoading}
+          updateLoading={updateLoading}
         />
       ) : (
         <CardWrapper
@@ -781,6 +1033,7 @@ const ProductCard = (props) => {
           cardheight={cardheight}
           horizontalcard={horizontalcard}
           wishlistcard={wishlistcard}
+          cardWidth={cardWidth}
           onClick={() => handleClick()}
           onMouseEnter={() =>
             dispatch({ type: ACTION.setIsTransformed, payload: true })
@@ -807,7 +1060,10 @@ const ProductCard = (props) => {
               position: "relative",
             }}
           >
-            <CustomCardMedia horizontalcard={horizontalcard}>
+            <CustomCardMedia
+              horizontalcard={horizontalcard}
+              loveItem={loveItem}
+            >
               {handleBadge()}
               <CustomImageContainer
                 src={`${imageBaseUrl}/${item?.image}`}
@@ -820,6 +1076,7 @@ const ProductCard = (props) => {
               {item?.module?.module_type === "food" && (
                 <ProductsUnavailable product={item} />
               )}
+              
               <CustomOverLay hover={state.isTransformed} border_radius="10px">
                 <QuickView
                   quickViewHandleClick={quickViewHandleClick}
@@ -829,6 +1086,7 @@ const ProductCard = (props) => {
                   isProductExist={isProductExist}
                   addToCartHandler={addToCart}
                   showAddtocart={cardFor === "vertical" && !isProductExist}
+                  isLoading={isLoading}
                 />
               </CustomOverLay>
               {cardFor === "vertical" && isProductExist && (
@@ -849,6 +1107,7 @@ const ProductCard = (props) => {
                     handleDecrement={handleDecrement}
                     setIsHover={handleHoverOnCartIcon}
                     count={count}
+                    updateLoading={updateLoading}
                   />
                 </Box>
               )}
@@ -856,6 +1115,8 @@ const ProductCard = (props) => {
             <CustomStackFullWidth justifyContent="center">
               {cardFor === "popular items" && popularCardUi()}
               {cardFor === "vertical" && verticalCardUi()}
+              {cardFor === "flashSale" && verticalCardFlashUi()}
+              {cardFor === "flashSaleSlider" && verticalCardFlashSliderUi()}
               {cardFor === "food horizontal card" && foodHorizontalCardUi()}
               {cardFor === "list-view" && listViewCardUi()}
             </CustomStackFullWidth>

@@ -13,11 +13,19 @@ import {
 } from "../../../api-error-response/ErrorResponses";
 
 const getData = async (pageParams) => {
-  const { category_id, page_limit, offset, type, pageParam } = pageParams;
+  const {
+    category_id,
+    selectedCategoriesIds,
+    page_limit,
+    offset,
+    type,
+    pageParam,
+  } = pageParams;
+  const selectedCategoriesId = JSON.stringify(selectedCategoriesIds);
   const { data } = await MainApi.get(
-    `${categories_details_Store_api}/${category_id}?limit=${page_limit}&offset=${
+    `${categories_details_Store_api}/list?limit=${page_limit}&offset=${
       pageParam ? pageParam : offset
-    }&type=${type}`
+    }&type=${type}&category_ids=${selectedCategoriesId}`
   );
   return data;
 };

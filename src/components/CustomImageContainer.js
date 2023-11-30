@@ -20,6 +20,7 @@ const CustomImageContainer = ({
   smMaxWidth,
   smWidth,
   aspectRatio,
+  padding
 }) => {
   const [imageFile, setState] = useState(null);
   useEffect(() => {
@@ -42,6 +43,7 @@ const CustomImageContainer = ({
       md_height={mdHeight}
       cursor={cursor}
       aspect_ratio={aspectRatio}
+      padding={padding}
     >
       {!imageFile ? (
         <Box

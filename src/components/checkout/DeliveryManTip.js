@@ -25,11 +25,13 @@ const DeliveryManTip = ({
   const [show, setShow] = useState(false);
   const theme = useTheme();
   const [fieldValue, setFieldValue] = useState(deliveryTip);
+  const [isCustom,setIsCustom]=useState(false)
   const deliveryTips = [0, 10, 15, 20, 40];
   const { t } = useTranslation();
 
   const debouncedSetInputValue = debounce((value) => {
     setDeliveryTip(value);
+
   }, 300);
   const handleOnChange = (e) => {
     // setFieldValue(e.target.value);
@@ -38,11 +40,15 @@ const DeliveryManTip = ({
     if (e.target.value > -1) {
       setFieldValue(e.target.value);
       debouncedSetInputValue(e.target.value);
+      setIsCustom(true)
+    }else{
+      setIsCustom(false)
     }
   };
 
   const handleClickOnTips = (tip) => {
     setFieldValue(tip);
+    setIsCustom(false)
   };
   useEffect(() => {
     debouncedSetInputValue(fieldValue);
@@ -118,8 +124,9 @@ const DeliveryManTip = ({
               <CustomBoxForTips
                 sx={{ borderColor: (theme) => theme.palette.primary.main }}
                 onClick={handleShow}
+                active={isCustom}
               >
-                <Typography color={theme.palette.primary.main} fontSize="12px">
+                <Typography color={isCustom?theme.palette.neutral[100]:theme.palette.primary.main} fontSize="12px">
                   {t("Custom")}
                 </Typography>
               </CustomBoxForTips>
@@ -127,7 +134,7 @@ const DeliveryManTip = ({
           </Grid>
         )}
         {show && (
-          <Stack width="100%" direction="row" spacing={1.8}>
+          <Stack width="100%" direction="row" spacing={1.8} >
             <CustomTextField
               type="number"
               label={t("Amount")}

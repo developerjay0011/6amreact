@@ -8,10 +8,12 @@ import ProductsMoreFromTheStore from "./ProductsMoreFromTheStore";
 import FeaturedStores from "../home/module-wise-components/pharmacy/featured-stores";
 
 import DetailsAndReviews from "./details-and-reviews/DetailsAndReviews";
+import LoveItem from "../home/love-item";
+import DiscountedProductRedirectBanner from "../home/DiscountedProductRedirectBanner";
+import SinglePoster from "../home/module-wise-components/ecommerce/SinglePoster";
 
 const ProductDetails = ({ productDetailsData, configData }) => {
   const storeImageBaseUrl = configData?.base_urls?.store_image_url;
-
   return (
     <CustomStackFullWidth
       spacing={5}
@@ -47,15 +49,15 @@ const ProductDetails = ({ productDetailsData, configData }) => {
         {/*<Grid item xs={12}>*/}
         {/*  <LoveItem />*/}
         {/*</Grid>*/}
-        {/* <Grid item xs={12}>
-          <SinglePoster />
-        </Grid> */}
+        <Grid item xs={12}>
+          <SinglePoster  />
+        </Grid>
         <Grid item xs={12}>
           <FeaturedStores title="Popular Store" configData={configData} />
         </Grid>
-        {/* <Grid item xs={12}>
-          <DiscountedProductRedirectBanner />
-        </Grid> */}
+        {/*<Grid item xs={12}>*/}
+        {/*  <DiscountedProductRedirectBanner />*/}
+        {/*</Grid>*/}
       </Grid>
 
       {/*{productDetailsData && !productDetailsData?.isCampaignItem && (*/}

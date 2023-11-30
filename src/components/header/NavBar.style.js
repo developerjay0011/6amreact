@@ -4,8 +4,8 @@ import {
   BottomNavigationAction,
   Button,
   Drawer,
-  Menu,
   Link as MenuLink,
+  Menu,
   Stack,
   styled,
   Switch,
@@ -13,8 +13,29 @@ import {
 import bgImg from "../../../public/bgimge.jpg";
 
 import React from "react";
-export const AppBarStyle = styled(AppBar)(({ theme }) => ({
+
+export const AppBarStyle = styled(AppBar)(({ theme, scrolling, isSmall }) => ({
+  // transition: "all ease-in-out 0.3s",
+  top: !scrolling ? "0" : isSmall ? "0px" : "-30px",
   background: `${theme.palette.mode === "light" && "#fff !important"}`,
+  WebkitAnimation: !isSmall && scrolling ? "fadeInUp 0.4s" : "fadeInDown 0.4s",
+  animation: !isSmall && scrolling ? "fadeInUp 0.4s" : "fadeInDown 0.4s",
+  "@keyframes fadeInUp": {
+    "0%": {
+      transform: "translateY(30px)",
+    },
+    "100%": {
+      transform: "translateY(0)",
+    },
+  },
+  "@keyframes fadeInDown": {
+    "0%": {
+      transform: "translateY(-30px)",
+    },
+    "100%": {
+      transform: "translateY(0)",
+    },
+  },
 }));
 
 export const CustomBgImage = styled(Stack)(({ theme }) => ({
@@ -182,6 +203,7 @@ export const CustomDrawer = styled(Drawer)(({ theme, router }) => ({
     top: "56px",
     width: "80%",
     height: "80vh",
+    transition: "transform 0.3s ease-in-out",
 
     // marginLeft: router.pathname === "/" && "24px",
     // marginRight: router.pathname === "/" && "24px",
@@ -195,9 +217,11 @@ export const CustomBottomNavigationAction = styled(BottomNavigationAction)(
   ({ theme }) => ({
     color: theme.palette.neutral[1000],
     minWidth: "60px",
-    fontSize: "10px",
+    fontSize: "10px !important",
     padding: "0px 0px",
-
+    "& .MuiBottomNavigationAction-label": {
+      fontSize: "11px !important" /* Adjust the font size here */,
+    },
     "&.Mui-selected": {
       color: theme.palette.primary.main,
     },

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import Dialog from "@mui/material/Dialog";
-import { Button, Stack } from "@mui/material";
+import { Button, IconButton, Stack } from "@mui/material";
 import DialogTitle from "@mui/material/DialogTitle";
 import Typography from "@mui/material/Typography";
 import DialogActions from "@mui/material/DialogActions";
@@ -15,6 +15,9 @@ import CustomSelectWithFormik from "../../../custom-select/CustomSelectWithFormi
 import CustomTextFieldWithFormik from "../../../form-fields/CustomTextFieldWithFormik";
 import MultiFileUploader from "../../../multi-file-uploader/MultiFileUploader";
 import { useGetRefundReasons } from "../../../../api-manage/hooks/react-query/refund-request/useGetRefundReasons";
+import { getToken } from "../../../../helper-functions/getToken";
+import CloseIcon from "@mui/icons-material/Close";
+import { useTheme } from "@emotion/react";
 const acceptedFileInputFormat =
   "application/pdf,image/*,text/plain,.doc, .docx,.txt";
 const supportedFormatMultiImages = [
@@ -38,8 +41,12 @@ const RefundModal = (props) => {
     refundIsLoading,
   } = props;
   const { data: reasonsData, refetch } = useGetRefundReasons();
+  const theme = useTheme();
   useEffect(() => {
-    refetch();
+    if (getToken()) {
+      refetch();
+    }
+
   }, []);
 
   const { t } = useTranslation();
@@ -56,7 +63,7 @@ const RefundModal = (props) => {
     onSubmit: async (values, helpers) => {
       try {
         formSubmitOnSuccess(values);
-      } catch (err) {}
+      } catch (err) { }
     },
   });
 
@@ -90,6 +97,23 @@ const RefundModal = (props) => {
       aria-labelledby="alert-dialog-title"
       aria-describedby="alert-dialog-description"
     >
+      <IconButton
+        onClick={() => onClose()}
+        sx={{
+          zIndex: "99",
+          position: "absolute",
+          top: 10,
+          right: 10,
+          backgroundColor: (theme) => theme.palette.neutral[100],
+          borderRadius: "50%",
+          [theme.breakpoints.down("md")]: {
+            top: 10,
+            right: 5,
+          },
+        }}
+      >
+        <CloseIcon sx={{ fontSize: "20px", fontWeight: "500" }} />
+      </IconButton>
       <WrapperForCustomDialogConfirm>
         <CustomStackFullWidth spacing={1}>
           <Stack alignItems="start" justifyContent="center">

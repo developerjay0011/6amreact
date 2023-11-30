@@ -103,6 +103,9 @@ export const DeliveryOptionButton = styled(CustomButtonPrimary)(
     padding: "7px 16px",
     "&:hover": {
       backgroundColor: theme.palette.primary.dark,
+      ".text": {
+        color: theme.palette.whiteContainer.main,
+      },
     },
     [theme.breakpoints.down("md")]: {
       gap: "10px",

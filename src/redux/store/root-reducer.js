@@ -13,6 +13,8 @@ import fbCredentialSliceReducer from "../slices/fbCredentials";
 import storedDataSliceReducer from "../slices/storedData";
 import languageChangeReducer from "../slices/languageChange";
 import AddAddressModalReducer from "../slices/addAddress";
+import guestUserReducer from "../slices/guestUserInfo";
+import offlinePaymentInfoReducer from "../slices/offlinePaymentData";
 
 //register all reducers here
 export const rootReducer = combineReducers({
@@ -30,4 +32,6 @@ export const rootReducer = combineReducers({
   storedData: storedDataSliceReducer,
   languageChange: languageChangeReducer,
   addressModel: AddAddressModalReducer,
+  guestUserInfo: guestUserReducer,
+  offlinePayment : offlinePaymentInfoReducer,
 });

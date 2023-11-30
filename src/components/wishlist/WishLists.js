@@ -17,7 +17,7 @@ import {
 import StoresInfoCard from "../home/stores-with-filter/cards-grid/StoresInfoCard";
 import { Stack } from "@mui/system";
 import CustomEmptyResult from "../custom-empty-result";
-import nodataimage from "../../../public/static/nodata.png";
+import nodataimage from "../../../public/static/newnoitem.png";
 import PushNotificationLayout from "../PushNotificationLayout";
 import { getItemsOrFoods } from "../../helper-functions/getItemsOrFoods";
 import { getStoresOrRestaurants } from "../../helper-functions/getStoresOrRestaurants";

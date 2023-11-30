@@ -12,6 +12,7 @@ import img from "./assets/image 43.png";
 import img3 from "./assets/image 45.png";
 import img2 from "./assets/image 46.png";
 import img1 from "./assets/image 47.png";
+import SupportImgSvg from "./assets/SupportImgSvg";
 
 const HelpAndSupport = (props) => {
 	const { configData, t } = props;
@@ -19,12 +20,7 @@ const HelpAndSupport = (props) => {
 		<Box>
 			<Grid container>
 				<Grid item md={12} xs={12}>
-					<CustomImageContainer
-						width="100%"
-						height="100%"
-						src={img.src}
-						objectFit="cover"
-					/>
+					<SupportImgSvg/>
 				</Grid>
 				<Grid item md={12} xs={12} sx={{ marginY: "1rem" }}>
 					<HelpTypographyBox>

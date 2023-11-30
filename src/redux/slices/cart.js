@@ -21,9 +21,12 @@ export const cartSlice = createSlice({
   name: "cart",
   initialState,
   reducers: {
+    setCartList: (state = initialState, action) => {
+      state.cartList = action.payload;
+    },
     setCart: (state = initialState, action) => {
       if (action.payload.module_type !== "food") {
-        let isItemExist = state.cartList.find(
+        let isItemExist = state?.cartList?.find(
           (obj) => obj.id === action.payload.id
         );
 
@@ -43,8 +46,9 @@ export const cartSlice = createSlice({
         }
       } else {
         //for food module
+
         let isPayloadItemMatches = false;
-        if (state.cartList.length > 0) {
+        if (state.cartList?.length > 0) {
           for (let i = 0; i < state.cartList.length; i++) {
             if (
               _.isEqual(
@@ -104,7 +108,7 @@ export const cartSlice = createSlice({
       let newData = state.cartList.map((item, i) =>
         i === index ? action.payload : item
       );
-      state.cartList = newData;
+      state.cartList = action.payload;
     },
     setUpdateVariationToCart: (state = initialState, action) => {
       if (action.payload.newObj.module_type === "food") {
@@ -118,20 +122,6 @@ export const cartSlice = createSlice({
       }
     },
     setIncrementToCartItem: (state = initialState, action) => {
-      const price =
-        action.payload.price +
-        getTotalVariationsPrice(action.payload.food_variations);
-      //here quantity is incremented with number 1
-      const productPrice = price * (action.payload.quantity + 1);
-      const discountedTotalPrice = getConvertDiscount(
-        action.payload.discount_type === "amount"
-          ? action.payload.discount * (action.payload.quantity + 1)
-          : action.payload.discount,
-        action.payload.discount_type,
-        productPrice,
-        action.payload.store_discount
-      );
-
       let newData;
       if (getCurrentModuleType() === "food") {
         if (action.payload.food_variations.length > 0) {
@@ -144,8 +134,8 @@ export const cartSlice = createSlice({
             i === index
               ? {
                   ...item,
-                  totalPrice: discountedTotalPrice,
-                  quantity: action.payload.quantity + 1,
+                  totalPrice: action.payload.totalPrice,
+                  quantity: action.payload.quantity,
                 }
               : item
           );
@@ -154,8 +144,8 @@ export const cartSlice = createSlice({
             item.id === action.payload.id
               ? {
                   ...item,
-                  totalPrice: discountedTotalPrice,
-                  quantity: action.payload.quantity + 1,
+                  totalPrice:action.payload.totalPrice,
+                  quantity: action.payload.quantity,
                 }
               : item
           );
@@ -170,12 +160,8 @@ export const cartSlice = createSlice({
             return {
               ...action.payload,
               price: action.payload.price,
-              quantity: action.payload.quantity + 1,
-              totalPrice:
-                (action.payload?.selectedOption?.length > 0
-                  ? action.payload?.selectedOption?.[0]?.price
-                  : action.payload.price) *
-                (action.payload.quantity + 1),
+              quantity: action.payload.quantity ,
+              totalPrice:action.payload.totalPrice,
             };
           } else {
             return stateItem;
@@ -185,19 +171,19 @@ export const cartSlice = createSlice({
       state.cartList = newData;
     },
     setDecrementToCartItem: (state = initialState, action) => {
-      const price =
-        action?.payload?.price +
-        getTotalVariationsPrice(action.payload.food_variations);
-      //here quantity is decremented with number 1
-      const productPrice = price * (action.payload.quantity - 1);
-      const discountedTotalPrice = getConvertDiscount(
-        action.payload.discount_type === "amount"
-          ? action.payload.discount * (action.payload.quantity - 1)
-          : action.payload.discount,
-        action.payload.discount_type,
-        productPrice,
-        action.payload.store_discount
-      );
+      // const price =
+      //   action?.payload?.price +
+      //   getTotalVariationsPrice(action.payload.food_variations);
+      // //here quantity is decremented with number 1
+      // const productPrice = price * (action.payload.quantity);
+      // const discountedTotalPrice = getConvertDiscount(
+      //   action.payload.discount_type === "amount"
+      //     ? action.payload.discount * (action.payload.quantity )
+      //     : action.payload.discount,
+      //   action.payload.discount_type,
+      //   productPrice,
+      //   action.payload.store_discount
+      // );
 
       // without food module
       let newData;
@@ -211,8 +197,8 @@ export const cartSlice = createSlice({
             i === index
               ? {
                   ...item,
-                  totalPrice: discountedTotalPrice,
-                  quantity: action.payload.quantity - 1,
+                  totalPrice: action.payload.totalPrice,
+                  quantity: action.payload.quantity ,
                 }
               : item
           );
@@ -221,8 +207,8 @@ export const cartSlice = createSlice({
             item.id === action.payload.id
               ? {
                   ...item,
-                  totalPrice: discountedTotalPrice,
-                  quantity: action.payload.quantity - 1,
+                  totalPrice: action.payload.totalPrice,
+                  quantity: action.payload.quantity ,
                 }
               : item
           );
@@ -237,12 +223,8 @@ export const cartSlice = createSlice({
             return {
               ...action.payload,
               price: action.payload.price,
-              quantity: action.payload.quantity - 1,
-              totalPrice:
-                (action.payload?.selectedOption?.length > 0
-                  ? action.payload?.selectedOption?.[0]?.price
-                  : action.payload.price) *
-                (action.payload.quantity - 1),
+              quantity: action.payload.quantity ,
+              totalPrice:action.payload.totalPrice,
             };
           } else {
             return stateItem;
@@ -273,7 +255,7 @@ export const cartSlice = createSlice({
     },
     setClearCart: (state = initialState, action) => {
       const currentModule = getCurrentModuleType();
-      state.cartList = state.cartList.filter(
+      state.cartList = state?.cartList?.filter(
         (item) => item?.module_type !== currentModule
       );
     },
@@ -287,6 +269,7 @@ export const cartSlice = createSlice({
 });
 export const {
   cart,
+  setCartList,
   setCart,
   setUpdateItemToCart,
   setVariationToCart,

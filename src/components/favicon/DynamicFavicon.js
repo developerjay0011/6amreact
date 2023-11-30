@@ -2,8 +2,8 @@ import React from "react";
 import PropTypes from "prop-types";
 import Head from "next/head";
 import { useSelector } from "react-redux";
-const DynamicFavicon = () => {
-  const { configData } = useSelector((state) => state.configData);
+const DynamicFavicon = ({configData}) => {
+  //const { configData } = useSelector((state) => state.configData);
   const businessLogo = configData?.base_urls?.business_logo_url;
 
   return (

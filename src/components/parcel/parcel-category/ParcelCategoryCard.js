@@ -48,10 +48,10 @@ const ParcelCategoryCard = (props) => {
 				<Grid container spacing={3}>
 					<Grid item xs={3} sm={4} md={4} alignSelf="center">
 						<CustomImageContainer
-							width="100%"
+							width={{ xs: "65px", sm: "80px", md: "100px" }}
 							src={`${configData?.base_urls?.parcel_category_image_url}/${data?.image}`}
-							height="100%"
-							objectfit="contain"
+							height={{ xs: "65px", sm: "80px", md: "100px" }}
+							objectfit="cover"
 							borderRadius=".7rem"
 						/>
 					</Grid>

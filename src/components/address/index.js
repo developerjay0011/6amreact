@@ -1,10 +1,6 @@
 import React, { useEffect, useState } from "react";
-import PropTypes from "prop-types";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
-import {
-  CustomPaperBigCard,
-  CustomStackFullWidth,
-} from "../../styled-components/CustomStyles.style";
+import { CustomStackFullWidth } from "../../styled-components/CustomStyles.style";
 import {
   Button,
   Grid,
@@ -15,22 +11,15 @@ import {
 } from "@mui/material";
 import { Box, Stack } from "@mui/system";
 import CustomEmptyResult from "../custom-empty-result";
-import nodata from "../loyalty-points/assets/Search.svg";
-import useGetAddressList from "../../api-manage/hooks/react-query/address/useGetAddressList";
-import AddNewAddress from "./add-new-address";
-import { Skeleton } from "@mui/material";
+import nodata from "../loyalty-points/assets/no-address-2.png";
 import Shimmer from "./Shimmer";
 import AddressCard from "./address-card";
-import AddNewAddressButton from "./add-new-address/AddNewAddressButton";
 import { useDispatch, useSelector } from "react-redux";
-import { CustomTypography } from "../home/PromotionalBanner";
 import { t } from "i18next";
-import { setOpenAddressModal } from "../../redux/slices/addAddress";
-import CustomImageContainer from "../CustomImageContainer";
-import editIcon from "../profile/asset/editIcon.png";
 import { SmallDeviceIconButton } from "../profile/basic-information";
 import { useTheme } from "@emotion/react";
 import { setAllSaveAddress } from "../../redux/slices/storedData";
+
 export const GrayButton = styled(Button)(({ theme }) => ({
   color: theme.palette.neutral[400],
   fontSize: "12px",
@@ -150,16 +139,16 @@ const Address = (props) => {
               </Box>
             ) : (
               <Stack
-                width="100%"
                 alignItems="center"
                 justifyContent="center"
+                width="100%"
                 height="100%"
               >
                 <CustomEmptyResult
                   label="No Address Found"
                   image={nodata}
                   width="128px"
-                  height="128px"
+                  height="170px"
                 />
               </Stack>
             )}

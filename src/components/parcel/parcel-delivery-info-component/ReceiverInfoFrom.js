@@ -197,6 +197,7 @@ const ReceiverInfoFrom = ({
           coords={coords}
           toparcel="1"
           handleLocation={handleLocation}
+          fromReceiver="1"
         />
       )}
     </CustomStackFullWidth>

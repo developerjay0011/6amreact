@@ -12,7 +12,7 @@ import { useTheme } from "@emotion/react";
 const ParcelCategory = () => {
   const theme = useTheme();
 
-  const { data, refetch } = useGetParcelCategory();
+  const { data, refetch, isLoading } = useGetParcelCategory();
   useEffect(() => {
     refetch();
   }, []);
@@ -32,7 +32,7 @@ const ParcelCategory = () => {
       </Stack>
       <CustomStackFullWidth>
         <Grid container spacing={{ xs: 2, sm: 3, md: 3 }}>
-          {data?.length > 0 ? (
+          {!isLoading ? (
             <>
               {data?.map((item) => {
                 return (

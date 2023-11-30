@@ -1,8 +1,7 @@
-import React, { useEffect, useId, useState } from "react";
+import React, { useEffect, useId, useRef, useState } from "react";
 import {
   alpha,
   Grid,
-  Stack,
   Typography,
   useMediaQuery,
   useTheme,
@@ -21,7 +20,7 @@ import AllowLocationDialog from "../../Map/AllowLocationDialog";
 import CustomMapSearch from "../../Map/CustomMapSearch";
 import MapModal from "../../Map/MapModal";
 import { ModuleSelection } from "./module-selection";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { module_select_success } from "../../../utils/toasterMessages";
 import { setWishList } from "../../../redux/slices/wishList";
 import { useWishListGet } from "../../../api-manage/hooks/react-query/wish-list/useWishListGet";
@@ -31,8 +30,8 @@ import GpsFixedIcon from "@mui/icons-material/GpsFixed";
 import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import MapIcon from "@mui/icons-material/Map";
-import { useRef } from "react";
 import { getLanguage } from "../../../helper-functions/getLanguage";
+
 const HeroLocationForm = () => {
   const theme = useTheme();
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
@@ -175,14 +174,13 @@ const HeroLocationForm = () => {
   const { refetch: wishlistRefetch, isLoading: isLoadingWishlist } =
     useWishListGet(onSuccessHandler);
   const setLocationEnable = async () => {
-    if (!currentLocation) {
-      toast.error(t("Location is required."), {
-        id: "id",
-      });
-    }
+    // if (!currentLocation) {
+    //   toast.error(t("Location is required."), {
+    //     id: "id",
+    //   });
+    // }
     setGeoLocationEnable(true);
     setZoneIdEnabled(true);
-
     if (currentLocation && location) {
       if (getToken()) {
         wishlistRefetch();
@@ -386,15 +384,15 @@ const HeroLocationForm = () => {
                 }}
                 onClick={() => setLocationEnable()}
                 radiuschange={isXSmall ? "false" : "true"}
-                disabled={isLoadingGeoCode}
+                disabled={!location?.lat || isLoadingGeoCode}
               >
-                <Typography
-                  variant={isXSmall ? "body3" : "body1"}
-                  color="whiteContainer.main"
-                  fontWeight="bold"
-                >
-                  {t("Explore")}
-                </Typography>
+                {/*<Typography*/}
+                {/*  variant={isXSmall ? "body3" : "body1"}*/}
+                {/*  color="whiteContainer.main"*/}
+                {/*  fontWeight="bold"*/}
+                {/*>*/}
+                {t("Explore")}
+                {/*</Typography>*/}
               </StyledButton>
             </Grid>
           </Grid>

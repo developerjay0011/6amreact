@@ -39,7 +39,7 @@ const DiscountedProductRedirectBanner = (props) => {
         <Typography
           textAlign={IsSmallScreen() ? "center" : "flex-start"}
           fontSize="15px"
-          color="text.secondary"
+          color="text.customText1"
         >
           See Our latest discounted products from here and get a special
           <CustomSpan>discount product</CustomSpan>

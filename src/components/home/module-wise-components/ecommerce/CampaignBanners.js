@@ -40,87 +40,68 @@ const CampaignBanners = (props) => {
 	const [foodBanner, setFoodBanner] = useState();
 	const [openModal, setOpenModal] = useState(false);
 	const { configData } = useSelector((state) => state.configData);
+
 	const dispatch = useDispatch();
 	useEffect(() => {
-		if (banners.banners.length === 0 && banners.campaigns.length === 0) {
-			refetchBannerData();
-		}
+	  if (banners.campaigns.length === 0) {
+		refetchBannerData();
+	  }
 	}, [banners]);
 	useEffect(() => {
-		if (data) {
-			dispatch(setBanners(data));
-		}
+	  if (data?.campaigns) {
+		dispatch(setBanners(data));
+	  }
 	}, [data]);
 	useEffect(() => {
-		if (banners.banners.length > 0 || banners.campaigns.length > 0) {
-			handleBannersData();
-		}
+	  if (banners.banners.length > 0) {
+		handleBannersData();
+	  }
 	}, [banners]);
-
+  
 	const handleBannersData = () => {
-		let mergedBannerData = [];
-		if (banners?.banners?.length > 0) {
-			banners?.banners?.forEach((item) => mergedBannerData.push(item));
-		}
-		if (banners?.campaigns?.length > 0) {
-			banners?.campaigns?.forEach((item) =>
-				mergedBannerData.push({ ...item, isCampaign: true })
-			);
-		}
-		setBannersData(mergedBannerData);
+	  let mergedBannerData = [];
+	  if (banners?.banners?.length > 0) {
+		banners?.banners?.forEach((item) => mergedBannerData.push(item));
+	  }
+	  setBannersData(mergedBannerData);
 	};
 	const handleBannerClick = (banner) => {
-		if (banner?.isCampaign) {
+	  if (banner?.type === "default") {
+		router.push(banner?.link);
+	  }
+	  if (banner?.type === "store_wise") {
+		router.push(
+		  {
+			pathname: "/store/[id]",
+			query: {
+			  id: `${banner?.store?.slug ? banner?.store?.slug : banner?.store?.id}`,
+			  module_id: `${getModuleId()}`,
+			},
+		  },
+		  undefined,
+		  { shallow: true }
+		);
+	  } else {
+		if (banner?.type === "item_wise") {
+		  if (selectedModule?.module_type === "food") {
+			setFoodBanner(banner?.item);
+			setOpenModal(true);
+		  } else {
 			router.push(
-				{
-					pathname: "/campaigns/[id]",
-					query: { id: `${banner?.id}`, module_id: `${getModuleId()}` },
+			  {
+				pathname: "/product/[id]",
+				query: {
+				  id: `${banner?.item?.slug ? banner?.item?.slug : banner?.item?.id
+					}`,
+				  module_id: `${getModuleId()}`,
 				},
-				undefined,
-				{ shallow: true }
+			  },
+			  undefined,
+			  { shallow: true }
 			);
-		} else {
-			if (banner?.type === "store_wise") {
-				router.push(
-					{
-						pathname: "/store/[id]",
-						query: {
-							id: `${
-								banner?.store?.slug
-									? banner?.store?.slug
-									: banner?.store?.id
-							}`,
-							module_id: `${getModuleId()}`,
-						},
-					},
-					undefined,
-					{ shallow: true }
-				);
-			} else {
-				if (banner?.type === "item_wise") {
-					if (selectedModule?.module_type === "food") {
-						setFoodBanner(banner?.item);
-						setOpenModal(true);
-					} else {
-						router.push(
-							{
-								pathname: "/product/[id]",
-								query: {
-									id: `${
-										banner?.item?.slug
-											? banner?.item?.slug
-											: banner?.item?.id
-									}`,
-									module_id: `${getModuleId()}`,
-								},
-							},
-							undefined,
-							{ shallow: true }
-						);
-					}
-				}
-			}
+		  }
 		}
+	  }
 	};
 	const handleModalClose = () => {
 		setOpenModal(false);
@@ -145,7 +126,7 @@ const CampaignBanners = (props) => {
 				}
 			case ModuleTypes.ECOMMERCE:
 				if (bannersData.length > 1) {
-					return 3;
+					return bannersData.length;
 				} else {
 					return 1;
 				}
@@ -171,7 +152,6 @@ const CampaignBanners = (props) => {
 			},
 		],
 	};
-	const isSmall = useMediaQuery("(max-width:1180px)");
 
 	return (
 		<>
@@ -195,11 +175,10 @@ const CampaignBanners = (props) => {
 									onClick={() => handleBannerClick(item)}
 								>
 									<CustomImageContainer
-										src={`${
-											item?.isCampaign
-												? configData?.base_urls?.campaign_image_url
-												: configData?.base_urls?.banner_image_url
-										}/${item?.image}`}
+										src={`${item?.isCampaign
+											? configData?.base_urls?.campaign_image_url
+											: configData?.base_urls?.banner_image_url
+											}/${item?.image}`}
 										alt={item?.title}
 										height="100%"
 										width="100%"

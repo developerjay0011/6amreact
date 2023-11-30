@@ -1,6 +1,5 @@
 export const haveRtlLanguages = [
   "ar",
-
   "arc",
   "dv",
   "fa",

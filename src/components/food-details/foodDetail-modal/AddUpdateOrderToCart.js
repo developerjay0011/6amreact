@@ -4,9 +4,10 @@ import NotAvailableCard from "./NotAvailableCard";
 import { Button, Stack } from "@mui/material";
 import { CustomTypography } from "../../landing-page/hero-section/HeroSection.style";
 import { isAvailable } from "../../../utils/CustomFunctions";
+import Loading from "../../custom-loading/Loading";
 
 const AddUpdateOrderToCart = (props) => {
-  const { modalData, isInCart, addToCard, t, product, orderNow, isCampaign } = props;
+  const { modalData, isInCart, addToCard, t, product, orderNow, isCampaign,isLoading,updateIsLoading } = props;
   return (
     <Stack spacing={1}>
       {
@@ -22,12 +23,12 @@ const AddUpdateOrderToCart = (props) => {
               <>
                 {isInCart(product?.id) && (
                     <Button
-                        // disabled={quantity <= 0}
+                        loading={updateIsLoading}                        // disabled={quantity <= 0}
                         onClick={() => addToCard()}
                         variant="contained"
                         fullWidth
                     >
-                      {t("Update to cart")}
+                      {updateIsLoading ?<Stack height="25px" alignItems="center" justifyContent="center"> <Loading /></Stack> : t("Update to cart")}
                     </Button>
                 )}
                 {!isInCart(product?.id) &&  <Button
@@ -35,6 +36,8 @@ const AddUpdateOrderToCart = (props) => {
                     onClick={() => addToCard()}
                     variant="contained"
                     fullWidth
+                    loading={isLoading}
+
                 >
                   <CustomTypography
                       variant="h5"

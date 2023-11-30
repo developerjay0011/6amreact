@@ -60,7 +60,7 @@ const ButtonContainer = styled(Box)(({ theme, right, isdisabled }) => ({
   },
 }));
 const lanDirection = getLanguage() ? getLanguage() : "ltr";
-console.log({ lanDirection });
+
 const Next = ({ onClick, className }) => {
   return (
     <ButtonContainer

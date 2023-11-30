@@ -7,10 +7,11 @@ import { useTheme } from "@emotion/react";
 import { Box, Stack } from "@mui/system";
 import { t } from "i18next";
 import CustomContainer from "../container";
+import Router from "next/router";
 
 const FooterBottom = (props) => {
   const handleClickToRoute = (href) => {
-    router.push(href, undefined, { shallow: true });
+    Router.push(href, undefined, { shallow: true });
   };
   const { configData } = props;
   const theme = useTheme();
@@ -43,10 +44,17 @@ const FooterBottom = (props) => {
         <CustomContainer>
           <CustomStackFullWidth
             direction={{ xs: "column", md: "row" }}
-            justifyContent="space-between"
+            justifyContent={{ xs: "center", md: "space-between" }}
+            alignItems={{ xs: "center", md: "flex-start" }}
           >
-            <Typography>{configData?.footer_text}</Typography>
-            <Stack direction={{ xs: "column", md: "row" }} spacing={3}>
+            <Typography marginBottom={{ xs: "16px", md: "0px" }}>
+              {configData?.footer_text}
+            </Typography>
+            <Stack
+              direction={{ xs: "column", md: "row" }}
+              spacing={{ xs: 2, md: 3 }}
+              alignItems={{ xs: "center" }}
+            >
               <Typography
                 onClick={() => handleClickToRoute("/terms-and-conditions")}
                 sx={{

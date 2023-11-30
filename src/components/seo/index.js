@@ -1,8 +1,9 @@
 import Head from "next/head";
 import PropTypes from "prop-types";
 import { useRouter } from "next/router";
+import DynamicFavicon from "../favicon/DynamicFavicon";
 
-const SEO = ({ title, description, keywords, image, businessName }) => {
+const SEO = ({ title, description, keywords, image, businessName,configData }) => {
   const router = useRouter();
   const { asPath } = router;
 
@@ -11,13 +12,18 @@ const SEO = ({ title, description, keywords, image, businessName }) => {
 
   // Concatenate the current page URL with the site URL
   const url = `${siteUrl}${asPath}`;
-
+  const businessLogo = configData?.base_urls?.business_logo_url;
   return (
+    <>
+     <DynamicFavicon configData={configData}/>
     <Head>
+      
       {/* General meta tags */}
       <title>{title ? `${title} | ${siteName}` : siteName}</title>
-      <meta name="description" content={description} />
-      <meta name="keywords" content={keywords} />
+        <meta itemProp="name" content={title} />
+        <meta itemProp="description" content={description} />
+        <meta itemProp="image" content={image} />
+        <meta property="og:type" content="website" />
 
       {/* Open Graph meta tags for Facebook */}
       <meta property="og:title" content={title || siteName} />
@@ -40,6 +46,8 @@ const SEO = ({ title, description, keywords, image, businessName }) => {
 
       <link rel="canonical" href={url} />
     </Head>
+    </>
+   
   );
 };
 

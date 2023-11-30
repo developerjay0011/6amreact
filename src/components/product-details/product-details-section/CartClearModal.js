@@ -1,4 +1,11 @@
-import {Button, Grid, Modal, Paper, Typography, useMediaQuery} from "@mui/material";
+import {
+  Button,
+  Grid,
+  Modal,
+  Paper,
+  Typography,
+  useMediaQuery,
+} from "@mui/material";
 import React from "react";
 
 import { styled, useTheme } from "@mui/material/styles";
@@ -15,9 +22,12 @@ import {
   cart_clear_description,
   cart_clear_header,
   cart_clear_messages,
-  cart_clear_success_message
+  cart_clear_success_message,
 } from "../../../utils/toasterMessages";
 import toast from "react-hot-toast";
+import useDeleteAllCartItem from "../../../api-manage/hooks/react-query/add-cart/useDeleteAllCartItem";
+import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
+import { getToken } from "../../../helper-functions/getToken";
 
 const CustomStyledBox = styled(Paper)(({ theme }) => ({
   padding: "1.5rem",
@@ -30,10 +40,16 @@ const CartClearModal = ({ handleClose, dispatchRedux }) => {
   const { t } = useTranslation();
   const theme = useTheme();
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
+  const guestId = localStorage.getItem("guest_id");
+  const { mutate } = useDeleteAllCartItem();
   const handleClearCart = () => {
+    mutate(guestId, {
+      //onSuccess: handleSuccess,
+      onError: onErrorResponse,
+    });
     dispatchRedux(setClearCart());
     toast.success(t(cart_clear_success_message), { duration: 5000 });
-    handleClose?.('add-item');
+    handleClose?.("add-item");
   };
 
   return (
@@ -58,9 +74,7 @@ const CartClearModal = ({ handleClose, dispatchRedux }) => {
           </Grid>
           <Grid item xs={12} md={12} align="center">
             <Typography fontWeight="bold">
-              {t(
-                  cart_clear_description
-              )}
+              {t(cart_clear_description)}
             </Typography>
           </Grid>
           <Grid item xs={6} md={6} align="center">
@@ -79,7 +93,7 @@ const CartClearModal = ({ handleClose, dispatchRedux }) => {
               variant="contained"
               onClick={() => handleClearCart()}
             >
-              {isXSmall ? t("Clear") :  t("Clear Cart")}
+              {isXSmall ? t("Clear") : t("Clear Cart")}
             </Button>
           </Grid>
         </Grid>

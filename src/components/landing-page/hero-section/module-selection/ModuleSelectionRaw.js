@@ -41,6 +41,9 @@ const CardWrapper = styled(Stack)(({ theme, bg_change }) => ({
     img: {
       transform: "rotate(-10deg)",
     },
+    ".text": {
+      color: theme.palette.whiteContainer.main,
+    },
   },
 }));
 const ImageWrapper = styled(Box)(({ theme }) => ({
@@ -77,18 +80,18 @@ const Card = ({ item, configData, isSelected, handleClick }) => {
         }}
       >
         <Stack>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" className="text">
             {t("Over")}
           </Typography>
           {item?.module_type === "ecommerce" ? (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" className="text">
               {item?.items_count > 2
                 ? item?.items_count - 1
                 : item?.items_count}
               {item?.items_count > 2 && "+"} {t("Items")}
             </Typography>
           ) : (
-            <Typography variant="body2" color="text.secondary">
+            <Typography variant="body2" color="text.secondary" className="text">
               {item?.stores_count > 2
                 ? item?.stores_count - 1
                 : item?.stores_count}

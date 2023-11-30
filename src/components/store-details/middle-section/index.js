@@ -1,43 +1,39 @@
 import React, { useEffect, useReducer, useState } from "react";
 import CustomSearch from "../../custom-search/CustomSearch";
-import { alpha, Grid, IconButton, Stack, Typography } from "@mui/material";
+import {
+  alpha,
+  Grid,
+  IconButton,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Sidebar from "./Sidebar";
 import {
   CustomBoxFullWidth,
-  CustomPaperBigCard,
   CustomStackFullWidth,
 } from "../../../styled-components/CustomStyles.style";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import useGetStoresCategoriesItem from "../../../api-manage/hooks/react-query/stores-categories/useGetStoresCategoriesItem";
 import ProductCard, { CardWrapper } from "../../cards/ProductCard";
 import { useRouter } from "next/router";
-import { Skeleton } from "@mui/material";
-import CustomPagination from "../../custom-pagination";
 import useGetSearchedStoreItems from "../../../api-manage/hooks/react-query/store/useGetSearchedStoreItems";
 import { ACTION, initialState, reducer } from "./states";
 import CustomEmptyResult from "../../custom-empty-result";
-import notFoundImage from "../../../../public/static/food-not-found.png";
+import notFoundImage from "../../../../public/static/empty.png";
 import { useTranslation } from "react-i18next";
-import toast from "react-hot-toast";
-import OutlinedGroupButtons from "../../group-buttons/OutlinedGroupButtons";
+import VegNonVegCheckBox from "../../group-buttons/OutlinedGroupButtons";
 import { getModuleId } from "../../../helper-functions/getModuleId";
-import H2 from "../../typographies/H2";
-import H4 from "../../typographies/H4";
-import H1 from "../../typographies/H1";
 import HighToLow from "../../../sort/HighToLow";
-import CustomDivider from "../../CustomDivider";
-import VerticalCard from "../../cards/VerticalCard";
 import { getCurrentModuleType } from "../../../helper-functions/getCurrentModuleType";
 import { useSelector } from "react-redux";
 
 import { getDiscountedAmount } from "../../../helper-functions/CardHelpers";
 import { ModuleTypes } from "../../../helper-functions/moduleTypes";
 import { useInView } from "react-intersection-observer";
-import { VIEW_ALL_TEXT } from "../../../utils/staticTexts";
 import { removeDuplicates } from "../../../utils/CustomFunctions";
 import DotSpin from "../../DotSpin";
-import ProductCardShimmer from "../../search/ProductCardShimmer";
-import VegNonVegCheckBox from "../../group-buttons/OutlinedGroupButtons";
+import SearchIcon from "@mui/icons-material/Search";
 
 export const handleShimmerProducts = () => {
   return (
@@ -143,6 +139,7 @@ const MiddleSection = (props) => {
     veg: false,
     non_veg: false,
   });
+  const [open, setOpen] = useState(false);
   const { t } = useTranslation();
   const { configData } = useSelector((state) => state.configData);
   const imageBaseUrl = configData?.base_urls?.item_image_url;
@@ -200,7 +197,9 @@ const MiddleSection = (props) => {
           if (isThisStoresProductExist?.length > 0) {
             return null;
           } else {
-            resProducts?.forEach((item) => visitedStoresProducts.push(item));
+            resProducts
+              ?.slice(0, 5)
+              ?.forEach((item) => visitedStoresProducts.push(item));
           }
           localStorage.setItem(
             "visitedStoresProducts",
@@ -209,7 +208,7 @@ const MiddleSection = (props) => {
         }
       } else {
         const products =
-          resProducts?.length > 5 ? resProducts?.slice(5) : resProducts;
+          resProducts?.length > 5 ? resProducts?.slice(0, 5) : resProducts;
         localStorage.setItem("visitedStoresProducts", JSON.stringify(products));
       }
     }
@@ -475,6 +474,10 @@ const MiddleSection = (props) => {
     }
   };
 
+  const handleOpenSerach = () => {
+    setOpen(!open);
+  };
+
   return (
     <CustomBoxFullWidth>
       {moduleId && (
@@ -501,17 +504,33 @@ const MiddleSection = (props) => {
                   <CustomStackFullWidth
                     direction="row"
                     alignItems="center"
-                    justifyContent="space-between"
-                    spacing={1}
+                    justifyContent="flex-end"
+                    // spacing={1}
                   >
-                    <CustomBoxFullWidth sx={{ paddingLeft: "15px" }}>
-                      <CustomSearch
-                        label={t("Search for items...")}
-                        selectedValue={state.searchKey}
-                        handleSearchResult={handleSearchResult}
-                        type2
-                      />
-                    </CustomBoxFullWidth>
+                    {!open ? (
+                      <IconButton
+                        onClick={handleOpenSerach}
+                        sx={{ color: "primary.main", display: { lg: "none" } }}
+                      >
+                        <SearchIcon />
+                      </IconButton>
+                    ) : (
+                      <CustomBoxFullWidth
+                        sx={{
+                          width: open ? "200px" : "0px",
+                          transition: "width 0.5s ease-in-out",
+                        }}
+                      >
+                        {open && (
+                          <CustomSearch
+                            label={t("Search for items...")}
+                            selectedValue={state.searchKey}
+                            handleSearchResult={handleSearchResult}
+                            type2
+                          />
+                        )}
+                      </CustomBoxFullWidth>
+                    )}
                     <IconButton
                       onClick={() =>
                         dispatch({
@@ -640,10 +659,14 @@ const MiddleSection = (props) => {
                   }
                 )}
               {state.data?.products?.length === 0 && !isRefetching && (
-                <CustomEmptyResult
-                  image={notFoundImage}
-                  label="Nothing found"
-                />
+                <Stack width="100%" paddingTop={{ xs: "0px", md: "30px" }}>
+                  <CustomEmptyResult
+                    image={notFoundImage}
+                    label="Nothing found"
+                    width="200px"
+                    height="200px"
+                  />
+                </Stack>
               )}
             </Grid>
             {(isFetchingNextPage || isRefetching || isRefetchingSearch) && (
