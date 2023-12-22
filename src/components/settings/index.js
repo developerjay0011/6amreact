@@ -37,14 +37,14 @@ const CustomSettings = (props) => {
             </Stack>
           </CustomPaper>
         </Grid>
-        <Grid item xs={12} sm={6} md={4} lg={3}>
+        {/* <Grid item xs={12} sm={6} md={4} lg={3}>
           <CustomPaper elevation={10}>
             <Stack alignItems="center" justifyContent="center" spacing={1}>
               <Typography fontWeight="bold">{t("Change language")}</Typography>
               <CustomLanguage countryCode={countryCode} language={language} />
             </Stack>
           </CustomPaper>
-        </Grid>
+        </Grid> */}
       </Grid>
     </CustomStackFullWidth>
   );
