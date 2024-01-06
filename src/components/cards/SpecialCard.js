@@ -57,8 +57,10 @@ const SpecialCard = (props) => {
     handleDecrement,
     count,
     showAddtocart,
-    handleClick,updateLoading,
-      isLoading
+    handleClick,
+    updateLoading,
+    setOpenLocationAlert,
+    isLoading,
   } = props;
 
   const { configData } = useSelector((state) => state.configData);
@@ -133,7 +135,7 @@ const SpecialCard = (props) => {
             showAddtocart={!isProductExist}
             isLoading={isLoading}
             updateLoading={updateLoading}
-
+            setOpenLocationAlert={setOpenLocationAlert}
           />
           <Box
             sx={{

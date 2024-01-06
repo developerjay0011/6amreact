@@ -34,10 +34,10 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import useGetAllCartList from "../../../api-manage/hooks/react-query/add-cart/useGetAllCartList";
 import { setCartList } from "../../../redux/slices/cart";
 import { clearOfflinePaymentInfo } from "../../../redux/slices/offlinePaymentData";
-import { getGuestId } from "../../../helper-functions/getToken";
 import LocalShippingOutlinedIcon from "@mui/icons-material/LocalShippingOutlined";
 import { getModule } from "../../../helper-functions/getLanguage";
 import { handleProductValueWithOutDiscount } from "../../../utils/CustomFunctions";
+import useGetGuest from "../../../api-manage/hooks/react-query/guest/useGetGuest";
 
 const Cart = ({ isLoading }) => {
   const [sideDrawerOpen, setSideDrawerOpen] = useState(false);
@@ -46,7 +46,6 @@ const Cart = ({ isLoading }) => {
   const handleIconClick = () => {
     setSideDrawerOpen(true);
   };
-
   return (
     <>
       <NavBarIcon
@@ -129,6 +128,7 @@ const SecondNavBar = ({ configData }) => {
   const theme = useTheme();
   const dispatch = useDispatch();
   const router = useRouter();
+  const { cartList } = useSelector((state) => state.cart);
   const { selectedModule } = useSelector((state) => state.utilsData);
   const { offlineInfoStep } = useSelector((state) => state.offlinePayment);
   const isSmall = useMediaQuery("(max-width:1180px)");
@@ -144,7 +144,36 @@ const SecondNavBar = ({ configData }) => {
   let token = undefined;
   let location = undefined;
   let zoneId;
-  const guestId = getGuestId();
+  let guestId;
+
+  if (typeof window !== "undefined") {
+    token = localStorage.getItem("token");
+  }
+
+  if (typeof window !== "undefined") {
+    guestId = localStorage.getItem("guest_id");
+  }
+
+  const {
+    data: guestData,
+    refetch: guestRefetch,
+    isLoading: guestIsLoading,
+  } = useGetGuest();
+
+  useEffect(() => {
+    // Check if there is no guest ID in local storage and there is no ongoing API request
+    if (!guestId && !guestIsLoading) {
+      guestRefetch();
+    }
+  }, [guestId, guestIsLoading, guestRefetch]);
+
+  useEffect(() => {
+    // Update guestId when guestData is available
+    if (guestData?.guest_id) {
+      localStorage.setItem("guest_id", guestData.guest_id);
+      guestId = guestData.guest_id;
+    }
+  }, [guestData]);
 
   const {
     data,
@@ -277,7 +306,7 @@ const SecondNavBar = ({ configData }) => {
             <WishListSideBar totalWishList={totalWishList} />
           )}
 
-          {moduleType !== "parcel" && location && (
+          {moduleType !== "parcel" && (location || cartList?.length !== 0) && (
             <Cart isLoading={isLoading} />
           )}
 

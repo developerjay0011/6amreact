@@ -41,6 +41,7 @@ import useAddCartItem from "../../../api-manage/hooks/react-query/add-cart/useAd
 import { getGuestId } from "../../../helper-functions/getToken";
 import { onErrorResponse } from "../../../api-manage/api-error-response/ErrorResponses";
 import useCartItemUpdate from "../../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
+import { useRouter } from "next/router";
 export const getItemObject = (productData) => {
   return {
     guest_id: getGuestId(),
@@ -62,6 +63,7 @@ const ProductInformation = ({
   isSmall,
 }) => {
   const theme = useTheme();
+  const router = useRouter();
   const [wishListCount, setWishListCount] = useState(
     productDetailsData?.whislists_count
   );
@@ -296,6 +298,7 @@ const ProductInformation = ({
       });
     } else toast.error(t(not_logged_in_message));
   };
+
   const topInformation = () => {
     return (
       <CustomStackFullWidth
@@ -307,18 +310,31 @@ const ProductInformation = ({
         }}
       >
         {state.modalData[0]?.store_name ? (
-          <Link
-            href={{
-              pathname: "/store/[id]",
-              query: {
-                id: `${state.modalData[0]?.store_id}`,
-                module_id: `${getModuleId()}`,
-                lat: currentLocation?.lat,
-                lng: currentLocation?.lng,
-              },
-            }}
-          >
-            {" "}
+          router.pathname !== `/store/[id]` ? (
+            <Link
+              href={{
+                pathname: "/store/[id]",
+                query: {
+                  id: `${state.modalData[0]?.store_id}`,
+                  module_id: `${getModuleId()}`,
+                  lat: currentLocation?.lat,
+                  lng: currentLocation?.lng,
+                  store_zone_id: `${state?.modalData[0]?.zone_id}`,
+                },
+              }}
+            >
+              {" "}
+              <Typography
+                variant="body1"
+                fontWeight="400"
+                lineHeight="normal"
+                color="customColor.textGray"
+              >
+                {state.modalData[0]?.store_name}
+              </Typography>
+            </Link>
+
+          ) : (
             <Typography
               variant="body1"
               fontWeight="400"
@@ -327,7 +343,7 @@ const ProductInformation = ({
             >
               {state.modalData[0]?.store_name}
             </Typography>
-          </Link>
+          )
         ) : (
           <Skeleton width={100} variant="text" />
         )}

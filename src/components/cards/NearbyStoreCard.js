@@ -126,6 +126,7 @@ const NearbyStoreCard = (props) => {
         // lat: currentLocation?.lat,
         // lng: currentLocation?.lng,
         distance: item.distance,
+        store_zone_id: `${item?.zone_id}`
       },
     });
   };

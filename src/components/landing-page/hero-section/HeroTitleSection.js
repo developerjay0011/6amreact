@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { CustomStackFullWidth } from "../../../styled-components/CustomStyles.style";
 
 import {
@@ -23,8 +23,14 @@ const HeroTitleSection = ({ configData, landingPageData, handleOrderNow }) => {
   const theme = useTheme();
   const isXSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const currentLanguage = getLanguage();
+  const [currentLocation, setCurrentLocation] = useState(null);
+	useEffect(() => {
+		if (typeof window !== "undefined") {
+			setCurrentLocation(window.localStorage.getItem("location"));
+		}
+	}, []);
   const getSearchOrModulesBySelectedModules = () => {
-    if (getCurrentModuleType()) {
+    if (currentLocation) {
       return <ModuleSelectionRaw />;
     } else {
       return (

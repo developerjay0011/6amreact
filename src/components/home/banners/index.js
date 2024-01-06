@@ -98,10 +98,10 @@ const Banners = (props) => {
           {
             pathname: "/store/[id]",
             query: {
-              id: `${
-                banner?.store?.slug ? banner?.store?.slug : banner?.store?.id
-              }`,
+              id: `${banner?.store?.slug ? banner?.store?.slug : banner?.store?.id
+                }`,
               module_id: `${getModuleId()}`,
+              store_zone_id: `${banner?.store.zone_id}`
             },
           },
           undefined,
@@ -117,9 +117,8 @@ const Banners = (props) => {
               {
                 pathname: "/product/[id]",
                 query: {
-                  id: `${
-                    banner?.item?.slug ? banner?.item?.slug : banner?.item?.id
-                  }`,
+                  id: `${banner?.item?.slug ? banner?.item?.slug : banner?.item?.id
+                    }`,
                   module_id: `${getModuleId()}`,
                 },
               },
@@ -229,11 +228,10 @@ const Banners = (props) => {
                     onClick={() => handleBannerClick(item)}
                   >
                     <CustomImageContainer
-                      src={`${
-                        item?.isCampaign
+                      src={`${item?.isCampaign
                           ? configData?.base_urls?.campaign_image_url
                           : configData?.base_urls?.banner_image_url
-                      }/${item?.image}`}
+                        }/${item?.image}`}
                       alt={item?.title}
                       height="100%"
                       width="100%"

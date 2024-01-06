@@ -145,6 +145,8 @@ const VisitAgainCard = (props) => {
       query: {
         id: `${item?.slug ? item?.slug : item?.id}`,
         module_id: `${item?.module_id}`,
+        module_type: getCurrentModuleType(),
+        store_zone_id: `${item?.zone_id}`,
       },
     });
   };

@@ -54,17 +54,17 @@ const LandingPage = ({ configData, landingPageData }) => {
       setOpen(true);
     }
   };
-  let token = undefined;
-  if (typeof window !== "undefined") {
-    token = localStorage.getItem("token");
-  }
-  const { data: guestData, refetch: guestRefetch, isLoading } = useGetGuest();
-  useEffect(() => {
-    if (!token) {
-      guestRefetch();
-    }
-  }, []);
-  localStorage.setItem("guest_id", guestData?.guest_id);
+  // let token = undefined;
+  // if (typeof window !== "undefined") {
+  //   token = localStorage.getItem("token");
+  // }
+  // const { data: guestData, refetch: guestRefetch, isLoading } = useGetGuest();
+  // useEffect(() => {
+  //   if (!token) {
+  //     guestRefetch();
+  //   }
+  // }, []);
+  // localStorage.setItem("guest_id", guestData?.guest_id);
 
   return (
     <>

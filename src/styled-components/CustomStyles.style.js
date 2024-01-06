@@ -66,7 +66,6 @@ export const FlexContainer = styled(Box)({
 });
 export const CustomTextField = styled(TextField)(({ theme }) => ({
   borderRadius: "13px",
-
   "& .MuiInputBase-input": {
     padding: "15px 10px",
     "& .MuiOutlinedInput-input": {

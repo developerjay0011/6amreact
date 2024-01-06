@@ -157,7 +157,7 @@ const MobileTopMenu = ({
                   />
                 </>
               )}
-              {/* <ListItemButton>
+              <ListItemButton>
                 <ListItemText>{t("Theme Mode")}</ListItemText>
                 <ThemeSwitches noText />
               </ListItemButton>
@@ -168,7 +168,7 @@ const MobileTopMenu = ({
                   language={language}
                   noText
                 />
-              </ListItemButton> */}
+              </ListItemButton>
               {/*{token && (*/}
               {/*  <>*/}
               {/*    {router.pathname === "/" && (*/}

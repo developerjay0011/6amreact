@@ -424,6 +424,7 @@ const OrderSummery = (props) => {
 								data={data}
 								t={t}
 								trackOrderData={trackOrderData}
+								configData={configData}
 							/>
 						) : (
 							<OrderCalculation

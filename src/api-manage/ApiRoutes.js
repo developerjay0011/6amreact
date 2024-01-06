@@ -48,7 +48,7 @@ export const discounted_product_api = "/api/v1/items/discounted";
 export const discounted_stores_api = "/api/v1/stores/discounted";
 export const popular_items_in_store = "/api/v1/stores/popular-items";
 export const common_condition_product_in_store =
-  "api/v1/items/common-conditions";
+  "/api/v1/items/common-conditions";
 export const wallet_transactions_list_api =
   "/api/v1/customer/wallet/transactions";
 export const LP_transactions_list_api =

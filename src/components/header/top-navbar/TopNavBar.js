@@ -63,10 +63,10 @@ const TopNavBar = () => {
 									>
 										<ThemeSwitches />
 										<CallToAdmin configData={configData} />
-										{/* <CustomLanguage
+										<CustomLanguage
 											countryCode={countryCode}
 											language={language}
-										/> */}
+										/>
 									</Stack>
 								</Stack>
 							</Box>

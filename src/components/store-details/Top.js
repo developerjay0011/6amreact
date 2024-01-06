@@ -104,6 +104,8 @@ const Top = (props) => {
     bannersData,isLoading
   } = props;
 
+  console.log("storeDetails",configData)
+  // const {configData} = useSelector(state=> state.configData)
   const [state, dispatch] = useReducer(reducer, initialState);
   const theme = useTheme();
   const dispatchRedux = useDispatch();
@@ -403,7 +405,7 @@ const Top = (props) => {
                       },
                     }}
                   >
-                    {storeDetails?.positive_rating}
+                    {storeDetails?.positive_rating.toFixed(configData?.digit_after_decimal_point)}
                   </Typography>
                   <Stack direction="row" alignItems="center" spacing={0.3}>
                     <Typography
@@ -610,7 +612,7 @@ const Top = (props) => {
                         },
                       }}
                     >
-                      {storeDetails?.positive_rating}%
+                      {storeDetails?.positive_rating.toFixed(configData?.digit_after_decimal_point)}%
                     </Typography>
                     <Stack direction="row" alignItems="center" spacing={0.3}>
                       <Typography>{t("Positive Review")}</Typography>

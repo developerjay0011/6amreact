@@ -135,18 +135,18 @@ const FoodDetailModal = ({
     const newVariations =
       modalData?.[0]?.food_variations.length > 0
         ? modalData?.[0]?.food_variations?.map((item, index) => {
-            if (selectedOptions.length > 0) {
-              return {
-                ...item,
-                values:
-                  item.values.length > 0
-                    ? itemValuesHandler(index, item.values)
-                    : item.values,
-              };
-            } else {
-              return item;
-            }
-          })
+          if (selectedOptions.length > 0) {
+            return {
+              ...item,
+              values:
+                item.values.length > 0
+                  ? itemValuesHandler(index, item.values)
+                  : item.values,
+            };
+          } else {
+            return item;
+          }
+        })
         : modalData?.[0]?.food_variations;
     return newVariations;
   };
@@ -231,15 +231,15 @@ const FoodDetailModal = ({
         add_on_ids:
           selectedAddons?.length > 0
             ? selectedAddons?.map((add) => {
-                return add.id;
-              })
+              return add.id;
+            })
             : [],
         add_on_qtys:
           selectedAddons?.length > 0
             ? selectedAddons?.map((add) => {
-                totalQty += add.quantity;
-                return totalQty;
-              })
+              totalQty += add.quantity;
+              return totalQty;
+            })
             : [],
         item_id: product?.id,
         price: totalPrice,
@@ -247,13 +247,13 @@ const FoodDetailModal = ({
         variation:
           getNewVariationForDispatch()?.length > 0
             ? getNewVariationForDispatch()?.map((variation) => {
-                return {
-                  name: variation.name,
-                  values: {
-                    label: handleValuesFromCartItems(variation.values),
-                  },
-                };
-              })
+              return {
+                name: variation.name,
+                values: {
+                  label: handleValuesFromCartItems(variation.values),
+                },
+              };
+            })
             : [],
       };
 
@@ -294,15 +294,15 @@ const FoodDetailModal = ({
         add_on_ids:
           selectedAddons?.length > 0
             ? selectedAddons?.map((add) => {
-                return add.id;
-              })
+              return add.id;
+            })
             : [],
         add_on_qtys:
           selectedAddons?.length > 0
             ? selectedAddons?.map((add) => {
-                totalQty += add.quantity;
-                return totalQty;
-              })
+              totalQty += add.quantity;
+              return totalQty;
+            })
             : [],
         item_id: modalData[0]?.id,
         price: totalPrice,
@@ -310,13 +310,13 @@ const FoodDetailModal = ({
         variation:
           getNewVariationForDispatch()?.length > 0
             ? getNewVariationForDispatch()?.map((variation) => {
-                return {
-                  name: variation.name,
-                  values: {
-                    label: handleValuesFromCartItems(variation.values),
-                  },
-                };
-              })
+              return {
+                name: variation.name,
+                values: {
+                  label: handleValuesFromCartItems(variation.values),
+                },
+              };
+            })
             : [],
       };
       mutate(itemObject, {
@@ -606,14 +606,14 @@ const FoodDetailModal = ({
                 (prevState) =>
                   prevState -
                   Number.parseInt(isItemExistFromSameVariation.optionPrice) *
-                    quantity +
+                  quantity +
                   Number.parseInt(option.optionPrice) * quantity
               );
               setVarPrice(
                 (prevPrice) =>
                   prevPrice -
                   Number.parseInt(isItemExistFromSameVariation.optionPrice) *
-                    quantity +
+                  quantity +
                   Number.parseInt(option.optionPrice) * quantity
               );
             } else {
@@ -849,15 +849,17 @@ const FoodDetailModal = ({
   };
 
   const handleRouteToStore = () => {
-    router.push({
-      pathname: `/store/[id]`,
-      query: {
-        id: modalData[0]?.store_id,
-        module_id: `${modalData[0]?.module_id}`,
-        module_type: getCurrentModuleType(),
-        store_zone_id: `${modalData[0].zone_id}`,
-      },
-    });
+    if (router.pathname !== `/store/[id]`) {
+      router.push({
+        pathname: `/store/[id]`,
+        query: {
+          id: modalData[0]?.store_id,
+          module_id: `${modalData[0]?.module_id}`,
+          module_type: getCurrentModuleType(),
+          store_zone_id: `${modalData[0].zone_id}`,
+        },
+      });
+    }
   };
 
   return (

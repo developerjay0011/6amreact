@@ -1,9 +1,9 @@
 import DeleteIcon from "@mui/icons-material/Delete";
 import {
+  alpha,
   Card,
   CardMedia,
   Typography,
-  alpha,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -45,9 +45,8 @@ import { getCurrentModuleType } from "../../helper-functions/getCurrentModuleTyp
 import { getModuleId } from "../../helper-functions/getModuleId";
 import { ModuleTypes } from "../../helper-functions/moduleTypes";
 import { addWishList, removeWishListItem } from "../../redux/slices/wishList";
-import { getConvertDiscount, getTotalVariationsPrice, isAvailable } from "../../utils/CustomFunctions";
+import { isAvailable } from "../../utils/CustomFunctions";
 import {
-  cart_item_remove,
   not_logged_in_message,
   out_of_limits,
   out_of_stock,
@@ -66,19 +65,18 @@ import ModuleModal from "./ModuleModal";
 import ProductsUnavailable from "./ProductsUnavailable";
 import QuickView from "./QuickView";
 import SpecialCard, { FoodVegNonVegFlag } from "./SpecialCard";
-import MoreFromTheStoreCard from "./MoreFromTheStoreCard";
-import { t } from "i18next";
 import { getLanguage } from "../../helper-functions/getLanguage";
 import CustomLinearProgressbar from "../linear-progressbar";
 import useAddCartItem from "../../api-manage/hooks/react-query/add-cart/useAddCartItem";
 import {
-  getItemDataForAddToCart, getPriceAfterQuantityChange,
-  handleValuesFromCartItems,
+  getItemDataForAddToCart,
+  getPriceAfterQuantityChange,
 } from "../product-details/product-details-section/helperFunction";
 import { onErrorResponse } from "../../api-manage/api-error-response/ErrorResponses";
 import { getGuestId } from "../../helper-functions/getToken";
 import useCartItemUpdate from "../../api-manage/hooks/react-query/add-cart/useCartItemUpdate";
 import useDeleteCartItem from "../../api-manage/hooks/react-query/add-cart/useDeleteCartItem";
+import GetLocationAlert from "../GetLocationAlert";
 
 export const CardWrapper = styled(Card)(
   ({
@@ -96,8 +94,8 @@ export const CardWrapper = styled(Card)(
       cardFor === "list-view"
         ? "100%"
         : horizontalcard === "true"
-          ? "440px"
-          : "320px",
+        ? "440px"
+        : "320px",
     width:
       cardType === "vertical-type" || cardType === "list-view"
         ? "100%"
@@ -106,10 +104,10 @@ export const CardWrapper = styled(Card)(
       wishlistcard === "true"
         ? "0rem"
         : nomargin === "true"
-          ? "0rem"
-          : cardType === "vertical-type"
-            ? "0rem"
-            : ".7rem",
+        ? "0rem"
+        : cardType === "vertical-type"
+        ? "0rem"
+        : ".7rem",
     borderRadius: "8px",
     height: cardheight ? cardheight : "220px",
     border:
@@ -137,15 +135,15 @@ export const CardWrapper = styled(Card)(
           ? cardFor === "list-view"
             ? "100%"
             : cardWidth
-              ? cardWidth
-              : "300px"
+            ? cardWidth
+            : "300px"
           : "100%",
       margin:
         wishlistcard === "true"
           ? "0rem"
           : nomargin === "true"
-            ? "0rem"
-            : ".4rem",
+          ? "0rem"
+          : ".4rem",
     },
     [theme.breakpoints.up("sm")]: {
       height: cardheight ? cardheight : "330px",
@@ -212,6 +210,7 @@ const ProductCard = (props) => {
 
   const [state, dispatch] = useReducer(reducer, initialState);
   const [openModal, setOpenModal] = React.useState(false);
+  const [openLocationAlert, setOpenLocationAlert] = useState(false);
   const { selectedModule } = useSelector((state) => state.utilsData);
   const { configData } = useSelector((state) => state.configData);
   const [isHover, setIsHover] = useState(false);
@@ -261,7 +260,7 @@ const ProductCard = (props) => {
     }
   };
 
-  useEffect(() => { }, [state.clearCartModal]);
+  useEffect(() => {}, [state.clearCartModal]);
   const handleClearCartModalOpen = () =>
     dispatch({ type: ACTION.setClearCartModal, payload: true });
   const handleCloseForClearCart = (value) => {
@@ -416,15 +415,13 @@ const ProductCard = (props) => {
   const addToCart = (e) => {
     if (item?.module_type === "ecommerce") {
       if (item?.variations.length > 0) {
-        router.push(
-          {
-            pathname: "/product/[id]",
-            query: {
-              id: `${item?.slug ? item?.slug : item?.id}`,
-              module_id: `${getModuleId()}`,
-            },
-          }
-        );
+        router.push({
+          pathname: "/product/[id]",
+          query: {
+            id: `${item?.slug ? item?.slug : item?.id}`,
+            module_id: `${getModuleId()}`,
+          },
+        });
       } else {
         e.stopPropagation();
         addToCartHandler();
@@ -511,7 +508,12 @@ const ProductCard = (props) => {
   const handleIncrement = () => {
     const isExisted = getItemFromCartlist();
     const updateQuantity = isInCart?.quantity + 1;
-    const itemObject = getItemDataForAddToCart(isInCart, updateQuantity, getPriceAfterQuantityChange(isInCart, updateQuantity), getGuestId());
+    const itemObject = getItemDataForAddToCart(
+      isInCart,
+      updateQuantity,
+      getPriceAfterQuantityChange(isInCart, updateQuantity),
+      getGuestId()
+    );
     if (isExisted) {
       if (getCurrentModuleType() === "food") {
         if (item?.maximum_cart_quantity) {
@@ -575,7 +577,12 @@ const ProductCard = (props) => {
         onError: onErrorResponse,
       });
     } else {
-      const itemObject = getItemDataForAddToCart(isInCart, updateQuantity, getPriceAfterQuantityChange(isInCart, updateQuantity), getGuestId());
+      const itemObject = getItemDataForAddToCart(
+        isInCart,
+        updateQuantity,
+        getPriceAfterQuantityChange(isInCart, updateQuantity),
+        getGuestId()
+      );
       updateMutate(itemObject, {
         onSuccess: cartUpdateHandleSuccessDecrement,
         onError: onErrorResponse,
@@ -867,9 +874,10 @@ const ProductCard = (props) => {
                 fontSize: { xs: "13px", sm: "18px" },
                 color: alpha(theme.palette.error.deepLight, 0.7),
               }}
-            >{t("Out of Stock")}</Typography>
+            >
+              {t("Out of Stock")}
+            </Typography>
           ) : (
-
             <AmountWithDiscountedAmount item={item} />
           )}
           <CustomStackFullWidth mt="100px" spacing={1}>
@@ -975,8 +983,22 @@ const ProductCard = (props) => {
           isWishlisted={isWishlisted}
         />
       ) : (
-        <>{cardFor === "flashSale" ? (
-          <>{stock !== 0 &&
+        <>
+          {cardFor === "flashSale" ? (
+            <>
+              {stock !== 0 && (
+                <ModuleModal
+                  open={state.openModal}
+                  handleModalClose={handleClose}
+                  configData={configData}
+                  productDetailsData={item}
+                  addToWishlistHandler={addToWishlistHandler}
+                  removeFromWishlistHandler={removeFromWishlistHandler}
+                  isWishlisted={isWishlisted}
+                />
+              )}
+            </>
+          ) : (
             <ModuleModal
               open={state.openModal}
               handleModalClose={handleClose}
@@ -986,22 +1008,8 @@ const ProductCard = (props) => {
               removeFromWishlistHandler={removeFromWishlistHandler}
               isWishlisted={isWishlisted}
             />
-          }</>
-        ) : (
-          <ModuleModal
-            open={state.openModal}
-            handleModalClose={handleClose}
-            configData={configData}
-            productDetailsData={item}
-            addToWishlistHandler={addToWishlistHandler}
-            removeFromWishlistHandler={removeFromWishlistHandler}
-            isWishlisted={isWishlisted}
-          />
-        )
-
-        }
+          )}
         </>
-
       )}
       {wishlistcard === "true" && (
         <HeartWrapper onClick={() => setOpenModal(true)} top="5px" right="5px">
@@ -1024,6 +1032,7 @@ const ProductCard = (props) => {
           handleClick={handleClick}
           isLoading={isLoading}
           updateLoading={updateLoading}
+          setOpenLocationAlert={setOpenLocationAlert}
         />
       ) : (
         <CardWrapper
@@ -1076,7 +1085,7 @@ const ProductCard = (props) => {
               {item?.module?.module_type === "food" && (
                 <ProductsUnavailable product={item} />
               )}
-              
+
               <CustomOverLay hover={state.isTransformed} border_radius="10px">
                 <QuickView
                   quickViewHandleClick={quickViewHandleClick}
@@ -1087,6 +1096,8 @@ const ProductCard = (props) => {
                   addToCartHandler={addToCart}
                   showAddtocart={cardFor === "vertical" && !isProductExist}
                   isLoading={isLoading}
+                  openLocationAlert={openLocationAlert}
+                  setOpenLocationAlert={setOpenLocationAlert}
                 />
               </CustomOverLay>
               {cardFor === "vertical" && isProductExist && (
@@ -1137,6 +1148,12 @@ const ProductCard = (props) => {
         onClose={() => setOpenModal(false)}
         onSuccess={() => deleteWishlistItem(item?.id)}
       />
+      <CustomModal
+        openModal={openLocationAlert}
+        handleClose={() => setOpenLocationAlert(false)}
+      >
+        <GetLocationAlert setOpenAlert={setOpenLocationAlert} />
+      </CustomModal>
     </Stack>
   );
 };
